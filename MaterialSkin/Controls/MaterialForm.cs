@@ -1205,17 +1205,20 @@ namespace MaterialSkin.Controls
                 //Form title
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
-                    Rectangle textLocation = new Rectangle(DrawerTabControl != null ? TITLE_LEFT_PADDING : TITLE_LEFT_PADDING - (ICON_SIZE + (ACTION_BAR_PADDING * 2)), STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
-                    NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
-                        SkinManager.ColorScheme.TextColor,
-                        textLocation.Location,
-                        textLocation.Size,
-                        NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                    if(_formStyle != FormStyles.ActionBar_None)
+                    {
+                        Rectangle textLocation = new Rectangle(DrawerTabControl != null ? TITLE_LEFT_PADDING : TITLE_LEFT_PADDING - (ICON_SIZE + (ACTION_BAR_PADDING * 2)), STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
+                        NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
+                            SkinManager.ColorScheme.TextColor,
+                            textLocation.Location,
+                            textLocation.Size,
+                            NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                    }
 
                     //titlebar text
                     if(DrawTitlebarText)
                     {
-                        textLocation = new Rectangle(24, 0, ClientSize.Width, STATUS_BAR_HEIGHT);
+                        Rectangle textLocation = new Rectangle(24, 0, ClientSize.Width, STATUS_BAR_HEIGHT);
                         NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
                             SkinManager.ColorScheme.TextColor,
                             textLocation.Location,
