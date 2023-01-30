@@ -4,14 +4,15 @@ namespace MaterialSkin.Controls
     using System;
     using System.ComponentModel;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.Drawing.Text;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
-    #if NETFRAMEWORK
+#if NETFRAMEWORK
     using System.Runtime.Remoting.Channels;
-    #endif
+#endif
 
     public class MaterialForm : Form, IMaterialControl
     {
@@ -172,6 +173,30 @@ namespace MaterialSkin.Controls
             get
             {
                 return new Rectangle(ClientRectangle.X, ClientRectangle.Y + STATUS_BAR_HEIGHT + ACTION_BAR_HEIGHT, ClientSize.Width, ClientSize.Height - (STATUS_BAR_HEIGHT + ACTION_BAR_HEIGHT));
+            }
+        }
+
+        private bool _drawIconInOriginalColor;
+        [Category("Material Skin"), Browsable(true)]
+        public bool DrawIconInOriginalColor
+        {
+            get => _drawIconInOriginalColor;
+            set
+            {
+                _drawIconInOriginalColor = value;
+                Invalidate();
+            }
+        }
+
+        private bool _drawTitlebarText;
+        [Category("Material Skin"), Browsable(true)]
+        public bool DrawTitlebarText
+        {
+            get => _drawTitlebarText;
+            set
+            {
+                _drawTitlebarText = value;
+                Invalidate();
             }
         }
         #endregion
@@ -422,6 +447,9 @@ namespace MaterialSkin.Controls
             DrawerIndicatorWidth = 0;
             DrawerHighlightWithAccent = true;
             DrawerBackgroundWithAccent = false;
+            DrawIconInOriginalColor = true;
+            DrawTitlebarText = false;
+            ShowIcon = false;
 
             FormBorderStyle = FormBorderStyle.None;
             Sizable = true;
@@ -429,7 +457,7 @@ namespace MaterialSkin.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
             FormStyle = FormStyles.ActionBar_40;
 
-            Padding = new Padding(PADDING_MINIMUM, STATUS_BAR_HEIGHT+ ACTION_BAR_HEIGHT, PADDING_MINIMUM, PADDING_MINIMUM);      //Keep space for resize by mouse
+            Padding = new Padding(PADDING_MINIMUM, STATUS_BAR_HEIGHT + ACTION_BAR_HEIGHT, PADDING_MINIMUM, PADDING_MINIMUM);      //Keep space for resize by mouse
 
             _clickAnimManager = new AnimationManager()
             {
@@ -452,7 +480,6 @@ namespace MaterialSkin.Controls
         {
             if (DrawerTabControl == null)
                 return;
-
             // Form opacity fade animation;
             _drawerShowHideAnimManager = new AnimationManager
             {
@@ -837,7 +864,7 @@ namespace MaterialSkin.Controls
             }
             // Double click to maximize
             else if (message == WM.LeftButtonDoubleClick && isOverCaption)
-            { 
+            {
                 Maximized = !Maximized;
             }
             // Treat the Caption as if it was Non-Client
@@ -861,7 +888,7 @@ namespace MaterialSkin.Controls
 
                     // Pass the command as a WM_SYSCOMMAND message
                     SendMessage(Handle, (int)WM.SystemCommand, id, 0);
-                    
+
                     // restore user defined ContextMenuStrip
                     base.ContextMenuStrip = user_cms;
                 }
@@ -1172,19 +1199,117 @@ namespace MaterialSkin.Controls
                 }
             }
 
-            if (ControlBox == true && _formStyle != FormStyles.ActionBar_None && _formStyle != FormStyles.StatusAndActionBar_None)
+            if (ControlBox == true && _formStyle != FormStyles.StatusAndActionBar_None)
             {
+
                 //Form title
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
-                    Rectangle textLocation = new Rectangle(DrawerTabControl != null ? TITLE_LEFT_PADDING : TITLE_LEFT_PADDING - (ICON_SIZE + (ACTION_BAR_PADDING*2)), STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
-                    NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.H6),
+                    Rectangle textLocation = new Rectangle(DrawerTabControl != null ? TITLE_LEFT_PADDING : TITLE_LEFT_PADDING - (ICON_SIZE + (ACTION_BAR_PADDING * 2)), STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
+                    NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
                         SkinManager.ColorScheme.TextColor,
                         textLocation.Location,
                         textLocation.Size,
                         NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+
+                    //titlebar text
+                    if(DrawTitlebarText)
+                    {
+                        textLocation = new Rectangle(24, 0, ClientSize.Width, STATUS_BAR_HEIGHT);
+                        NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
+                            SkinManager.ColorScheme.TextColor,
+                            textLocation.Location,
+                            textLocation.Size,
+                            NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                    }
+
+                }
+
+                // Draw icon
+                if (Icon != null && ShowIcon)
+                {
+                    if (DrawIconInOriginalColor)
+                    {
+                        // Image Rect
+                        Rectangle destRect = new Rectangle(2, 2, STATUS_BAR_HEIGHT_DEFAULT - 4, STATUS_BAR_HEIGHT_DEFAULT - 4);
+                        g.DrawIcon(Icon, destRect);
+                    }
+                    else
+                    {
+                        PreProcessIcons(g);
+                    }
                 }
             }
+        }
+
+        private void PreProcessIcons(Graphics g)
+        {
+            if (Icon == null) return;
+
+            int newWidth, newHeight;
+            //Resize icon if greater than ICON_SIZE
+            if (Icon.Width > (STATUS_BAR_HEIGHT_DEFAULT - 2) || Icon.Height > (STATUS_BAR_HEIGHT_DEFAULT - 2))
+            {
+                //calculate aspect ratio
+                float aspect = Icon.Width / (float)Icon.Height;
+
+                //calculate new dimensions based on aspect ratio
+                newWidth = (int)((STATUS_BAR_HEIGHT_DEFAULT - 2) * aspect);
+                newHeight = (int)(newWidth / aspect);
+
+                //if one of the two dimensions exceed the box dimensions
+                if (newWidth > (STATUS_BAR_HEIGHT_DEFAULT - 2) || newHeight > (STATUS_BAR_HEIGHT_DEFAULT - 2))
+                {
+                    //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
+                    if (newWidth > newHeight)
+                    {
+                        newWidth = STATUS_BAR_HEIGHT_DEFAULT - 2;
+                        newHeight = (int)(newWidth / aspect);
+                    }
+                    else
+                    {
+                        newHeight = STATUS_BAR_HEIGHT_DEFAULT - 2;
+                        newWidth = (int)(newHeight * aspect);
+                    }
+                }
+            }
+            else
+            {
+                newWidth = Icon.Width;
+                newHeight = Icon.Height;
+            }
+
+            Bitmap IconResized = new Bitmap(Icon.ToBitmap(), newWidth, newHeight);
+
+            // Calculate lightness and color
+            float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT) ? 0f : 1.5f;
+
+            // Create matrices
+            float[][] matrixGray = {
+                    new float[] {   0,   0,   0,   0,  0}, // Red scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Green scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Blue scale factor
+                    new float[] {   0,   0,   0, Enabled ? .7f : .3f,  0}, // alpha scale factor
+                    new float[] {   l,   l,   l,   0,  1}};// offset
+
+
+            ColorMatrix colorMatrixGray = new ColorMatrix(matrixGray);
+
+            ImageAttributes grayImageAttributes = new ImageAttributes();
+
+            // Set color matrices
+            grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            // Image Rect
+            Rectangle destRect = new Rectangle(0, 0, STATUS_BAR_HEIGHT_DEFAULT - 2, STATUS_BAR_HEIGHT_DEFAULT - 2);
+
+            g.DrawImage(IconResized,
+                    new Point[] {
+                                new Point(2, 2),
+                                new Point(destRect.Width, 2),
+                                new Point(2, destRect.Height),
+                    },
+                    destRect, GraphicsUnit.Pixel, grayImageAttributes);
         }
         #endregion
 
