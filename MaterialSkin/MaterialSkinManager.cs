@@ -395,6 +395,11 @@
             return NativeTextRenderer.CreateFontIndirect(lfont);
         }
 
+        public FontFamily GetFontFamily(string fontName)
+        {
+            return RobotoFontFamilies[fontName];
+        }
+
         // Dyanmic Themes
         public void AddFormToManage(MaterialForm materialForm)
         {

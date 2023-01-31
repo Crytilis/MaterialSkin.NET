@@ -723,12 +723,23 @@
                 }
             }
 
+            #region DrawBackground
+            if (BackgroundImage != null)
+            {
+                var x = (ClientRectangle.Width / 2) - (BackgroundImage.Width / 2);
+                var y = (ClientRectangle.Height / 2) - (BackgroundImage.Height / 2);
+                g.DrawImage(BackgroundImage, x, y);
+            }
+            #endregion
+
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
+                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, FontStyle.Bold, GraphicsUnit.Point);
+
                 NativeText.DrawMultilineTransparentText(
                     CharacterCasing == CharacterCasingEnum.Upper ? base.Text.ToUpper() : CharacterCasing == CharacterCasingEnum.Lower ? base.Text.ToLower() :
                         CharacterCasing == CharacterCasingEnum.Title ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(base.Text.ToLower()) : base.Text,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Button),
+                    font,
                     textColor,
                     textRect.Location,
                     textRect.Size,
