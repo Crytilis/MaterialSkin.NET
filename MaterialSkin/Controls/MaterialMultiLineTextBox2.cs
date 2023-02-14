@@ -47,8 +47,6 @@ namespace MaterialSkin.Controls
         public override System.Drawing.Color ForeColor { get; set; }
 
         //Material Skin properties
-
-
         [Category("Material Skin"), DefaultValue(""), Localizable(true)]
         public string Hint
         {
@@ -90,6 +88,34 @@ namespace MaterialSkin.Controls
                     base.ContextMenuStrip = cms;
                 }
                 _lastContextMenuStrip = base.ContextMenuStrip;
+            }
+        }
+
+        [Category("Layout"), DefaultValue(typeof(Padding), "5, 5, 0, 4"), Localizable(true)]
+        public new Padding Padding
+        {
+            get { return baseTextBox.Padding; }
+            set
+            {
+                baseTextBox.Padding = value;
+                OnResize(EventArgs.Empty);
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily("Roboto"), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.Font = font;
+                }
+                base.Font = font;
+                Invalidate();
             }
         }
 
@@ -1118,10 +1144,10 @@ namespace MaterialSkin.Controls
         private const int HINT_TEXT_SMALL_SIZE = 18;
         private const int HINT_TEXT_SMALL_Y = 4;
         private const int LINE_BOTTOM_PADDING = 3;
-        private const int TOP_PADDING = 10;
-        private const int BOTTOM_PADDING = 10;
-        private const int LEFT_PADDING = 16;
-        private const int RIGHT_PADDING = 12;
+        private const int TOP_PADDING = 3;
+        private const int BOTTOM_PADDING = 3;
+        private const int LEFT_PADDING = 3;
+        private const int RIGHT_PADDING = 0;
         private int LINE_Y;
         private bool hasHint;
         private readonly int SB_LINEUP = 0;
@@ -1147,11 +1173,12 @@ namespace MaterialSkin.Controls
                 InterruptAnimation = false
             };
             _animationManager.OnAnimationProgress += sender => Invalidate();
+            Font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
 
             baseTextBox = new BaseTextBox
             {
                 BorderStyle = BorderStyle.None,
-                Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1),
+                Font = Font,
                 ForeColor = SkinManager.TextHighEmphasisColor,
                 Multiline = true
             };
@@ -1325,12 +1352,11 @@ namespace MaterialSkin.Controls
         {
             base.OnResize(e);
 
-            baseTextBox.Location = new Point(LEFT_PADDING, TOP_PADDING);
-            baseTextBox.Width = Width - (LEFT_PADDING + RIGHT_PADDING);
-            baseTextBox.Height = Height - (TOP_PADDING + BOTTOM_PADDING);
+            baseTextBox.Location = new Point(Padding.Left + LEFT_PADDING, Padding.Top + TOP_PADDING);
+            baseTextBox.Width = Width - (Padding.Left + Padding.Right + LEFT_PADDING + RIGHT_PADDING);
+            baseTextBox.Height = Height - (Padding.Top + Padding.Bottom + TOP_PADDING + BOTTOM_PADDING);
 
             LINE_Y = Height - LINE_BOTTOM_PADDING;
-
         }
 
         protected override void OnCreateControl()

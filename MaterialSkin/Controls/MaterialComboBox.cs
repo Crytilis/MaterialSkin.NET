@@ -106,7 +106,7 @@
             UseTallSize = true;
             MaxDropDownItems = 4;
 
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle2);
+            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
             DrawMode = DrawMode.OwnerDrawVariable;
@@ -204,7 +204,7 @@
             // HintText
             bool userTextPresent = SelectedIndex >= 0;
             Rectangle hintRect = new Rectangle(SkinManager.FORM_PADDING, ClientRectangle.Y, Width, LINE_Y);
-            int hintTextSize = 16;
+            int hintTextSize = (int)Font.Size;
 
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -216,7 +216,7 @@
                 {
                     // hint text
                     hintRect = new Rectangle(SkinManager.FORM_PADDING, TEXT_SMALL_Y, Width, TEXT_SMALL_SIZE);
-                    hintTextSize = 12;
+                    hintTextSize = 8;
                 }
 
                 // bottom line
@@ -235,10 +235,10 @@
                 {
                     hintRect = new Rectangle(
                         SkinManager.FORM_PADDING,
-                        userTextPresent && !_animationManager.IsAnimating() ? (TEXT_SMALL_Y) : ClientRectangle.Y + (int)((TEXT_SMALL_Y - ClientRectangle.Y) * animationProgress),
+                        userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_Y) : ClientRectangle.Y + (int)((TEXT_SMALL_Y - ClientRectangle.Y) * animationProgress),
                         Width,
-                        userTextPresent && !_animationManager.IsAnimating() ? (TEXT_SMALL_SIZE) : (int)(LINE_Y + (TEXT_SMALL_SIZE - LINE_Y) * animationProgress));
-                    hintTextSize = userTextPresent && !_animationManager.IsAnimating() ? 12 : (int)(16 + (12 - 16) * animationProgress);
+                        userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_SIZE) : (int)(LINE_Y + (TEXT_SMALL_SIZE - LINE_Y) * animationProgress));
+                    hintTextSize = userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? 8 : (int)(Font.Size + (8 - Font.Size) * animationProgress);
                 }
 
                 // Line Animation
@@ -258,10 +258,11 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
+                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
                 // Draw user text
                 NativeText.DrawTransparentText(
                     Text,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textRect.Location,
                     textRect.Size,
@@ -275,9 +276,11 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
+                    var font = new Font(SkinManager.GetFontFamily("Roboto"), hintTextSize, Font.Style, GraphicsUnit.Point);
+
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    font,
                     Enabled ? DroppedDown || Focused ? 
                     SelectedColor : // Focus 
                     SkinManager.TextMediumEmphasisColor : // not focused
@@ -330,9 +333,11 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
+                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+
                 NativeText.DrawTransparentText(
                 Text,
-                SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1),
+                font,
                 SkinManager.TextHighEmphasisNoAlphaColor,
                 new Point(e.Bounds.Location.X + SkinManager.FORM_PADDING, e.Bounds.Location.Y),
                 new Size(e.Bounds.Size.Width - SkinManager.FORM_PADDING * 2, e.Bounds.Size.Height),
@@ -361,7 +366,7 @@
 
         private void setHeightVars()
         {
-            HEIGHT = UseTallSize ? 50 : 36;
+            HEIGHT = UseTallSize ? 42 : 32;
             Size = new Size(Size.Width, HEIGHT);
             LINE_Y = HEIGHT - BOTTOM_PADDING;
             ItemHeight = HEIGHT - 7;

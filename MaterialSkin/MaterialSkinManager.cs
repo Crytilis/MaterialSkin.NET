@@ -10,6 +10,13 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
+    public enum Glyphs
+    {
+        GlobalNavigationButton = 0xE700,
+        Pin = 0xE718,
+        Pinned = 0xE840
+    }
+
     public class MaterialSkinManager
     {
         private static MaterialSkinManager _instance;
@@ -451,16 +458,22 @@
             // Other Material Skin control
             else if (controlToUpdate.IsMaterialControl())
             {
-                controlToUpdate.BackColor = newBackColor;
-                controlToUpdate.ForeColor = TextHighEmphasisColor;
+                if(!(controlToUpdate.HasProperty("UseCustomColor") && ((MaterialLabel)controlToUpdate).UseCustomColor))
+                {
+                    controlToUpdate.BackColor = newBackColor;
+                    controlToUpdate.ForeColor = TextHighEmphasisColor;
+                }
             }
 
             // Other Generic control not part of material skin
             else if (EnforceBackcolorOnAllComponents && controlToUpdate.HasProperty("BackColor") && !controlToUpdate.IsMaterialControl() && controlToUpdate.Parent != null)
             {
-                controlToUpdate.BackColor = controlToUpdate.Parent.BackColor;
-                controlToUpdate.ForeColor = TextHighEmphasisColor;
-                controlToUpdate.Font = getFontByType(MaterialSkinManager.fontType.Body1);
+                if (!controlToUpdate.Name.StartsWith("pan"))
+                {
+                    controlToUpdate.BackColor = controlToUpdate.Parent.BackColor;
+                    controlToUpdate.ForeColor = TextHighEmphasisColor;
+                    controlToUpdate.Font = getFontByType(MaterialSkinManager.fontType.Body1);
+                }
             }
 
             // Recursive call to control's children

@@ -56,6 +56,15 @@
             }
         }
 
+        private bool pushDrawer;
+
+        [Category("Drawer")]
+        public bool PushDrawer
+        {
+            get => pushDrawer;
+            set { pushDrawer = value; Invalidate(); }
+        }
+
         [Category("Drawer")]
         public bool AutoHide { get; set; }
 
@@ -507,7 +516,7 @@
 
                 Rectangle textRect = _drawerItemRects[currentTabIndex];
                 textRect.X += _baseTabControl.ImageList != null ? drawerItemHeight : (int)(SkinManager.FORM_PADDING * 0.75);
-                textRect.Width -= SkinManager.FORM_PADDING << 2;
+                textRect.Width -= (SkinManager.FORM_PADDING << 2) + 16;
 
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {

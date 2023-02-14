@@ -1,5 +1,6 @@
 using MaterialSkin;
 using MaterialSkin.Controls;
+using MaterialSkin.Properties;
 using System;
 using System.Text;
 using System.Windows.Forms;
@@ -35,6 +36,8 @@ namespace MaterialSkinExample
             materialCheckedListBox1.Items.Add("Item5", true);
             materialCheckedListBox1.Items.Add("Item6", false);
             materialCheckedListBox1.Items.Add("Item7", false);
+
+            materialLabel24.Image = Properties.Resources.Auswertung;
 
             materialComboBox6.SelectedIndex = 0;
 

@@ -8,6 +8,8 @@
     using System.Drawing.Imaging;
     using System.Drawing.Text;
     using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
     using System.Windows.Forms;
 
     /// <summary>
@@ -21,6 +23,16 @@
         private const int MINIMUMWIDTHICONONLY = 36; //64;
         private const int HEIGHTDEFAULT = 36;
         private const int HEIGHTDENSE = 32;
+
+        public new Padding Padding {
+            get => base.Padding;
+            set
+            {
+                base.Padding = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
 
         // icons
         private TextureBrush iconsBrushes;
@@ -212,6 +224,10 @@
         /// Defines the _icon
         /// </summary>
         private Image _icon;
+        private int iconSize = ICON_SIZE;
+        private ContentAlignment iconAlign = ContentAlignment.MiddleLeft;
+        private Rectangle iconRect;
+        private Padding iconPadding = new Padding();
 
         private bool drawShadows;
         private bool highEmphasis;
@@ -241,6 +257,32 @@
                 Invalidate();
             }
         }
+
+        [Category("Material Skin"), DefaultValue(ContentAlignment.MiddleLeft), Description("Sets Icon alignment")]
+        public ContentAlignment IconAlign
+        {
+            get => iconAlign;
+            set { iconAlign = value; preProcessIcons(); Invalidate(); }
+        }
+        [Category("Material Skin"), DefaultValue(ICON_SIZE), Description("Sets Icon alignment")]
+        public int IconSize
+        {
+            get => iconSize;
+            set { iconSize = value; preProcessIcons(); Invalidate(); }
+        }
+
+        [Category("Material Skin"), DefaultValue(typeof(Padding), "5, 5, 5, 5"), Description("Sets Icon padding")]
+        public Padding IconPadding
+        {
+            get => iconPadding;
+            set
+            {
+                iconPadding = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
+
 
         [Category("Material Skin"), DefaultValue(4), Description("Sets the border radius in px")]
         public int Radius
@@ -365,28 +407,28 @@
             if (Icon == null) return;
 
             int newWidth, newHeight;
-            //Resize icon if greater than ICON_SIZE
-            if (Icon.Width > ICON_SIZE || Icon.Height > ICON_SIZE)
+            //Resize icon if greater than IconSize
+            if (Icon.Width > IconSize || Icon.Height > IconSize)
             {
                 //calculate aspect ratio
                 float aspect = Icon.Width / (float)Icon.Height;
 
                 //calculate new dimensions based on aspect ratio
-                newWidth = (int)(ICON_SIZE * aspect);
+                newWidth = (int)(IconSize * aspect);
                 newHeight = (int)(newWidth / aspect);
 
                 //if one of the two dimensions exceed the box dimensions
-                if (newWidth > ICON_SIZE || newHeight > ICON_SIZE)
+                if (newWidth > IconSize || newHeight > IconSize)
                 {
                     //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
                     if (newWidth > newHeight)
                     {
-                        newWidth = ICON_SIZE;
+                        newWidth = IconSize;
                         newHeight = (int)(newWidth / aspect);
                     }
                     else
                     {
-                        newHeight = ICON_SIZE;
+                        newHeight = IconSize;
                         newWidth = (int)(newHeight * aspect);
                     }
                 }
@@ -419,7 +461,7 @@
             grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             // Image Rect
-            Rectangle destRect = new Rectangle(0, 0, ICON_SIZE, ICON_SIZE);
+            Rectangle destRect = new Rectangle(0, 0, IconSize, IconSize);
 
             // Create a pre-processed copy of the image (GRAY)
             Bitmap bgray = new Bitmap(destRect.Width, destRect.Height);
@@ -440,13 +482,86 @@
                 WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp
             };
 
-            // Translate the brushes to the correct positions
-            Rectangle iconRect = new Rectangle(8, (Height / 2 - ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
+            int top = 0 + IconPadding.Top;
+            int middle = (ClientRectangle.Height / 2) - (IconSize / 2);
+            int bottom = ClientRectangle.Height - IconSize - IconPadding.Bottom;
+            int left = 0 + IconPadding.Left;
+            int center = (ClientRectangle.Width / 2) - (IconSize / 2);
+            int right = ClientRectangle.Width - IconSize - IconPadding.Right;
 
+            switch (IconAlign)
+            {
+                case ContentAlignment.TopLeft:
+                    iconRect = new Rectangle(left, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.TopCenter:
+                    iconRect = new Rectangle(center, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.TopRight:
+                    iconRect = new Rectangle(right, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleLeft:
+                    iconRect = new Rectangle(left, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleCenter:
+                    iconRect = new Rectangle(center, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleRight:
+                    iconRect = new Rectangle(right, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomLeft:
+                    iconRect = new Rectangle(left, bottom, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomCenter:
+                    iconRect = new Rectangle(center, bottom, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomRight:
+                    iconRect = new Rectangle(right, bottom, IconSize, IconSize);
+                    break;
+            }
+
+            // Translate the brushes to the correct positions
             textureBrushGray.TranslateTransform(iconRect.X + iconRect.Width / 2 - IconResized.Width / 2,
                                                 iconRect.Y + iconRect.Height / 2 - IconResized.Height / 2);
 
             iconsBrushes = textureBrushGray;
+        }
+
+        private NativeTextRenderer.TextAlignFlags PreProcessTextAlign()
+        {
+            var align = NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle;
+            switch (TextAlign)
+            {
+                case ContentAlignment.TopLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.TopCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.TopRight:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+                case ContentAlignment.MiddleLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.MiddleCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.MiddleRight:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+                case ContentAlignment.BottomLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.BottomCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.BottomRight:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+            }
+
+            return align;
         }
 
         /// <summary>
@@ -668,12 +783,8 @@
             }
 
             //Text
+            //Rectangle textRect = PreProcessTextRect();
             Rectangle textRect = ClientRectangle;
-            if (Icon != null)
-            {
-                textRect.Width -= 8 + ICON_SIZE + 4 + 8; // left padding + icon width + space between Icon and Text + right padding
-                textRect.X += 8 + ICON_SIZE + 4; // left padding + icon width + space between Icon and Text
-            }
             /*
             Color textColor = Enabled ? (HighEmphasis ? (Type == MaterialButtonType.Text || Type == MaterialButtonType.Outlined) ?
                 UseAccentColor ? SkinManager.ColorScheme.AccentColor : // Outline or Text and accent and emphasis
@@ -731,10 +842,46 @@
                 g.DrawImage(BackgroundImage, x, y);
             }
             #endregion
+            if (Icon != null)
+            {
+                g.FillRectangle(iconsBrushes, iconRect);
+            }
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, FontStyle.Bold, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                var align = PreProcessTextAlign();
+                switch (TextAlign)
+                {
+                    case ContentAlignment.TopLeft:
+                        textRect.X += Padding.Left;
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.TopCenter:
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.TopRight:
+                        textRect.X -= Padding.Right;
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.MiddleLeft:
+                        textRect.X += Padding.Left;
+                        break;
+                    case ContentAlignment.MiddleRight:
+                        textRect.X -= Padding.Right;
+                        break;
+                    case ContentAlignment.BottomLeft:
+                        textRect.X += Padding.Left;
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                    case ContentAlignment.BottomCenter:
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                    case ContentAlignment.BottomRight:
+                        textRect.X -= Padding.Right;
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                }
 
                 NativeText.DrawMultilineTransparentText(
                     CharacterCasing == CharacterCasingEnum.Upper ? base.Text.ToUpper() : CharacterCasing == CharacterCasingEnum.Lower ? base.Text.ToLower() :
@@ -743,21 +890,7 @@
                     textColor,
                     textRect.Location,
                     textRect.Size,
-                    NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);
-            }
-
-            //Icon
-            Rectangle iconRect = new Rectangle(8, (Height / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
-
-            if (string.IsNullOrEmpty(Text))
-            {
-                // Center Icon
-                iconRect.X += 2;
-            }
-
-            if (Icon != null)
-            {
-                g.FillRectangle(iconsBrushes, iconRect);
+                    align);
             }
         }
 
@@ -809,7 +942,7 @@
             {
                 // 24 is for icon size
                 // 4 is for the space between icon & text
-                extra += ICON_SIZE + 4;
+                extra += IconSize + 4;
             }
 
             if (AutoSize)
