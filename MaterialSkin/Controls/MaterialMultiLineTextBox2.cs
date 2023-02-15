@@ -219,6 +219,23 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [Category("Behavior"), DefaultValue(true)]
+        public new bool TabStop
+        {
+            get
+            {
+                return baseTextBox.TabStop;
+            }
+            set
+            {
+                if (TabStop != value)
+                {
+                    baseTextBox.TabStop = value;
+                    OnTabStopChanged(EventArgs.Empty);
+                }
+            }
+        }
+
         public void SelectAll() { baseTextBox.SelectAll(); }
 
         public void Clear() { baseTextBox.Clear(); }
@@ -1212,9 +1229,7 @@ namespace MaterialSkin.Controls
 
             baseTextBox.TextChanged += new EventHandler(Redraw);
             baseTextBox.BackColorChanged += new EventHandler(Redraw);
-
-            baseTextBox.TabStop = true;
-            this.TabStop = false;
+            base.TabStop = false;
 
             cms.Opening += ContextMenuStripOnOpening;
             cms.OnItemClickStart += ContextMenuStripOnItemClickStart;

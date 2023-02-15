@@ -338,6 +338,24 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [Category("Behavior"), DefaultValue(true)]
+        public new bool TabStop
+        {
+            get
+            {
+                return baseTextBox.TabStop;
+            }
+            set
+            {
+                if (TabStop != value)
+                {
+                    baseTextBox.TabStop = value;
+                    OnTabStopChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+
         public AutoCompleteStringCollection AutoCompleteCustomSource { get { return baseTextBox.AutoCompleteCustomSource; } set { baseTextBox.AutoCompleteCustomSource = value; } }
 
         public AutoCompleteSource AutoCompleteSource { get { return baseTextBox.AutoCompleteSource; } set { baseTextBox.AutoCompleteSource = value; } }
@@ -1380,9 +1398,7 @@ namespace MaterialSkin.Controls
 
             baseTextBox.TextChanged += new EventHandler(Redraw);
             baseTextBox.BackColorChanged += new EventHandler(Redraw);
-
-            baseTextBox.TabStop = true;
-            this.TabStop = false;
+            base.TabStop = false;
 
             cms.Opening += ContextMenuStripOnOpening;
             cms.OnItemClickStart += ContextMenuStripOnItemClickStart;
@@ -1649,7 +1665,7 @@ namespace MaterialSkin.Controls
             HEIGHT = Height < 10 ? 10 : Height;
             if(_UseTallSize)
             {
-                HEIGHT = Height < 36 ? 36 : Height;
+                HEIGHT = Height < 32 ? 32 : Height;
             }
 
             Size = new Size(Width, HEIGHT);
