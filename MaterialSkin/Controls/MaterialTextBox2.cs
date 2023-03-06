@@ -239,7 +239,7 @@ namespace MaterialSkin.Controls
             get { return base.Font; }
             set
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
                 if (baseTextBox != null)
                 {
                     baseTextBox.Font = font;
@@ -1358,7 +1358,7 @@ namespace MaterialSkin.Controls
                 Font = base.Font,
                 ForeColor = SkinManager.TextHighEmphasisColor,
                 Multiline = false,
-                Location = new Point(LEFT_PADDING, HEIGHT/2- FONT_HEIGHT/2),
+                Location = new Point(LEFT_PADDING, (HEIGHT / 2) - (FONT_HEIGHT / 2)),
                 Width = Width - (LEFT_PADDING + RIGHT_PADDING),
                 Height = FONT_HEIGHT
             };

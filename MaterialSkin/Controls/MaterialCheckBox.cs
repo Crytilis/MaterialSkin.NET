@@ -43,6 +43,18 @@
             }
         }
 
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
         [Browsable(true)]
         public bool ReadOnly { get; set; }
         #endregion
@@ -57,7 +69,7 @@
         private const int CHECKBOX_SIZE = 18;
         private const int CHECKBOX_SIZE_HALF = CHECKBOX_SIZE / 2;
         private int _boxOffset;
-        private static readonly Point[] CheckmarkLine = { new Point(3, 8), new Point(7, 12), new Point(14, 5) };
+        private Point[] CheckmarkLine = { new Point(3, 8), new Point(7, 12), new Point(14, 5) };
         private bool hovered = false;
         private CheckState _oldCheckState;
         #endregion
@@ -101,11 +113,15 @@
         {
             base.OnSizeChanged(e);
 
-            _boxOffset = HEIGHT_RIPPLE / 2 - 9;
+            var offset = Ripple ? HEIGHT_RIPPLE : HEIGHT_NO_RIPPLE;
+
+            _boxOffset = offset / 2 - 9;
         }
 
         public override Size GetPreferredSize(Size proposedSize)
         {
+            var baseSize = base.GetPreferredSize(proposedSize);
+
             Size strSize;
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
@@ -165,8 +181,19 @@
                 }
             }
 
-            Rectangle checkMarkLineFill = new Rectangle(_boxOffset, _boxOffset, (int)(CHECKBOX_SIZE * animationProgress), CHECKBOX_SIZE);
-            using (GraphicsPath checkmarkPath = DrawHelper.CreateRoundRect(_boxOffset - 0.5f, _boxOffset - 0.5f, CHECKBOX_SIZE, CHECKBOX_SIZE, 1))
+            var width = CHECKBOX_SIZE - Padding.Left - Padding.Right;
+            var height = CHECKBOX_SIZE - Padding.Top - Padding.Bottom;
+
+            var x = (ClientRectangle.Height / 2) - (width / 2);
+            var y = (ClientRectangle.Height / 2) - (height / 2);
+
+            if(CheckAlign == ContentAlignment.MiddleRight)
+            {
+                x = ClientRectangle.Width - width - 2;
+            }
+
+            Rectangle checkMarkLineFill = new Rectangle(x, y, (int)(width * animationProgress), height);
+            using (GraphicsPath checkmarkPath = DrawHelper.CreateRoundRect(x - 0.5f, y - 0.5f, width, height, 1))
             {
                 if (Enabled)
                 {
@@ -186,18 +213,26 @@
                         g.DrawPath(pen, checkmarkPath);
                 }
 
-                g.DrawImageUnscaledAndClipped(DrawCheckMarkBitmap(), checkMarkLineFill);
+                g.DrawImage(DrawCheckMarkBitmap(), checkMarkLineFill);
             }
 
             // draw checkbox text
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                Rectangle textLocation = new Rectangle(_boxOffset + TEXT_OFFSET, 0, Width - (_boxOffset + TEXT_OFFSET), HEIGHT_RIPPLE);
-                NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                var textSize = NativeText.MeasureString(Text, Font);
+                var textWidth = textSize.Width;
+                var textX = _boxOffset + TEXT_OFFSET;
+                if (CheckAlign == ContentAlignment.MiddleRight || CheckAlign == ContentAlignment.TopRight || CheckAlign == ContentAlignment.BottomRight)
+                {
+                    textX = ClientRectangle.Width - textSize.Width - width - _boxOffset - 3;
+                }
+
+                Rectangle textLocation = new Rectangle(textX < 0 ? 0 : textX, 0, textWidth, ClientRectangle.Height);
+                NativeText.DrawTransparentText(Text, Font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textLocation.Location,
                     textLocation.Size,
-                    NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                    GetTextAlign());
             }
 
             // dispose used paint objects
@@ -338,6 +373,33 @@
         private bool IsMouseInCheckArea()
         {
             return ClientRectangle.Contains(MouseLocation);
+        }
+
+        private NativeTextRenderer.TextAlignFlags GetTextAlign()
+        {
+            switch (TextAlign)
+            {
+                case ContentAlignment.TopLeft:
+                    return NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Left;
+                case ContentAlignment.TopCenter:
+                    return NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Center;
+                case ContentAlignment.TopRight:
+                    return NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Right;
+                case ContentAlignment.MiddleLeft:
+                    return NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Left;
+                case ContentAlignment.MiddleCenter:
+                    return NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Center;
+                case ContentAlignment.MiddleRight:
+                    return NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Right;
+                case ContentAlignment.BottomLeft:
+                    return NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Left;
+                case ContentAlignment.BottomCenter:
+                    return NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Bottom;
+                case ContentAlignment.BottomRight:
+                    return NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Right;
+                default:
+                    return NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Left;
+            }
         }
         #endregion
     }

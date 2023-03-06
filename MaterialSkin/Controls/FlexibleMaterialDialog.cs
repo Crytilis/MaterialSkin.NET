@@ -112,9 +112,9 @@ namespace MaterialSkin.Controls
             this.messageContainer.Controls.Add(this.materialLabel1);
             this.messageContainer.Controls.Add(this.pictureBoxForIcon);
             this.messageContainer.Controls.Add(this.richTextBoxMessage);
-            this.messageContainer.Location = new System.Drawing.Point(1, 65);
+            this.messageContainer.Location = new System.Drawing.Point(1, 25);
             this.messageContainer.Name = "messageContainer";
-            this.messageContainer.Size = new System.Drawing.Size(382, 89);
+            this.messageContainer.Size = new System.Drawing.Size(382, 129);
             this.messageContainer.TabIndex = 1;
             // 
             // materialLabel1
@@ -128,7 +128,7 @@ namespace MaterialSkin.Controls
             this.materialLabel1.Location = new System.Drawing.Point(56, 12);
             this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel1.Name = "materialLabel1";
-            this.materialLabel1.Size = new System.Drawing.Size(314, 65);
+            this.materialLabel1.Size = new System.Drawing.Size(314, 105);
             this.materialLabel1.TabIndex = 9;
             this.materialLabel1.Text = "<Message>";
             this.materialLabel1.Visible = false;
@@ -159,7 +159,7 @@ namespace MaterialSkin.Controls
             this.richTextBoxMessage.Name = "richTextBoxMessage";
             this.richTextBoxMessage.ReadOnly = true;
             this.richTextBoxMessage.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBoxMessage.Size = new System.Drawing.Size(314, 65);
+            this.richTextBoxMessage.Size = new System.Drawing.Size(314, 105);
             this.richTextBoxMessage.TabIndex = 0;
             this.richTextBoxMessage.TabStop = false;
             this.richTextBoxMessage.Text = "<Message>";
@@ -175,11 +175,13 @@ namespace MaterialSkin.Controls
             this.leftButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.leftButton.HighEmphasis = false;
             this.leftButton.Icon = null;
+            this.leftButton.IconPadding = new System.Windows.Forms.Padding(0, 0, 0, 0);
             this.leftButton.Location = new System.Drawing.Point(32, 163);
             this.leftButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.leftButton.MinimumSize = new System.Drawing.Size(0, 24);
             this.leftButton.MouseState = MaterialSkin.MouseState.HOVER;
             this.leftButton.Name = "leftButton";
+            this.leftButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.leftButton.Size = new System.Drawing.Size(108, 36);
             this.leftButton.TabIndex = 14;
             this.leftButton.Text = "OK";
@@ -198,11 +200,13 @@ namespace MaterialSkin.Controls
             this.middleButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.middleButton.HighEmphasis = true;
             this.middleButton.Icon = null;
+            this.middleButton.IconPadding = new System.Windows.Forms.Padding(0, 0, 0, 0);
             this.middleButton.Location = new System.Drawing.Point(148, 163);
             this.middleButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.middleButton.MinimumSize = new System.Drawing.Size(0, 24);
             this.middleButton.MouseState = MaterialSkin.MouseState.HOVER;
             this.middleButton.Name = "middleButton";
+            this.middleButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.middleButton.Size = new System.Drawing.Size(102, 36);
             this.middleButton.TabIndex = 15;
             this.middleButton.Text = "OK";
@@ -221,11 +225,13 @@ namespace MaterialSkin.Controls
             this.rightButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.rightButton.HighEmphasis = true;
             this.rightButton.Icon = null;
+            this.rightButton.IconPadding = new System.Windows.Forms.Padding(0, 0, 0, 0);
             this.rightButton.Location = new System.Drawing.Point(258, 163);
             this.rightButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.rightButton.MinimumSize = new System.Drawing.Size(0, 24);
             this.rightButton.MouseState = MaterialSkin.MouseState.HOVER;
             this.rightButton.Name = "rightButton";
+            this.rightButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.rightButton.Size = new System.Drawing.Size(106, 36);
             this.rightButton.TabIndex = 13;
             this.rightButton.Text = "OK";
@@ -243,11 +249,13 @@ namespace MaterialSkin.Controls
             this.Controls.Add(this.rightButton);
             this.Controls.Add(this.messageContainer);
             this.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.FlexibleMaterialFormBindingSource, "CaptionText", true));
+            this.DrawTitlebarText = true;
+            this.FormStyle = MaterialSkin.Controls.MaterialForm.FormStyles.ActionBar_None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(276, 140);
             this.Name = "FlexibleMaterialForm";
-            this.ShowIcon = false;
+            this.Padding = new System.Windows.Forms.Padding(3, 24, 3, 3);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "<Caption>";

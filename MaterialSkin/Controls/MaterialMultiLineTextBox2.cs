@@ -109,7 +109,7 @@ namespace MaterialSkin.Controls
             get { return base.Font; }
             set
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
                 if (baseTextBox != null)
                 {
                     baseTextBox.Font = font;
@@ -1190,7 +1190,7 @@ namespace MaterialSkin.Controls
                 InterruptAnimation = false
             };
             _animationManager.OnAnimationProgress += sender => Invalidate();
-            Font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
 
             baseTextBox = new BaseTextBox
             {

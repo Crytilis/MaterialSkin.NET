@@ -12,6 +12,10 @@
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
+        [Category("Material Skin")]
+        [Browsable(true)]
+        public bool UseFixedSize { get; set; }
+
         [Browsable(false)]
         public int Depth { get; set; }
 
@@ -23,7 +27,7 @@
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            base.SetBoundsCore(x, y, width, 5, specified);
+            base.SetBoundsCore(x, y, width, UseFixedSize ? 5 : height, specified);
         }
 
         protected override void OnPaint(PaintEventArgs e)

@@ -38,11 +38,18 @@
 
         public int FORM_PADDING = 14;
 
+        /// <summary>
+        /// Possible options
+        /// Roboto, Roboto Light, Roboto Medium
+        /// </summary>
+        public string CurrentFontFamily { get; set; }
+
         // Constructor
         private MaterialSkinManager()
         {
             Theme = Themes.LIGHT;
             ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE, Primary.Green700, Primary.Cyan700, Primary.Yellow700, Primary.Red700);
+            CurrentFontFamily = "Roboto";
 
             // Create and cache Roboto fonts
             // Thanks https://www.codeproject.com/Articles/42041/How-to-Use-a-Font-Without-Installing-it
@@ -187,9 +194,9 @@
         private static readonly Brush BACKGROUND_ALTERNATIVE_LIGHT_BRUSH = new SolidBrush(BACKGROUND_ALTERNATIVE_LIGHT);
         private static readonly Color BACKGROUND_ALTERNATIVE_DARK = Color.FromArgb(10, 255, 255, 255);
         private static readonly Brush BACKGROUND_ALTERNATIVE_DARK_BRUSH = new SolidBrush(BACKGROUND_ALTERNATIVE_DARK);
-        private static readonly Color BACKGROUND_HOVER_LIGHT = Color.FromArgb(20, 0, 0, 0);
+        private static readonly Color BACKGROUND_HOVER_LIGHT = Color.FromArgb(50, 0, 0, 0);
         private static readonly Brush BACKGROUND_HOVER_LIGHT_BRUSH = new SolidBrush(BACKGROUND_HOVER_LIGHT);
-        private static readonly Color BACKGROUND_HOVER_DARK = Color.FromArgb(20, 255, 255, 255);
+        private static readonly Color BACKGROUND_HOVER_DARK = Color.FromArgb(50, 255, 255, 255);
         private static readonly Brush BACKGROUND_HOVER_DARK_BRUSH = new SolidBrush(BACKGROUND_HOVER_DARK);
         private static readonly Color BACKGROUND_HOVER_RED = Color.FromArgb(255, 255, 0, 0);
         private static readonly Brush BACKGROUND_HOVER_RED_BRUSH = new SolidBrush(BACKGROUND_HOVER_RED);

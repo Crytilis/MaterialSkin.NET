@@ -126,11 +126,6 @@
                 MouseState = MouseState.OUT;
                 if (SelectedIndex < 0 && !Focused) _animationManager.StartNewAnimation(AnimationDirection.Out);
             };
-            LostFocus += (sender, args) =>
-            {
-                MouseState = MouseState.OUT;
-                if (SelectedIndex < 0) _animationManager.StartNewAnimation(AnimationDirection.Out);
-            };
             DropDown += (sender, args) =>
             {
                 _animationManager.StartNewAnimation(AnimationDirection.In);
@@ -139,6 +134,11 @@
             {
                 _animationManager.StartNewAnimation(AnimationDirection.In);
                 Invalidate();
+            };
+            LostFocus += (sender, args) =>
+            {
+                MouseState = MouseState.OUT;
+                if (SelectedIndex < 0) _animationManager.StartNewAnimation(AnimationDirection.Out);
             };
             MouseEnter += (sender, args) =>
             {
@@ -258,7 +258,7 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
                 // Draw user text
                 NativeText.DrawTransparentText(
                     Text,
@@ -276,7 +276,7 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
-                    var font = new Font(SkinManager.GetFontFamily("Roboto"), hintTextSize, Font.Style, GraphicsUnit.Point);
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
 
                     NativeText.DrawTransparentText(
                     Hint,
@@ -333,7 +333,7 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
 
                 NativeText.DrawTransparentText(
                 Text,

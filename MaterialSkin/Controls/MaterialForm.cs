@@ -382,6 +382,10 @@ namespace MaterialSkin.Controls
         }
         #endregion
 
+        #region Events
+        public event EventHandler<string> DrawerTabAsButtonClick;
+        #endregion
+
         #region Constants
         // Form Constants
         private const int BORDER_WIDTH = 7;
@@ -457,6 +461,9 @@ namespace MaterialSkin.Controls
             DrawIconInOriginalColor = true;
             DrawTitlebarText = false;
             ShowIcon = false;
+            drawerControl.TabAsButtonClick += (s, e) => {
+                DrawerTabAsButtonClick?.Invoke(this, e);
+            };
 
             FormBorderStyle = FormBorderStyle.None;
             Sizable = true;

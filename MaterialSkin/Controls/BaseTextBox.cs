@@ -41,6 +41,15 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [Browsable(false)]
+        [Category("Behaviour")]
+        [DefaultValue(false)]
+        public bool Selectable
+        {
+            get => GetStyle(ControlStyles.Selectable);
+            set => SetStyle(ControlStyles.Selectable, value);
+        }
+
         public new void SelectAll()
         {
             BeginInvoke((MethodInvoker)delegate ()

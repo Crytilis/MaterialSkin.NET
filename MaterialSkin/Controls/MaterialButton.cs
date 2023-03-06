@@ -849,7 +849,7 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily("Roboto"), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
                 var align = PreProcessTextAlign();
                 switch (TextAlign)
                 {

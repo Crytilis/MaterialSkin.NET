@@ -2,14 +2,43 @@
 {
     using MaterialSkin.Animations;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Text;
+    using System.Linq;
     using System.Windows.Forms;
 
     public class MaterialRadioButton : RadioButton, IMaterialControl
     {
+        public enum Level { Parent, Form };
+
+        #region Private variables
+        // animation managers
+        private readonly AnimationManager _checkAM;
+
+        private readonly AnimationManager _rippleAM;
+        private readonly AnimationManager _hoverAM;
+
+        // size related variables which should be recalculated onsizechanged
+        private Rectangle _radioButtonBounds;
+
+        private bool ripple;
+        private int _boxOffset;
+        private bool hovered = false;
+
+        // size constants
+        private const int HEIGHT_RIPPLE = 37;
+
+        private const int HEIGHT_NO_RIPPLE = 20;
+        private const int RADIOBUTTON_SIZE = 18;
+        private const int RADIOBUTTON_SIZE_HALF = RADIOBUTTON_SIZE / 2;
+        private const int RADIOBUTTON_OUTER_CIRCLE_WIDTH = 2;
+        private const int RADIOBUTTON_INNER_CIRCLE_SIZE = RADIOBUTTON_SIZE - (2 * RADIOBUTTON_OUTER_CIRCLE_WIDTH);
+        private const int TEXT_OFFSET = 26;
+        #endregion
+        #region Properties
         [Browsable(false)]
         public int Depth { get; set; }
 
@@ -21,8 +50,6 @@
 
         [Browsable(false)]
         public Point MouseLocation { get; set; }
-
-        private bool ripple;
 
         [Category("Behavior")]
         public bool Ripple
@@ -42,26 +69,15 @@
             }
         }
 
-        // animation managers
-        private readonly AnimationManager _checkAM;
+        [Category("Behavior"),
+        Description("Gets or sets the level that specifies which RadioButton controls are affected."),
+        DefaultValue(Level.Parent)]
+        public Level GroupNameLevel { get; set; }
 
-        private readonly AnimationManager _rippleAM;
-        private readonly AnimationManager _hoverAM;
-
-        // size related variables which should be recalculated onsizechanged
-        private Rectangle _radioButtonBounds;
-
-        private int _boxOffset;
-
-        // size constants
-        private const int HEIGHT_RIPPLE = 37;
-
-        private const int HEIGHT_NO_RIPPLE = 20;
-        private const int RADIOBUTTON_SIZE = 18;
-        private const int RADIOBUTTON_SIZE_HALF = RADIOBUTTON_SIZE / 2;
-        private const int RADIOBUTTON_OUTER_CIRCLE_WIDTH = 2;
-        private const int RADIOBUTTON_INNER_CIRCLE_SIZE = RADIOBUTTON_SIZE - (2 * RADIOBUTTON_OUTER_CIRCLE_WIDTH);
-        private const int TEXT_OFFSET = 26;
+        [Category("Behavior"),
+        Description("Gets or sets the name that specifies which RadioButton controls are mutually exclusive.")]
+        public string GroupName { get; set; }
+        #endregion
 
         public MaterialRadioButton()
         {
@@ -102,12 +118,7 @@
             MouseLocation = new Point(-1, -1);
         }
 
-        private void OnSizeChanged(object sender, EventArgs eventArgs)
-        {
-            _boxOffset = Height / 2 - (int)(RADIOBUTTON_SIZE / 2);
-            _radioButtonBounds = new Rectangle(_boxOffset, _boxOffset, RADIOBUTTON_SIZE, RADIOBUTTON_SIZE);
-        }
-
+        #region Overrides
         public override Size GetPreferredSize(Size proposedSize)
         {
             Size strSize;
@@ -171,17 +182,23 @@
                 }
             }
 
+            var width = RADIOBUTTON_SIZE - Padding.Left - Padding.Right;
+            var height = RADIOBUTTON_SIZE - Padding.Top - Padding.Bottom;
+
+            var x = (ClientRectangle.Height / 2) - (width / 2);
+            var y = (ClientRectangle.Height / 2) - (height / 2);
+
             // draw radiobutton circle
             using (Pen pen = new Pen(DrawHelper.BlendColor(Parent.BackColor, Enabled ? SkinManager.CheckboxOffColor : SkinManager.CheckBoxOffDisabledColor, backgroundAlpha), 2))
             {
-                g.DrawEllipse(pen, new Rectangle(_boxOffset, _boxOffset, RADIOBUTTON_SIZE, RADIOBUTTON_SIZE));
+                g.DrawEllipse(pen, new Rectangle(x, y, width, height));
             }
 
             if (Enabled)
             {
                 using (Pen pen = new Pen(RadioColor, 2))
                 {
-                    g.DrawEllipse(pen, new Rectangle(_boxOffset, _boxOffset, RADIOBUTTON_SIZE, RADIOBUTTON_SIZE));
+                    g.DrawEllipse(pen, new Rectangle(x, y, width, height));
                 }
             }
 
@@ -196,21 +213,15 @@
             // Text
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
                 Rectangle textLocation = new Rectangle(_boxOffset + TEXT_OFFSET, 0, Width, Height);
-                NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                NativeText.DrawTransparentText(Text, font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textLocation.Location,
                     textLocation.Size,
                     NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
             }
         }
-
-        private bool IsMouseInCheckArea()
-        {
-            return ClientRectangle.Contains(MouseLocation);
-        }
-
-        private bool hovered = false;
 
         protected override void OnCreateControl()
         {
@@ -304,5 +315,68 @@
                 Cursor = IsMouseInCheckArea() ? Cursors.Hand : Cursors.Default;
             };
         }
+
+        protected override void OnCheckedChanged(EventArgs e)
+        {
+            base.OnCheckedChanged(e);
+
+            if (Checked)
+            {
+                List<MaterialRadioButton> arbControls = null;
+                switch (GroupNameLevel)
+                {
+                    case Level.Parent:
+                        if (this.Parent != null)
+                        {
+                            arbControls = GetAll(this.Parent, typeof(MaterialRadioButton)).ToList();
+                        }
+                        break;
+                    case Level.Form:
+                        Form form = this.FindForm();
+                        if (form != null)
+                        {
+                            arbControls = GetAll(form, typeof(MaterialRadioButton)).ToList();
+                        }
+                        break;
+                }
+                if (arbControls != null)
+                {
+                    foreach (Control control in arbControls)
+                    {
+                        if (control != this && (control as MaterialRadioButton).GroupName == this.GroupName)
+                        {
+                            (control as MaterialRadioButton).Checked = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void OnClick(EventArgs e)
+        {
+            if (!Checked)
+                base.OnClick(e);
+        }
+        #endregion
+
+        #region Private Methods
+        private bool IsMouseInCheckArea()
+        {
+            return ClientRectangle.Contains(MouseLocation);
+        }
+
+        private List<MaterialRadioButton> GetAll(Control control, Type type)
+        {
+            var controls = control.Controls.Cast<Control>();
+            return controls.SelectMany(ctrl => GetAll(ctrl, type)).Concat(controls).Where(c => c.GetType() == type).Cast<MaterialRadioButton>().ToList();
+        }
+        #endregion
+        #region EventHandler
+        private void OnSizeChanged(object sender, EventArgs eventArgs)
+        {
+            _boxOffset = Height / 2 - (int)(RADIOBUTTON_SIZE / 2);
+            _radioButtonBounds = new Rectangle(_boxOffset, _boxOffset, RADIOBUTTON_SIZE, RADIOBUTTON_SIZE);
+        }
+        #endregion
     }
 }
