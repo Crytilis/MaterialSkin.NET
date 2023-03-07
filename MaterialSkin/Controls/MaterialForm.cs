@@ -8,6 +8,7 @@ namespace MaterialSkin.Controls
     using System.Drawing.Text;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Windows.Controls.Primitives;
     using System.Windows.Forms;
 
 #if NETFRAMEWORK
@@ -246,10 +247,12 @@ namespace MaterialSkin.Controls
             MaxOver,
             MinOver,
             DrawerOver,
+            ThemeSwitcherOver,
             XDown,
             MaxDown,
             MinDown,
             DrawerDown,
+            ThemeSwitcherDown,
             None
         }
 
@@ -404,6 +407,7 @@ namespace MaterialSkin.Controls
         private ResizeDirection _resizeDir;
         private ButtonState _buttonState = ButtonState.None;
         private FormStyles _formStyle;
+        private Rectangle _themeSwitchButtonBounds => new Rectangle(ClientSize.Width - 4 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _minButtonBounds => new Rectangle(ClientSize.Width - 3 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _maxButtonBounds => new Rectangle(ClientSize.Width - 2 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _xButtonBounds => new Rectangle(ClientSize.Width - STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
@@ -428,6 +432,9 @@ namespace MaterialSkin.Controls
         }
         private Point _animationSource;
         private Padding originalPadding;
+
+        private Image iconDarkMode;
+        private Image iconLightMode;
 
         private Form drawerOverlay = new Form();
         private MaterialDrawerForm drawerForm = new MaterialDrawerForm();
@@ -465,11 +472,14 @@ namespace MaterialSkin.Controls
                 DrawerTabAsButtonClick?.Invoke(this, e);
             };
 
+            iconDarkMode = Properties.Resources.dark_mode_24;
+            iconLightMode = Properties.Resources.light_mode_24;
+
             FormBorderStyle = FormBorderStyle.None;
             Sizable = true;
             DoubleBuffered = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
-            FormStyle = FormStyles.ActionBar_40;
+            FormStyle = FormStyles.ActionBar_None;
 
             Padding = new Padding(PADDING_MINIMUM, STATUS_BAR_HEIGHT + ACTION_BAR_HEIGHT, PADDING_MINIMUM, PADDING_MINIMUM);      //Keep space for resize by mouse
 
@@ -688,19 +698,37 @@ namespace MaterialSkin.Controls
             if (button == MouseButtons.Left && !up)
             {
                 if (showMin && !showMax && _maxButtonBounds.Contains(location))
+                {
                     _buttonState = ButtonState.MinDown;
+                }
                 else if (showMin && showMax && _minButtonBounds.Contains(location))
+                {
                     _buttonState = ButtonState.MinDown;
+                }
                 else if (showMax && _maxButtonBounds.Contains(location))
+                {
                     _buttonState = ButtonState.MaxDown;
+                }
                 else if (ControlBox && _xButtonBounds.Contains(location))
+                {
                     _buttonState = ButtonState.XDown;
+                }
                 else if (_drawerButtonBounds.Contains(location))
+                {
                     _buttonState = ButtonState.DrawerDown;
+                }
                 else if (_drawerButtonStatusBarBounds.Contains(location))
+                {
                     _buttonState = ButtonState.DrawerDown;
+                }
+                else if (_themeSwitchButtonBounds.Contains(location))
+                {
+                    _buttonState = ButtonState.ThemeSwitcherDown;
+                }
                 else
+                {
                     _buttonState = ButtonState.None;
+                }
             }
             else
             {
@@ -739,6 +767,10 @@ namespace MaterialSkin.Controls
                 else if (_drawerButtonStatusBarBounds.Contains(location))
                 {
                     _buttonState = ButtonState.DrawerOver;
+                }
+                else if (_themeSwitchButtonBounds.Contains(location))
+                {
+                    _buttonState = ButtonState.ThemeSwitcherOver;
                 }
                 else
                 {
@@ -891,7 +923,8 @@ namespace MaterialSkin.Controls
 
             var cursorPos = PointToClient(Cursor.Position);
             var isOverCaption = (_statusBarBounds.Contains(cursorPos) || _actionBarBounds.Contains(cursorPos)) &&
-                !(_minButtonBounds.Contains(cursorPos) || _maxButtonBounds.Contains(cursorPos) || _xButtonBounds.Contains(cursorPos));
+                !(_minButtonBounds.Contains(cursorPos) || _maxButtonBounds.Contains(cursorPos) ||
+                    _xButtonBounds.Contains(cursorPos) || _themeSwitchButtonBounds.Contains(cursorPos));
 
             // Drawer
             if (DrawerTabControl != null && (message == WM.LeftButtonDown || message == WM.LeftButtonDoubleClick) && _drawerIconRect.Contains(cursorPos))
@@ -900,6 +933,11 @@ namespace MaterialSkin.Controls
                 _clickAnimManager.SetProgress(0);
                 _clickAnimManager.StartNewAnimation(AnimationDirection.In);
                 _animationSource = cursorPos;
+            }
+            // Themeswitcher
+            if ((message == WM.LeftButtonDown || message == WM.LeftButtonDoubleClick) && _themeSwitchButtonBounds.Contains(cursorPos))
+            {
+                SkinManager.Theme = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? MaterialSkinManager.Themes.DARK : MaterialSkinManager.Themes.LIGHT;
             }
             // Double click to maximize
             else if (message == WM.LeftButtonDoubleClick && isOverCaption)
@@ -1097,6 +1135,13 @@ namespace MaterialSkin.Controls
                 if (_buttonState == ButtonState.XDown && ControlBox)
                     g.FillRectangle(SkinManager.BackgroundDownRedBrush, _xButtonBounds);
 
+                if (_buttonState == ButtonState.ThemeSwitcherOver && ControlBox)
+                    g.FillRectangle(hoverBrush, _themeSwitchButtonBounds);
+
+                if (_buttonState == ButtonState.ThemeSwitcherDown && ControlBox)
+                    g.FillRectangle(downBrush, _themeSwitchButtonBounds);
+
+
                 using (var formButtonsPen = new Pen(SkinManager.ColorScheme.TextColor, 2))
                 {
                     // Minimize button.
@@ -1184,6 +1229,10 @@ namespace MaterialSkin.Controls
                             _xButtonBounds.Y + (int)(_xButtonBounds.Height * 0.66));
                     }
                 }
+
+                var iconMode = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? iconLightMode : iconDarkMode;
+                var themeSwitcher = ProcessThemeSwitchIcon(iconMode);
+                g.FillRectangle(themeSwitcher, _themeSwitchButtonBounds);
             }
 
             // Drawer Icon
@@ -1338,6 +1387,45 @@ namespace MaterialSkin.Controls
                     }
                 }
             }
+        }
+
+        private TextureBrush ProcessThemeSwitchIcon(Image img)
+        {
+            // Calculate lightness and color
+            float l = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? 0f : 1f;
+
+            // Create matrices
+            float[][] matrixGray = {
+                    new float[] {   0,   0,   0,   0,  0}, // Red scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Green scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Blue scale factor
+                    new float[] {   0,   0,   0, .7f,  0}, // alpha scale factor
+                    new float[] {   l,   l,   l,   0,  1}};// offsetor
+
+            ColorMatrix colorMatrixGray = new ColorMatrix(matrixGray);
+
+            ImageAttributes grayImageAttributes = new ImageAttributes();
+            grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            Bitmap bgray = new Bitmap(img.Width, img.Height);
+
+            Rectangle destRect = new Rectangle(0, 0, STATUS_BAR_HEIGHT_DEFAULT, STATUS_BAR_HEIGHT_DEFAULT);
+
+            using (Graphics gGray = Graphics.FromImage(bgray))
+            {
+                gGray.DrawImage(img,
+                    new Point[] {
+                                new Point(0, 0),
+                                new Point(destRect.Width, 0),
+                                new Point(0, destRect.Height),
+                    },
+                    destRect, GraphicsUnit.Pixel, grayImageAttributes);
+            }
+
+            TextureBrush textureBrushGray = new TextureBrush(bgray);
+            //textureBrushGray.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
+            textureBrushGray.TranslateTransform(_themeSwitchButtonBounds.X + _themeSwitchButtonBounds.Width / 2 - img.Width / 2, _themeSwitchButtonBounds.Y + _themeSwitchButtonBounds.Height / 2 - img.Height / 2);
+
+            return textureBrushGray;
         }
 
         private void PreProcessIcons(Graphics g)
