@@ -470,34 +470,33 @@ namespace MaterialSkin.Controls
                 originalRect = dropDownItem.ClientRectangle;
                 DropDownForm.Height = 0;
 
-                dropDownItem.Paint += DropDownItem_Paint;
-
                 #region Animation
                 _animationManager = new AnimationManager(true)
                 {
                     Increment = 0.2,
                     AnimationType = AnimationType.EaseInOut
                 };
-                _animationManager.OnAnimationProgress += sender => dropDownItem.Invalidate();
-                _animationManager.OnAnimationFinished += sender => _animationManager.SetProgress(0);
-                #endregion
-            }
-
-            private void DropDownItem_Paint(object sender, PaintEventArgs e)
-            {
-                if (_animationManager.IsAnimating())
+                _animationManager.OnAnimationProgress += sender =>
                 {
-                    // Animate - Focus got/lost
-                    double animationProgress = _animationManager.GetProgress();
-
-                    DropDownForm.Height += (int)(originalRect.Height * animationProgress);
-                    if (DropDownForm.Height > originalRect.Height)
+                    if (_animationManager.IsAnimating())
                     {
-                        DropDownForm.Height = originalRect.Height;
-                        _animationManager.SetProgress(0);
+                        // Animate - Focus got/lost
+                        double animationProgress = _animationManager.GetProgress();
+
+                        DropDownForm.Height += (int)(originalRect.Height * animationProgress);
+                        if (DropDownForm.Height > originalRect.Height)
+                        {
+                            DropDownForm.Height = originalRect.Height;
+                            _animationManager.SetProgress(0);
+                        }
+                        DropDownForm.Invalidate();
                     }
-                    DropDownForm.Invalidate();
-                }
+                };
+                _animationManager.OnAnimationFinished += sender => {
+                    _animationManager.SetProgress(0);
+                    DropDownForm.Height = originalRect.Height;
+                };
+                #endregion
             }
 
             public void Show()

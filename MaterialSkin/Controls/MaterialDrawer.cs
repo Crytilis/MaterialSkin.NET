@@ -528,8 +528,6 @@
                 if (_baseTabControl.ImageList != null && !String.IsNullOrEmpty(tabPage.ImageKey))
                 {
                     var ik = string.Concat(tabPage.ImageKey, "_", tabPage.Name);
-                    var _width = _drawerItemRects[currentTabIndex].X + (drawerItemHeight >> 1) - (iconsSize[ik].Width >> 1);
-                    var _height = _drawerItemRects[currentTabIndex].Y + (drawerItemHeight >> 1) - (iconsSize[ik].Height >> 1);
                     Rectangle iconRect = new Rectangle(
                         _drawerItemRects[currentTabIndex].X + (drawerItemHeight >> 1) - (iconsSize[ik].Width >> 1),
                         _drawerItemRects[currentTabIndex].Y + (drawerItemHeight >> 1) - (iconsSize[ik].Height >> 1),
@@ -540,8 +538,6 @@
                         iconsBrushes[ik].TranslateTransform(dx, 0);
                         iconsSelectedBrushes[ik].TranslateTransform(dx, 0);
                     }
-
-                    var test = _width + _height;
 
                     g.FillRectangle(currentTabIndex == _baseTabControl.SelectedIndex ? iconsSelectedBrushes[ik] : iconsBrushes[ik], iconRect);
                 }

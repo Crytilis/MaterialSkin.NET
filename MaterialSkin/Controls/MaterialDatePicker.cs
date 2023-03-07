@@ -354,21 +354,27 @@ namespace MaterialSkin.Controls
             base.OnPaint(e);
 
             Graphics g = e.Graphics;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
             HoverBrush = new SolidBrush(Color.FromArgb(100, SkinManager.ColorScheme.PrimaryColor));
 
             g.Clear(Parent.BackColor);
             Rectangle rect = new Rectangle(Location, ClientRectangle.Size);
-
             DrawHelper.DrawSquareShadow(g, rect, 1);
+
+            RectangleF dateRectF = new RectangleF(ClientRectangle.Location, ClientRectangle.Size);
+            dateRectF.X -= 0.5f;
+            dateRectF.Y -= 0.5f;
+            GraphicsPath datePath = DrawHelper.CreateRoundRect(dateRectF, 1);
+
+            using (SolidBrush normalBrush = new SolidBrush(SkinManager.BackgroundColor))
+            {
+                g.FillPath(normalBrush, datePath);
+            }
 
             g.FillRectangle(SkinManager.ColorScheme.DarkPrimaryBrush, topDayRect);
             g.FillRectangle(SkinManager.ColorScheme.PrimaryBrush, topDateRect);
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-
-            var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
 
             #region ToDay String
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))

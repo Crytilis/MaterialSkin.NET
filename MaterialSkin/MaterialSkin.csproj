@@ -65,11 +65,20 @@
     <Compile Include="Controls\FlexibleMaterialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\MaterialColorPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MaterialDatePicker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\MaterialDatePicker.Designer.cs">
       <DependentUpon>MaterialDatePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownColorPicker.Designer.cs">
+      <DependentUpon>MaterialDropDownColorPicker.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MaterialDropDownDatePicker.cs">
       <SubType>UserControl</SubType>

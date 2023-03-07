@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MaterialSkin.Controls
 {
     public partial class MaterialDropDownDatePicker : DropDownControl
     {
-        public override Color BackColor { get => Parent == null ? SkinManager.BackdropColor : Parent.BackColor; set { } }
+        #region Events
+        public event EventHandler DateChanged;
+        #endregion
 
+        #region Private Variables
         private MaterialDatePicker objDateControl;
         private DateTime date;
+        #endregion
+
+        #region Properties
         public DateTime Date
         {
             get => date;
@@ -22,8 +22,13 @@ namespace MaterialSkin.Controls
             {
                 date = value; objDateControl.Date = date;
                 Text = date.ToShortDateString();
+                DateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+        public override Color BackColor { get => Parent == null ? SkinManager.BackdropColor : Parent.BackColor; set { } }
+        #endregion
+
+        #region Constructor
         public MaterialDropDownDatePicker()
         {
             InitializeComponent();
@@ -32,11 +37,14 @@ namespace MaterialSkin.Controls
             objDateControl.onDateChanged += objDateControl_onDateChanged;
             InitializeDropDown(objDateControl);
         }
+        #endregion
 
-        void objDateControl_onDateChanged(DateTime newDateTime)
+        #region Eventhandler methods
+        private void objDateControl_onDateChanged(DateTime newDateTime)
         {
             date = newDateTime;
             Text = newDateTime.ToShortDateString();
         }
+        #endregion
     }
 }
