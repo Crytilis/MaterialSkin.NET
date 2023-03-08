@@ -37,6 +37,18 @@
 
         private MaterialTabControl _baseTabControl;
 
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
         [Category("Material Skin"), Browsable(true)]
         public MaterialTabControl BaseTabControl
         {
@@ -69,6 +81,52 @@
             }
         }
 
+        [Category("Material Skin"), DefaultValue(160), Browsable(true)]
+        public int TabWidthMin {
+            get => tabWidthMin;
+            set
+            {
+                tabWidthMin = value;
+                Invalidate();
+            }
+        }
+        [Category("Material Skin"), DefaultValue(264), Browsable(true)]
+        public int TabWidthMax
+        {
+            get => tabWidthMax;
+            set
+            {
+                tabWidthMax = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Material Skin"), DefaultValue(24), Browsable(true)]
+        public int TabHeaderPadding
+        {
+            get => tabHeaderPadding;
+            set
+            {
+                tabHeaderPadding = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Material Skin"), DefaultValue(50), Browsable(true)]
+        public int FirstTabPadding
+        {
+            get => firstTabPadding;
+            set
+            {
+                firstTabPadding = value;
+                Invalidate();
+            }
+        }
+
+        private int firstTabPadding = 50;
+        private int tabHeaderPadding = 24;
+        private int tabWidthMin = 160;
+        private int tabWidthMax = 264;
         private int _previousSelectedTabIndex;
 
         private Point _animationSource;
@@ -78,10 +136,6 @@
         private List<Rectangle> _tabRects;
 
         private const int ICON_SIZE = 24;
-        private const int FIRST_TAB_PADDING = 50;
-        private const int TAB_HEADER_PADDING = 24;
-        private const int TAB_WIDTH_MIN = 160;
-        private const int TAB_WIDTH_MAX = 264;
 
         private int _tab_over_index = -1;
 
@@ -131,10 +185,9 @@
             set
             {
                 _tabLabel = value;
-                if (_tabLabel == TabLabelStyle.IconAndText)
-                    Height = 72;
-                else
-                    Height = 48;
+                if (_tabLabel == TabLabelStyle.IconAndText && Height < 24)
+                    Height = 24;
+
                 UpdateTabRects();
                 Invalidate();
             }
@@ -206,15 +259,19 @@
                     using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                     {
                         Size textSize = TextRenderer.MeasureText(_baseTabControl.TabPages[currentTabIndex].Text, Font);
-                        Rectangle textLocation = new Rectangle(_tabRects[currentTabIndex].X+ (TAB_HEADER_PADDING/2), _tabRects[currentTabIndex].Y, _tabRects[currentTabIndex].Width - (TAB_HEADER_PADDING), _tabRects[currentTabIndex].Height);
+                        Rectangle textLocation = new Rectangle(
+                            _tabRects[currentTabIndex].X + (tabHeaderPadding / 2),
+                            0,
+                            _tabRects[currentTabIndex].Width - (tabHeaderPadding),
+                            Height);
 
                         if (_tabLabel == TabLabelStyle.IconAndText)
                         {
-                            textLocation.Y = 46;
-                            textLocation.Height = 10;
+                            //textLocation.Y = 46;
+                            //textLocation.Height = 26;
                         }
 
-                        if (((TAB_HEADER_PADDING*2) + textSize.Width < TAB_WIDTH_MAX))
+                        if (((tabHeaderPadding * 2) + textSize.Width < TabWidthMax))
                         {
                             NativeText.DrawTransparentText(
                             CharacterCasing == CustomCharacterCasing.Upper ? tabPage.Text.ToUpper() :
@@ -230,8 +287,8 @@
                         {
                             if (_tabLabel == TabLabelStyle.IconAndText)
                             {
-                                textLocation.Y = 40;
-                                textLocation.Height = 26;
+                                //textLocation.Y = 40;
+                                //textLocation.Height = 26;
                             }
                             NativeText.DrawMultilineTransparentText(
                             CharacterCasing == CustomCharacterCasing.Upper ? tabPage.Text.ToUpper() :
@@ -353,6 +410,17 @@
             Invalidate();
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            UpdateTabRects();
+
+            Height = Height < 24 ? 24 : Height;
+            Size = new Size(Width, Height);
+            Invalidate();
+        }
+
         private void UpdateTabRects()
         {
             _tabRects = new List<Rectangle>();
@@ -373,14 +441,14 @@
                             Size textSize = TextRenderer.MeasureText(_baseTabControl.TabPages[i].Text, Font);
                             if (_tabLabel == TabLabelStyle.Icon) textSize.Width = ICON_SIZE;
 
-                            int TabWidth = (TAB_HEADER_PADDING * 2) + textSize.Width;
-                            if (TabWidth > TAB_WIDTH_MAX)
-                                TabWidth = TAB_WIDTH_MAX;
-                            else if (TabWidth < TAB_WIDTH_MIN)
-                                TabWidth = TAB_WIDTH_MIN;
+                            int TabWidth = (tabHeaderPadding * 2) + textSize.Width;
+                            if (TabWidth > TabWidthMax)
+                                TabWidth = TabWidthMax;
+                            else if (TabWidth < TabWidthMin)
+                                TabWidth = TabWidthMin;
 
                             if (i==0)
-                                _tabRects.Add(new Rectangle(FIRST_TAB_PADDING - (TAB_HEADER_PADDING), 0, TabWidth, Height));
+                                _tabRects.Add(new Rectangle(FirstTabPadding - (TabHeaderPadding), 0, TabWidth, Height));
                             else
                                 _tabRects.Add(new Rectangle(_tabRects[i - 1].Right, 0, TabWidth, Height));
                         }

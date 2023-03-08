@@ -206,6 +206,46 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
+
+        private bool _showThemeSwitchButton = false;
+        [Category("Material Skin"), DefaultValue(false), Browsable(true)]
+        public bool ShowThemeSwitchButton
+        {
+            get => _showThemeSwitchButton;
+            set
+            {
+                _showThemeSwitchButton = value;
+                Invalidate();
+            }
+        }
+
+        [Category("WindowStyle"), DefaultValue(true)]
+        public new bool MinimizeBox
+        {
+            get
+            {
+                return base.MinimizeBox;
+            }
+            set
+            {
+                base.MinimizeBox = value;
+                Invalidate();
+            }
+        }
+
+        [Category("WindowStyle"), DefaultValue(true)]
+        public new bool MaximizeBox
+        {
+            get
+            {
+                return base.MaximizeBox;
+            }
+            set
+            {
+                base.MaximizeBox = value;
+                Invalidate();
+            }
+        }
         #endregion
 
         #region Enums
@@ -407,7 +447,7 @@ namespace MaterialSkin.Controls
         private ResizeDirection _resizeDir;
         private ButtonState _buttonState = ButtonState.None;
         private FormStyles _formStyle;
-        private Rectangle _themeSwitchButtonBounds => new Rectangle(ClientSize.Width - 4 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
+        private Rectangle _themeSwitchButtonBounds => new Rectangle(ClientSize.Width - 5 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _minButtonBounds => new Rectangle(ClientSize.Width - 3 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _maxButtonBounds => new Rectangle(ClientSize.Width - 2 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _xButtonBounds => new Rectangle(ClientSize.Width - STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
@@ -1137,8 +1177,7 @@ namespace MaterialSkin.Controls
 
                 if (_buttonState == ButtonState.ThemeSwitcherOver && ControlBox)
                     g.FillRectangle(hoverBrush, _themeSwitchButtonBounds);
-
-                if (_buttonState == ButtonState.ThemeSwitcherDown && ControlBox)
+                if (_buttonState == ButtonState.ThemeSwitcherDown && ControlBox && ShowThemeSwitchButton)
                     g.FillRectangle(downBrush, _themeSwitchButtonBounds);
 
 
@@ -1230,9 +1269,12 @@ namespace MaterialSkin.Controls
                     }
                 }
 
-                var iconMode = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? iconLightMode : iconDarkMode;
-                var themeSwitcher = ProcessThemeSwitchIcon(iconMode);
-                g.FillRectangle(themeSwitcher, _themeSwitchButtonBounds);
+                if(ShowThemeSwitchButton)
+                {
+                    var iconMode = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? iconLightMode : iconDarkMode;
+                    var themeSwitcher = ProcessThemeSwitchIcon(iconMode);
+                    g.FillRectangle(themeSwitcher, _themeSwitchButtonBounds);
+                }
             }
 
             // Drawer Icon
@@ -1393,6 +1435,9 @@ namespace MaterialSkin.Controls
         {
             // Calculate lightness and color
             float l = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? 0f : 1f;
+            float r = SkinManager.ColorScheme.TextColor.R / 255f;
+            float g = SkinManager.ColorScheme.TextColor.G / 255f;
+            float b = SkinManager.ColorScheme.TextColor.B / 255f;
 
             // Create matrices
             float[][] matrixGray = {
@@ -1402,7 +1447,14 @@ namespace MaterialSkin.Controls
                     new float[] {   0,   0,   0, .7f,  0}, // alpha scale factor
                     new float[] {   l,   l,   l,   0,  1}};// offsetor
 
-            ColorMatrix colorMatrixGray = new ColorMatrix(matrixGray);
+            float[][] matrixColor = {
+                    new float[] {   0,   0,   0,   0,  0}, // Red scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Green scale factor
+                    new float[] {   0,   0,   0,   0,  0}, // Blue scale factor
+                    new float[] {   0,   0,   0,   1,  0}, // alpha scale factor
+                    new float[] {   r,   g,   b,   0,  1}};// offset
+
+            ColorMatrix colorMatrixGray = new ColorMatrix(matrixColor);
 
             ImageAttributes grayImageAttributes = new ImageAttributes();
             grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);

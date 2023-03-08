@@ -90,9 +90,7 @@
       <Compile Update="Controls\MaterialTextBox2.cs">
         <SubType>Component</SubType>
       </Compile>
-      <Compile Update="Controls\MaterialTabControl.cs">
-        <SubType>Component</SubType>
-      </Compile>
+      <Compile Update="Controls\MaterialTabControl.cs" />
       <Compile Update="Controls\MaterialDrawer.cs">
         <SubType>Component</SubType>
       </Compile>
