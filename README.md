@@ -2,7 +2,7 @@
 
 Theming .NET WinForms, C# or VB.Net, to Google's Material Design Principles.
 
-> This project state is: **not active**
+> This project state is: this fork is customized for our needs may not be for everyone
 >
 
 
@@ -16,9 +16,9 @@ Or simply search for MaterialSkin.2 on the **Nuget Package Manager** inside Visu
 
 ## WIKI Available!
 
-But there's not much in there for now, please contribute if you can. :smile:
+But there's nothing in there for now, please contribute if you can. :smile:
 
-You can access it [here](https://github.com/leocb/MaterialSkin/wiki)
+You can access it [here](https://github.com/TriDataGmbH/MaterialSkin/wiki)
 
 ## Current state of the MaterialSkin components
 
@@ -33,7 +33,8 @@ You can access it [here](https://github.com/leocb/MaterialSkin/wiki)
 | Chips                        |  **No**   |       -       |    -     |
 | Combobox                     |    Yes    |      Yes      |   Yes    |
 | Context Menu                 |    Yes    |      Yes      |   Yes    |
-| Date Picker                  |  **No**   |       -       |    -     |
+| Date Picker                  |    Yes    |      N/A      |   N/A    |
+| Color Picker                 |    Yes    |      N/A      |   N/A    |
 | Dialog                       |    Yes    |      N/A      |  **No**  |
 | Divider                      |    Yes    |      N/A      |   N/A    |
 | Drawer                       |    Yes    |      N/A      |   Yes    |
@@ -57,14 +58,7 @@ All supported components have a dark theme
 
 ## TODO List
 
-- [ ] Progress bar - Animation and variants, maybe round loading thingy
-- [ ] Backdrop (maybe)
-- [ ] Some Color code improvements and refactoring
-- [ ] DatePicker
 - [ ] Drawer - Header, Divider, subtitle & submenu
-- [ ] Textfield ContextualMenu translation
-- [ ] Controls code cleanup
-- [ ] Add Noto font support
 
 ---
 
