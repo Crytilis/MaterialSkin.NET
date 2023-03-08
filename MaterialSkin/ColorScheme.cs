@@ -4,23 +4,29 @@ namespace MaterialSkin
 
     public class ColorScheme
     {
-        public readonly Color PrimaryColor, DarkPrimaryColor, LightPrimaryColor, AccentColor, TextColor;
+        public readonly Color PrimaryColor, DarkPrimaryColor, LightPrimaryColor, AccentColor, TextColor, SuccessColor, InfoColor, WarningColor, DangerColor;
 
         public readonly Pen PrimaryPen, DarkPrimaryPen, LightPrimaryPen, AccentPen, TextPen;
 
         public readonly Brush PrimaryBrush, DarkPrimaryBrush, LightPrimaryBrush, AccentBrush, TextBrush;
 
-        public ColorScheme() : this(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE)
+        public ColorScheme() : this(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE, Primary.Green900, Primary.LightBlue900, Primary.Amber900, Primary.Red900)
         {
         }
 
-        public ColorScheme(Primary primary, Primary darkPrimary, Primary lightPrimary, Accent accent, TextShade textShade)
+        public ColorScheme(Primary primary, Primary darkPrimary, Primary lightPrimary, Accent accent, TextShade textShade, Primary successColor = Primary.Green900, Primary infoColor = Primary.LightBlue900, Primary warningColor = Primary.Amber900, Primary dangerColor = Primary.Red900)
         {
             //Color
             PrimaryColor = ((int)primary).ToColor();
             DarkPrimaryColor = ((int)darkPrimary).ToColor();
             LightPrimaryColor = ((int)lightPrimary).ToColor();
             AccentColor = ((int)accent).ToColor();
+
+            SuccessColor = ((int)successColor).ToColor();
+            InfoColor = ((int)infoColor).ToColor();
+            WarningColor = ((int)warningColor).ToColor();
+            DangerColor = ((int)dangerColor).ToColor();
+
             TextColor = ((int)textShade).ToColor();
 
             //Pen
@@ -38,13 +44,19 @@ namespace MaterialSkin
             TextBrush = new SolidBrush(TextColor);
         }
 
-        public ColorScheme(int primary, int darkPrimary, int lightPrimary, int accent, TextShade textShade)
+        public ColorScheme(int primary, int darkPrimary, int lightPrimary, int accent, TextShade textShade, int successColor = (int)Primary.Green900, int infoColor = (int)Primary.LightBlue900, int warningColor = (int)Primary.Amber900, int dangerColor = (int)Primary.Red900)
         {
             //Color
-            PrimaryColor = ((int)primary).ToColor();
-            DarkPrimaryColor = ((int)darkPrimary).ToColor();
-            LightPrimaryColor = ((int)lightPrimary).ToColor();
-            AccentColor = ((int)accent).ToColor();
+            PrimaryColor = primary.ToColor();
+            DarkPrimaryColor = darkPrimary.ToColor();
+            LightPrimaryColor = lightPrimary.ToColor();
+            AccentColor = accent.ToColor();
+
+            SuccessColor = successColor.ToColor();
+            InfoColor = infoColor.ToColor();
+            WarningColor = warningColor.ToColor();
+            DangerColor = dangerColor.ToColor();
+
             TextColor = ((int)textShade).ToColor();
 
             //Pen
@@ -62,13 +74,26 @@ namespace MaterialSkin
             TextBrush = new SolidBrush(TextColor);
         }
 
-        public ColorScheme(Color primary, Color darkPrimary, Color lightPrimary, Color accent, TextShade textShade)
+        /// <summary>
+        /// Sets color scheme for the theme
+        /// </summary>
+        /// <param name="successColor">If null is set to default value</param>
+        /// <param name="infoColor">If null is set to default value</param>
+        /// <param name="warningColor">If null is set to default value</param>
+        /// <param name="dangerColor">If null is set to default value</param>
+        public ColorScheme(Color primary, Color darkPrimary, Color lightPrimary, Color accent, TextShade textShade, Color? successColor = null, Color? infoColor = null, Color? warningColor = null, Color? dangerColor = null)
         {
             //Color
             PrimaryColor = primary;
             DarkPrimaryColor = darkPrimary;
             LightPrimaryColor = lightPrimary;
             AccentColor = accent;
+
+            SuccessColor = successColor ?? Color.Green;
+            InfoColor = infoColor ?? Color.Cyan;
+            WarningColor = warningColor ?? Color.Goldenrod;
+            DangerColor = dangerColor ?? Color.Red;
+
             TextColor = ((int)textShade).ToColor();
 
             //Pen

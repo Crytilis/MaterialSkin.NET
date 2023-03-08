@@ -8,6 +8,8 @@
     using System.Drawing.Imaging;
     using System.Drawing.Text;
     using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
     using System.Windows.Forms;
 
     /// <summary>
@@ -22,9 +24,19 @@
         private const int HEIGHTDEFAULT = 36;
         private const int HEIGHTDENSE = 32;
 
+        public new Padding Padding {
+            get => base.Padding;
+            set
+            {
+                base.Padding = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
+
         // icons
         private TextureBrush iconsBrushes;
-        
+
         /// <summary>
         /// Gets or sets the Depth
         /// </summary>
@@ -50,6 +62,17 @@
             Contained
         }
 
+        public enum MaterialButtonColorType
+        {
+            Primary,
+            Secondary,
+            Tertiary,
+            Success,
+            Info,
+            Warning,
+            Danger
+        }
+
         public enum MaterialButtonDensity
         {
             Default,
@@ -62,7 +85,7 @@
         [Category("Material Skin")]
         public bool UseAccentColor
         {
-            get { return useAccentColor; }
+            get => useAccentColor;
             set { useAccentColor = value; Invalidate(); }
         }
 
@@ -72,7 +95,7 @@
         /// </summary>
         public bool HighEmphasis
         {
-            get { return highEmphasis; }
+            get => highEmphasis;
             set { highEmphasis = value; Invalidate(); }
         }
 
@@ -81,15 +104,23 @@
         [Description("Draw Shadows around control")]
         public bool DrawShadows
         {
-            get { return drawShadows; }
+            get => drawShadows;
             set { drawShadows = value; Invalidate(); }
         }
 
         [Category("Material Skin")]
+        [Description("Sets the type of the button")]
         public MaterialButtonType Type
         {
-            get { return type; }
+            get => type;
             set { type = value; preProcessIcons(); Invalidate(); }
+        }
+
+        [Category("Material Skin"), DefaultValue(MaterialButtonColorType.Primary), Description("Sets button color, works only when UseAccentColor is false")]
+        public MaterialButtonColorType ColorType
+        {
+            get => colorType;
+            set { colorType = value; preProcessIcons(); Invalidate(); }
         }
 
         [Category("Material Skin")]
@@ -98,11 +129,11 @@
         /// </summary>
         public MaterialButtonDensity Density
         {
-            get { return _density; }
-            set 
-            { 
+            get => _density;
+            set
+            {
                 _density = value;
-                if (_density== MaterialButtonDensity.Dense)
+                if (_density == MaterialButtonDensity.Dense)
                     Size = new Size(Size.Width, HEIGHTDENSE);
                 else
                     Size = new Size(Size.Width, HEIGHTDEFAULT);
@@ -193,12 +224,18 @@
         /// Defines the _icon
         /// </summary>
         private Image _icon;
+        private int iconSize = ICON_SIZE;
+        private ContentAlignment iconAlign = ContentAlignment.MiddleLeft;
+        private Rectangle iconRect;
+        private Padding iconPadding = new Padding();
 
         private bool drawShadows;
         private bool highEmphasis;
         private bool useAccentColor;
         private MaterialButtonType type;
+        private MaterialButtonColorType colorType;
         private MaterialButtonDensity _density;
+        private int radius;
 
         [Category("Material Skin")]
         /// <summary>
@@ -206,7 +243,7 @@
         /// </summary>
         public Image Icon
         {
-            get { return _icon; }
+            get => _icon;
             set
             {
                 _icon = value;
@@ -216,6 +253,50 @@
                 {
                     Refresh();
                 }
+
+                Invalidate();
+            }
+        }
+
+        [Category("Material Skin"), DefaultValue(ContentAlignment.MiddleLeft), Description("Sets Icon alignment")]
+        public ContentAlignment IconAlign
+        {
+            get => iconAlign;
+            set { iconAlign = value; preProcessIcons(); Invalidate(); }
+        }
+        [Category("Material Skin"), DefaultValue(ICON_SIZE), Description("Sets Icon alignment")]
+        public int IconSize
+        {
+            get => iconSize;
+            set { iconSize = value; preProcessIcons(); Invalidate(); }
+        }
+
+        [Category("Material Skin"), DefaultValue(typeof(Padding), "5, 5, 5, 5"), Description("Sets Icon padding")]
+        public Padding IconPadding
+        {
+            get => iconPadding;
+            set
+            {
+                iconPadding = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
+
+
+        [Category("Material Skin"), DefaultValue(4), Description("Sets the border radius in px")]
+        public int Radius
+        {
+            get => radius;
+            set
+            {
+                if (value <= 0)
+                    value = 4;
+
+                if ((Math.Min(Width, Height) / 2) < value)
+                    value = (Math.Min(Width, Height) / 2);
+
+                radius = value;
 
                 Invalidate();
             }
@@ -237,6 +318,7 @@
             HighEmphasis = true;
             UseAccentColor = false;
             Type = MaterialButtonType.Contained;
+            ColorType = MaterialButtonColorType.Primary;
             Density = MaterialButtonDensity.Default;
             NoAccentTextColor = Color.Empty;
             CharacterCasing = CharacterCasingEnum.Upper;
@@ -274,6 +356,7 @@
             AutoSize = true;
             Margin = new Padding(4, 6, 4, 6);
             Padding = new Padding(0);
+            Radius = radius <= 0 ? 4 : radius;
         }
 
         /// <summary>
@@ -281,11 +364,11 @@
         /// </summary>
         public override string Text
         {
-            get { return base.Text; }
+            get => base.Text;
             set
             {
                 base.Text = value;
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     _textSize = CreateGraphics().MeasureString(value.ToUpper(), SkinManager.getFontByType(MaterialSkinManager.fontType.Button));
                 else
                 {
@@ -316,7 +399,7 @@
             Graphics gp = e.Graphics;
             Rectangle rect = new Rectangle(Location, ClientRectangle.Size);
             gp.SmoothingMode = SmoothingMode.AntiAlias;
-            DrawHelper.DrawSquareShadow(gp, rect);
+            DrawHelper.DrawSquareShadow(gp, rect, Radius);
         }
 
         private void preProcessIcons()
@@ -324,28 +407,28 @@
             if (Icon == null) return;
 
             int newWidth, newHeight;
-            //Resize icon if greater than ICON_SIZE
-            if (Icon.Width> ICON_SIZE || Icon.Height > ICON_SIZE)
+            //Resize icon if greater than IconSize
+            if (Icon.Width > IconSize || Icon.Height > IconSize)
             {
                 //calculate aspect ratio
                 float aspect = Icon.Width / (float)Icon.Height;
 
                 //calculate new dimensions based on aspect ratio
-                newWidth = (int)(ICON_SIZE * aspect);
+                newWidth = (int)(IconSize * aspect);
                 newHeight = (int)(newWidth / aspect);
 
                 //if one of the two dimensions exceed the box dimensions
-                if (newWidth > ICON_SIZE || newHeight > ICON_SIZE)
+                if (newWidth > IconSize || newHeight > IconSize)
                 {
                     //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
                     if (newWidth > newHeight)
                     {
-                        newWidth = ICON_SIZE;
+                        newWidth = IconSize;
                         newHeight = (int)(newWidth / aspect);
                     }
                     else
                     {
-                        newHeight = ICON_SIZE;
+                        newHeight = IconSize;
                         newWidth = (int)(newHeight * aspect);
                     }
                 }
@@ -378,7 +461,7 @@
             grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             // Image Rect
-            Rectangle destRect = new Rectangle(0, 0, ICON_SIZE, ICON_SIZE);
+            Rectangle destRect = new Rectangle(0, 0, IconSize, IconSize);
 
             // Create a pre-processed copy of the image (GRAY)
             Bitmap bgray = new Bitmap(destRect.Width, destRect.Height);
@@ -394,17 +477,91 @@
             }
 
             // added processed image to brush for drawing
-            TextureBrush textureBrushGray = new TextureBrush(bgray);
+            TextureBrush textureBrushGray = new TextureBrush(bgray)
+            {
+                WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp
+            };
 
-            textureBrushGray.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
+            int top = 0 + IconPadding.Top;
+            int middle = (ClientRectangle.Height / 2) - (IconSize / 2);
+            int bottom = ClientRectangle.Height - IconSize - IconPadding.Bottom;
+            int left = 0 + IconPadding.Left;
+            int center = (ClientRectangle.Width / 2) - (IconSize / 2);
+            int right = ClientRectangle.Width - IconSize - IconPadding.Right;
+
+            switch (IconAlign)
+            {
+                case ContentAlignment.TopLeft:
+                    iconRect = new Rectangle(left, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.TopCenter:
+                    iconRect = new Rectangle(center, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.TopRight:
+                    iconRect = new Rectangle(right, top, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleLeft:
+                    iconRect = new Rectangle(left, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleCenter:
+                    iconRect = new Rectangle(center, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.MiddleRight:
+                    iconRect = new Rectangle(right, middle, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomLeft:
+                    iconRect = new Rectangle(left, bottom, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomCenter:
+                    iconRect = new Rectangle(center, bottom, IconSize, IconSize);
+                    break;
+                case ContentAlignment.BottomRight:
+                    iconRect = new Rectangle(right, bottom, IconSize, IconSize);
+                    break;
+            }
 
             // Translate the brushes to the correct positions
-            var iconRect = new Rectangle(8, (Height/2 - ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
-
             textureBrushGray.TranslateTransform(iconRect.X + iconRect.Width / 2 - IconResized.Width / 2,
                                                 iconRect.Y + iconRect.Height / 2 - IconResized.Height / 2);
 
             iconsBrushes = textureBrushGray;
+        }
+
+        private NativeTextRenderer.TextAlignFlags PreProcessTextAlign()
+        {
+            var align = NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle;
+            switch (TextAlign)
+            {
+                case ContentAlignment.TopLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.TopCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.TopRight:
+                    align = NativeTextRenderer.TextAlignFlags.Top | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+                case ContentAlignment.MiddleLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.MiddleCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.MiddleRight:
+                    align = NativeTextRenderer.TextAlignFlags.Middle | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+                case ContentAlignment.BottomLeft:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Left;
+                    break;
+                case ContentAlignment.BottomCenter:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Center;
+                    break;
+                case ContentAlignment.BottomRight:
+                    align = NativeTextRenderer.TextAlignFlags.Bottom | NativeTextRenderer.TextAlignFlags.Right;
+                    break;
+            }
+
+            return align;
         }
 
         /// <summary>
@@ -413,7 +570,7 @@
         /// <param name="pevent">The pevent<see cref="PaintEventArgs"/></param>
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            var g = pevent.Graphics;
+            Graphics g = pevent.Graphics;
 
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -427,10 +584,10 @@
             RectangleF buttonRectF = new RectangleF(ClientRectangle.Location, ClientRectangle.Size);
             buttonRectF.X -= 0.5f;
             buttonRectF.Y -= 0.5f;
-            GraphicsPath buttonPath = DrawHelper.CreateRoundRect(buttonRectF, 4);
+            GraphicsPath buttonPath = DrawHelper.CreateRoundRect(buttonRectF, Radius);
 
             // button shadow (blend with form shadow)
-            DrawHelper.DrawSquareShadow(g, ClientRectangle);
+            DrawHelper.DrawSquareShadow(g, ClientRectangle, Radius);
 
             if (Type == MaterialButtonType.Contained)
             {
@@ -446,9 +603,42 @@
                 // High emphasis
                 else if (HighEmphasis)
                 {
-                    g.FillPath(UseAccentColor ? SkinManager.ColorScheme.AccentBrush : SkinManager.ColorScheme.PrimaryBrush, buttonPath);
+                    Brush usedBrush = SkinManager.ColorScheme.AccentBrush;
+
+                    if (!UseAccentColor)
+                    {
+                        switch (ColorType)
+                        {
+                            case MaterialButtonColorType.Primary:
+                                usedBrush = SkinManager.ColorScheme.PrimaryBrush;
+                                break;
+                            case MaterialButtonColorType.Secondary:
+                                usedBrush = SkinManager.ColorScheme.DarkPrimaryBrush;
+                                break;
+                            case MaterialButtonColorType.Tertiary:
+                                usedBrush = SkinManager.ColorScheme.LightPrimaryBrush;
+                                break;
+                            case MaterialButtonColorType.Success:
+                                usedBrush = new SolidBrush(SkinManager.ColorScheme.SuccessColor);
+                                break;
+                            case MaterialButtonColorType.Info:
+                                usedBrush = new SolidBrush(SkinManager.ColorScheme.InfoColor);
+                                break;
+                            case MaterialButtonColorType.Warning:
+                                usedBrush = new SolidBrush(SkinManager.ColorScheme.WarningColor);
+                                break;
+                            case MaterialButtonColorType.Danger:
+                                usedBrush = new SolidBrush(SkinManager.ColorScheme.DangerColor);
+                                break;
+                            default:
+                                usedBrush = SkinManager.ColorScheme.PrimaryBrush;
+                                break;
+                        }
+                    }
+
+                    g.FillPath(usedBrush, buttonPath);
                 }
-                // Mormal
+                // Normal
                 else
                 {
                     using (SolidBrush normalBrush = new SolidBrush(SkinManager.BackgroundColor))
@@ -462,15 +652,42 @@
                 g.Clear(Parent.BackColor);
             }
 
+            #region get hover/focus color
+            Color hoverFocusColor = Color.Transparent;
+            if (UseAccentColor)
+            {
+                if (HighEmphasis && Type == MaterialButtonType.Contained)
+                {
+                    // Contained with Emphasis - with accent
+                    hoverFocusColor = SkinManager.ColorScheme.AccentColor.Lighten(0.5f);
+                }
+                else
+                {
+                    // Not Contained Or Low Emphasis - with accent
+                    hoverFocusColor = SkinManager.ColorScheme.AccentColor;
+                }
+            }
+            else
+            {
+                if (Type == MaterialButtonType.Contained && HighEmphasis)
+                {
+                    // Contained with Emphasis without accent
+                    hoverFocusColor = GetColorByType().Lighten(0.5f);
+                }
+                else
+                {
+                    // Normal or Emphasis without accent
+                    hoverFocusColor = GetColorByType();
+                }
+            }
+            #endregion
+
             //Hover
             if (hoverAnimProgress > 0)
             {
                 using (SolidBrush hoverBrush = new SolidBrush(Color.FromArgb(
-                    (int)(HighEmphasis && Type == MaterialButtonType.Contained ? hoverAnimProgress * 80 : hoverAnimProgress * SkinManager.BackgroundHoverColor.A), (UseAccentColor ? (HighEmphasis && Type == MaterialButtonType.Contained ?
-                    SkinManager.ColorScheme.AccentColor.Lighten(0.5f) : // Contained with Emphasis - with accent
-                    SkinManager.ColorScheme.AccentColor) : // Not Contained Or Low Emphasis - with accent
-                    (Type == MaterialButtonType.Contained && HighEmphasis ? SkinManager.ColorScheme.LightPrimaryColor : // Contained with Emphasis without accent
-                    SkinManager.ColorScheme.PrimaryColor)).RemoveAlpha()))) // Normal or Emphasis without accent
+                    (int)(HighEmphasis && Type == MaterialButtonType.Contained ? hoverAnimProgress * 80 : hoverAnimProgress * SkinManager.BackgroundHoverColor.A),
+                    hoverFocusColor.RemoveAlpha())))
                 {
                     g.FillPath(hoverBrush, buttonPath);
                 }
@@ -480,11 +697,8 @@
             if (focusAnimProgress > 0)
             {
                 using (SolidBrush focusBrush = new SolidBrush(Color.FromArgb(
-                    (int)(HighEmphasis && Type == MaterialButtonType.Contained ? focusAnimProgress * 80 : focusAnimProgress * SkinManager.BackgroundFocusColor.A), (UseAccentColor ? (HighEmphasis && Type == MaterialButtonType.Contained ?
-                    SkinManager.ColorScheme.AccentColor.Lighten(0.5f) : // Contained with Emphasis - with accent
-                    SkinManager.ColorScheme.AccentColor) : // Not Contained Or Low Emphasis - with accent
-                    (Type == MaterialButtonType.Contained && HighEmphasis ? SkinManager.ColorScheme.LightPrimaryColor : // Contained with Emphasis without accent
-                    SkinManager.ColorScheme.PrimaryColor)).RemoveAlpha()))) // Normal or Emphasis without accent
+                    (int)(HighEmphasis && Type == MaterialButtonType.Contained ? focusAnimProgress * 80 : focusAnimProgress * SkinManager.BackgroundFocusColor.A),
+                    hoverFocusColor.RemoveAlpha())))
                 {
                     g.FillPath(focusBrush, buttonPath);
                 }
@@ -492,7 +706,21 @@
 
             if (Type == MaterialButtonType.Outlined)
             {
-                using (Pen outlinePen = new Pen(Enabled ? SkinManager.DividersAlternativeColor : SkinManager.DividersColor, 1))
+                Color outColor = SkinManager.DividersColor;
+                if (Enabled)
+                {
+                    if (UseAccentColor)
+                        outColor = SkinManager.ColorScheme.AccentColor;
+                    else if (highEmphasis)
+                    {
+                        outColor = GetColorByType();
+                    }
+
+                    if (outColor == SkinManager.DividersColor)
+                        outColor = SkinManager.DividersAlternativeColor;
+                }
+
+                using (Pen outlinePen = new Pen(outColor, 1))
                 {
                     buttonRectF.X += 0.5f;
                     buttonRectF.Y += 0.5f;
@@ -503,21 +731,51 @@
             //Ripple
             if (_animationManager.IsAnimating())
             {
-                g.Clip = new Region(buttonRectF);
-                for (var i = 0; i < _animationManager.GetAnimationCount(); i++)
+                //g.Clip = new Region(buttonRectF);
+                g.Clip = new Region(buttonPath);
+                for (int i = 0; i < _animationManager.GetAnimationCount(); i++)
                 {
-                    var animationValue = _animationManager.GetProgress(i);
-                    var animationSource = _animationManager.GetSource(i);
+                    double animationValue = _animationManager.GetProgress(i);
+                    Point animationSource = _animationManager.GetSource(i);
 
-                    using (Brush rippleBrush = new SolidBrush(
-                        Color.FromArgb((int)(100 - (animationValue * 100)), // Alpha animation
-                        (Type == MaterialButtonType.Contained && HighEmphasis ? (UseAccentColor ?
-                            SkinManager.ColorScheme.AccentColor.Lighten(0.5f) : // Emphasis with accent
-                            SkinManager.ColorScheme.LightPrimaryColor) : // Emphasis
-                            (UseAccentColor ? SkinManager.ColorScheme.AccentColor : // Normal with accent
-                            SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? SkinManager.ColorScheme.PrimaryColor : SkinManager.ColorScheme.LightPrimaryColor))))) // Normal
+                    Color rippleColor;
+                    if (Type == MaterialButtonType.Contained && HighEmphasis)
                     {
-                        var rippleSize = (int)(animationValue * Width * 2);
+                        if (UseAccentColor)
+                        {
+                            // Emphasis with accent
+                            rippleColor = SkinManager.ColorScheme.AccentColor.Lighten(0.5f);
+                        }
+                        else
+                        {
+                            // Emphasis
+                            rippleColor = GetColorByType();
+                        }
+                    }
+                    else
+                    {
+                        if (UseAccentColor)
+                        {
+                            // Normal with accent
+                            rippleColor = SkinManager.ColorScheme.AccentColor;
+                        }
+                        else
+                        {
+                            if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                            {
+                                rippleColor = GetColorByType();
+                            }
+                            else
+                            {
+                                rippleColor = GetColorByType().Lighten(0.5f);
+                            }
+                        }
+                    }
+
+                    using (Brush rippleBrush = new SolidBrush(Color.FromArgb((int)(100 - (animationValue * 100)), // Alpha animation
+                                                              rippleColor))) // Normal
+                    {
+                        int rippleSize = (int)(animationValue * Width * 2);
                         g.FillEllipse(rippleBrush, new Rectangle(animationSource.X - rippleSize / 2, animationSource.Y - rippleSize / 2, rippleSize, rippleSize));
                     }
                 }
@@ -525,46 +783,137 @@
             }
 
             //Text
-            var textRect = ClientRectangle;
-            if (Icon != null)
-            {
-                textRect.Width -= 8 + ICON_SIZE + 4 + 8; // left padding + icon width + space between Icon and Text + right padding
-                textRect.X += 8 + ICON_SIZE + 4; // left padding + icon width + space between Icon and Text
-            }
-
+            //Rectangle textRect = PreProcessTextRect();
+            Rectangle textRect = ClientRectangle;
+            /*
             Color textColor = Enabled ? (HighEmphasis ? (Type == MaterialButtonType.Text || Type == MaterialButtonType.Outlined) ?
                 UseAccentColor ? SkinManager.ColorScheme.AccentColor : // Outline or Text and accent and emphasis
-                NoAccentTextColor == Color.Empty ? 
+                NoAccentTextColor == Color.Empty ?
                 SkinManager.ColorScheme.PrimaryColor :  // Outline or Text and emphasis
                 NoAccentTextColor : // User defined Outline or Text and emphasis
                 SkinManager.ColorScheme.TextColor : // Contained and Emphasis
                 SkinManager.TextHighEmphasisColor) : // Cointained and accent
                 SkinManager.TextDisabledOrHintColor; // Disabled
-
-            using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
+            */
+            Color textColor = SkinManager.TextDisabledOrHintColor;
+            if (Enabled)
             {
-                NativeText.DrawMultilineTransparentText(
-                    CharacterCasing == CharacterCasingEnum.Upper ? base.Text.ToUpper() : CharacterCasing == CharacterCasingEnum.Lower ? base.Text.ToLower() :
-                        CharacterCasing == CharacterCasingEnum.Title ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(base.Text.ToLower()) : base.Text,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Button),
-                    textColor,
-                    textRect.Location,
-                    textRect.Size,
-                    NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);
+                if (HighEmphasis)
+                {
+                    if ((Type == MaterialButtonType.Text || Type == MaterialButtonType.Outlined))
+                    {
+                        if (UseAccentColor)
+                        {
+                            textColor = SkinManager.ColorScheme.AccentColor;
+                            // Outline or Text and accent and emphasis
+                        }
+                        else
+                        {
+                            if (NoAccentTextColor == Color.Empty)
+                            {
+                                //Outline or Text and emphasis no accent
+                                textColor = GetColorByType();
+                            }
+                            else
+                            {
+                                //User defined Outline or Text and emphasis
+                                textColor = NoAccentTextColor;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Contained and Emphasis
+                        textColor = SkinManager.ColorScheme.TextColor;
+                    }
+                }
+                else
+                {
+                    //Cointained and accent
+                    textColor = SkinManager.TextHighEmphasisColor;
+                }
             }
 
-            //Icon
-            var iconRect = new Rectangle(8, (Height / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
-
-            if (string.IsNullOrEmpty(Text))
+            #region DrawBackground
+            if (BackgroundImage != null)
             {
-                // Center Icon
-                iconRect.X += 2;
+                var x = (ClientRectangle.Width / 2) - (BackgroundImage.Width / 2);
+                var y = (ClientRectangle.Height / 2) - (BackgroundImage.Height / 2);
+                g.DrawImage(BackgroundImage, x, y);
             }
-
+            #endregion
             if (Icon != null)
             {
                 g.FillRectangle(iconsBrushes, iconRect);
+            }
+
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                var align = PreProcessTextAlign();
+                switch (TextAlign)
+                {
+                    case ContentAlignment.TopLeft:
+                        textRect.X += Padding.Left;
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.TopCenter:
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.TopRight:
+                        textRect.X -= Padding.Right;
+                        textRect.Y += Padding.Top;
+                        break;
+                    case ContentAlignment.MiddleLeft:
+                        textRect.X += Padding.Left;
+                        break;
+                    case ContentAlignment.MiddleRight:
+                        textRect.X -= Padding.Right;
+                        break;
+                    case ContentAlignment.BottomLeft:
+                        textRect.X += Padding.Left;
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                    case ContentAlignment.BottomCenter:
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                    case ContentAlignment.BottomRight:
+                        textRect.X -= Padding.Right;
+                        textRect.Y -= Padding.Bottom;
+                        break;
+                }
+
+                NativeText.DrawMultilineTransparentText(
+                    CharacterCasing == CharacterCasingEnum.Upper ? base.Text.ToUpper() : CharacterCasing == CharacterCasingEnum.Lower ? base.Text.ToLower() :
+                        CharacterCasing == CharacterCasingEnum.Title ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(base.Text.ToLower()) : base.Text,
+                    font,
+                    textColor,
+                    textRect.Location,
+                    textRect.Size,
+                    align);
+            }
+        }
+
+        private Color GetColorByType()
+        {
+            switch (ColorType)
+            {
+                case MaterialButtonColorType.Primary:
+                    return SkinManager.ColorScheme.PrimaryColor;
+                case MaterialButtonColorType.Secondary:
+                    return SkinManager.ColorScheme.DarkPrimaryColor;
+                case MaterialButtonColorType.Tertiary:
+                    return SkinManager.ColorScheme.LightPrimaryColor;
+                case MaterialButtonColorType.Success:
+                    return SkinManager.ColorScheme.SuccessColor;
+                case MaterialButtonColorType.Info:
+                    return SkinManager.ColorScheme.InfoColor;
+                case MaterialButtonColorType.Warning:
+                    return SkinManager.ColorScheme.WarningColor;
+                case MaterialButtonColorType.Danger:
+                    return SkinManager.ColorScheme.DangerColor;
+                default:
+                    return SkinManager.ColorScheme.LightPrimaryColor;
             }
         }
 
@@ -587,13 +936,13 @@
             Size s = base.GetPreferredSize(proposedSize);
 
             // Provides extra space for proper padding for content
-            var extra = 16;
+            int extra = 16;
 
             if (Icon != null)
             {
                 // 24 is for icon size
                 // 4 is for the space between icon & text
-                extra += ICON_SIZE + 4;
+                extra += IconSize + 4;
             }
 
             if (AutoSize)
@@ -607,7 +956,7 @@
                 s.Width += extra;
                 s.Height = HEIGHTDEFAULT;
             }
-            if (Icon != null && Text.Length==0 && s.Width < MINIMUMWIDTHICONONLY) s.Width = MINIMUMWIDTHICONONLY;
+            if (Icon != null && Text.Length == 0 && s.Width < MINIMUMWIDTHICONONLY) s.Width = MINIMUMWIDTHICONONLY;
             else if (s.Width < MINIMUMWIDTH) s.Width = MINIMUMWIDTH;
 
             return s;

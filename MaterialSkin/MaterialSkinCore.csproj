@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-		<TargetFrameworks>net5.0-windows;net48;net461</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net48;net461</TargetFrameworks>
 		<RuntimeIdentifier>win</RuntimeIdentifier>
       <OutputType>Library</OutputType>
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<usewpf>true</usewpf>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
       <AssemblyName>MaterialSkin</AssemblyName>
@@ -89,9 +90,7 @@
       <Compile Update="Controls\MaterialTextBox2.cs">
         <SubType>Component</SubType>
       </Compile>
-      <Compile Update="Controls\MaterialTabControl.cs">
-        <SubType>Component</SubType>
-      </Compile>
+      <Compile Update="Controls\MaterialTabControl.cs" />
       <Compile Update="Controls\MaterialDrawer.cs">
         <SubType>Component</SubType>
       </Compile>

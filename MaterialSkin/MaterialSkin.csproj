@@ -30,13 +30,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>MaterialSkinTridata.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\AnimationDirection.cs" />
@@ -47,8 +56,35 @@
     <Compile Include="Controls\BaseTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\DropDownControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DropDownControl.Designer.cs">
+      <DependentUpon>DropDownControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FlexibleMaterialDialog.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialColorPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialDatePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialDatePicker.Designer.cs">
+      <DependentUpon>MaterialDatePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownColorPicker.Designer.cs">
+      <DependentUpon>MaterialDropDownColorPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownDatePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialDropDownDatePicker.Designer.cs">
+      <DependentUpon>MaterialDropDownDatePicker.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MaterialListBox.cs">
       <SubType>Component</SubType>
@@ -120,6 +156,9 @@
     <Compile Include="Controls\MaterialTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\MaterialNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MaterialTextBox2.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -182,10 +221,17 @@
     <EmbeddedResource Include="Resources\Roboto-Thin.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MaterialSkinTridata.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dark_mode_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\light_mode_24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

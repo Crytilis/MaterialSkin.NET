@@ -10,6 +10,13 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
+    public enum Glyphs
+    {
+        GlobalNavigationButton = 0xE700,
+        Pin = 0xE718,
+        Pinned = 0xE840
+    }
+
     public class MaterialSkinManager
     {
         private static MaterialSkinManager _instance;
@@ -31,11 +38,18 @@
 
         public int FORM_PADDING = 14;
 
+        /// <summary>
+        /// Possible options
+        /// Roboto, Roboto Light, Roboto Medium
+        /// </summary>
+        public string CurrentFontFamily { get; set; }
+
         // Constructor
         private MaterialSkinManager()
         {
             Theme = Themes.LIGHT;
-            ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE);
+            ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE, Primary.Green700, Primary.Cyan700, Primary.Yellow700, Primary.Red700);
+            CurrentFontFamily = "Roboto";
 
             // Create and cache Roboto fonts
             // Thanks https://www.codeproject.com/Articles/42041/How-to-Use-a-Font-Without-Installing-it
@@ -180,9 +194,9 @@
         private static readonly Brush BACKGROUND_ALTERNATIVE_LIGHT_BRUSH = new SolidBrush(BACKGROUND_ALTERNATIVE_LIGHT);
         private static readonly Color BACKGROUND_ALTERNATIVE_DARK = Color.FromArgb(10, 255, 255, 255);
         private static readonly Brush BACKGROUND_ALTERNATIVE_DARK_BRUSH = new SolidBrush(BACKGROUND_ALTERNATIVE_DARK);
-        private static readonly Color BACKGROUND_HOVER_LIGHT = Color.FromArgb(20, 0, 0, 0);
+        private static readonly Color BACKGROUND_HOVER_LIGHT = Color.FromArgb(50, 0, 0, 0);
         private static readonly Brush BACKGROUND_HOVER_LIGHT_BRUSH = new SolidBrush(BACKGROUND_HOVER_LIGHT);
-        private static readonly Color BACKGROUND_HOVER_DARK = Color.FromArgb(20, 255, 255, 255);
+        private static readonly Color BACKGROUND_HOVER_DARK = Color.FromArgb(50, 255, 255, 255);
         private static readonly Brush BACKGROUND_HOVER_DARK_BRUSH = new SolidBrush(BACKGROUND_HOVER_DARK);
         private static readonly Color BACKGROUND_HOVER_RED = Color.FromArgb(255, 255, 0, 0);
         private static readonly Brush BACKGROUND_HOVER_RED_BRUSH = new SolidBrush(BACKGROUND_HOVER_RED);
@@ -235,7 +249,7 @@
         public Brush CheckboxOffBrush => Theme == Themes.LIGHT ? CHECKBOX_OFF_LIGHT_BRUSH : CHECKBOX_OFF_DARK_BRUSH;
         public Color CheckBoxOffDisabledColor => Theme == Themes.LIGHT ? CHECKBOX_OFF_DISABLED_LIGHT : CHECKBOX_OFF_DISABLED_DARK;
         public Brush CheckBoxOffDisabledBrush => Theme == Themes.LIGHT ? CHECKBOX_OFF_DISABLED_LIGHT_BRUSH : CHECKBOX_OFF_DISABLED_DARK_BRUSH;
-        
+
         // Switch
         public Color SwitchOffColor => Theme == Themes.LIGHT ? CHECKBOX_OFF_DARK : CHECKBOX_OFF_LIGHT; // yes, I re-use the checkbox color, sue me
         public Color SwitchOffThumbColor => Theme == Themes.LIGHT ? SWITCH_OFF_THUMB_LIGHT : SWITCH_OFF_THUMB_DARK;
@@ -319,7 +333,7 @@
 
                 case fontType.Subtitle2:
                     return new Font(RobotoFontFamilies["Roboto_Medium"], 14f, FontStyle.Bold, GraphicsUnit.Pixel);
-                
+
                 case fontType.SubtleEmphasis:
                     return new Font(RobotoFontFamilies["Roboto"], 12f, FontStyle.Italic, GraphicsUnit.Pixel);
 
@@ -395,6 +409,11 @@
             return NativeTextRenderer.CreateFontIndirect(lfont);
         }
 
+        public FontFamily GetFontFamily(string fontName)
+        {
+            return RobotoFontFamilies[fontName];
+        }
+
         // Dyanmic Themes
         public void AddFormToManage(MaterialForm materialForm)
         {
@@ -446,16 +465,22 @@
             // Other Material Skin control
             else if (controlToUpdate.IsMaterialControl())
             {
-                controlToUpdate.BackColor = newBackColor;
-                controlToUpdate.ForeColor = TextHighEmphasisColor;
+                if(!(controlToUpdate.HasProperty("UseCustomColor") && ((MaterialLabel)controlToUpdate).UseCustomColor))
+                {
+                    controlToUpdate.BackColor = newBackColor;
+                    controlToUpdate.ForeColor = TextHighEmphasisColor;
+                }
             }
 
             // Other Generic control not part of material skin
             else if (EnforceBackcolorOnAllComponents && controlToUpdate.HasProperty("BackColor") && !controlToUpdate.IsMaterialControl() && controlToUpdate.Parent != null)
             {
-                controlToUpdate.BackColor = controlToUpdate.Parent.BackColor;
-                controlToUpdate.ForeColor = TextHighEmphasisColor;
-                controlToUpdate.Font = getFontByType(MaterialSkinManager.fontType.Body1);
+                if (!controlToUpdate.Name.StartsWith("pan"))
+                {
+                    controlToUpdate.BackColor = controlToUpdate.Parent.BackColor;
+                    controlToUpdate.ForeColor = TextHighEmphasisColor;
+                    controlToUpdate.Font = getFontByType(MaterialSkinManager.fontType.Body1);
+                }
             }
 
             // Recursive call to control's children

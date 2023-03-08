@@ -200,7 +200,9 @@ namespace MaterialSkin.Controls
             }
         }
 
-        //TextBox properties
+        #region TextBox properties
+
+        public override bool Focused => baseTextBox.Focused;
 
         public override ContextMenuStrip ContextMenuStrip
         {
@@ -230,6 +232,22 @@ namespace MaterialSkin.Controls
 
         [Category("Appearance")]
         public HorizontalAlignment TextAlign { get { return baseTextBox.TextAlign; } set { baseTextBox.TextAlign = value; } }
+
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.Font = font;
+                }
+                base.Font = font;
+                Invalidate();
+            }
+        }
 
         [Category("Behavior")]
         public CharacterCasing CharacterCasing { get { return baseTextBox.CharacterCasing; } set { baseTextBox.CharacterCasing = value; } }
@@ -320,23 +338,42 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [Category("Behavior"), DefaultValue(true)]
+        public new bool TabStop
+        {
+            get
+            {
+                return baseTextBox.TabStop;
+            }
+            set
+            {
+                if (TabStop != value)
+                {
+                    baseTextBox.TabStop = value;
+                    OnTabStopChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+
         public AutoCompleteStringCollection AutoCompleteCustomSource { get { return baseTextBox.AutoCompleteCustomSource; } set { baseTextBox.AutoCompleteCustomSource = value; } }
 
         public AutoCompleteSource AutoCompleteSource { get { return baseTextBox.AutoCompleteSource; } set { baseTextBox.AutoCompleteSource = value; } }
 
         public AutoCompleteMode AutoCompleteMode { get { return baseTextBox.AutoCompleteMode; } set { baseTextBox.AutoCompleteMode = value; } }
 
-        public void SelectAll() { baseTextBox.SelectAll(); }
+        public void SelectAll() => baseTextBox.SelectAll();
 
-        public void Clear() { baseTextBox.Clear(); }
+        public void Clear() => baseTextBox.Clear();
 
-        public void Copy() { baseTextBox.Copy(); }
+        public void Copy() => baseTextBox.Copy();
 
-        public void Cut() { baseTextBox.Cut(); }
+        public void Cut() => baseTextBox.Cut();
 
-        public void Undo() { baseTextBox.Undo(); }
+        public void Undo() => baseTextBox.Undo();
 
-        public void Paste() { baseTextBox.Paste(); }
+        public void Paste() => baseTextBox.Paste();
+        #endregion
 
         #region "Events"
 
@@ -1264,11 +1301,11 @@ namespace MaterialSkin.Controls
         private const int HINT_TEXT_SMALL_Y = 4;
         private const int LEFT_PADDING = 16;
         private const int RIGHT_PADDING = 12;
-        private const int ACTIVATION_INDICATOR_HEIGHT = 2;
+        private const int ACTIVATION_INDICATOR_HEIGHT = 1;
         private const int HELPER_TEXT_HEIGHT = 16;
         private const int FONT_HEIGHT = 20;
         
-        private int HEIGHT = 48;
+        private int HEIGHT = 32;
 
         private int LINE_Y;
         private bool hasHint;
@@ -1321,7 +1358,7 @@ namespace MaterialSkin.Controls
                 Font = base.Font,
                 ForeColor = SkinManager.TextHighEmphasisColor,
                 Multiline = false,
-                Location = new Point(LEFT_PADDING, HEIGHT/2- FONT_HEIGHT/2),
+                Location = new Point(LEFT_PADDING, (HEIGHT / 2) - (FONT_HEIGHT / 2)),
                 Width = Width - (LEFT_PADDING + RIGHT_PADDING),
                 Height = FONT_HEIGHT
             };
@@ -1361,9 +1398,7 @@ namespace MaterialSkin.Controls
 
             baseTextBox.TextChanged += new EventHandler(Redraw);
             baseTextBox.BackColorChanged += new EventHandler(Redraw);
-
-            baseTextBox.TabStop = true;
-            this.TabStop = false;
+            base.TabStop = false;
 
             cms.Opening += ContextMenuStripOnOpening;
             cms.OnItemClickStart += ContextMenuStripOnItemClickStart;
@@ -1627,6 +1662,12 @@ namespace MaterialSkin.Controls
             UpdateRects();
             preProcessIcons();
 
+            HEIGHT = Height < 10 ? 10 : Height;
+            if(_UseTallSize)
+            {
+                HEIGHT = Height < 32 ? 32 : Height;
+            }
+
             Size = new Size(Width, HEIGHT);
             LINE_Y = HEIGHT - ACTIVATION_INDICATOR_HEIGHT - _helperTextHeight;
 
@@ -1639,6 +1680,11 @@ namespace MaterialSkin.Controls
             // events
             MouseState = MouseState.OUT;
 
+        }
+
+        public new bool Focus()
+        {
+            return baseTextBox.Focus();
         }
 
         #region Icon
@@ -1838,12 +1884,13 @@ namespace MaterialSkin.Controls
                 iconsErrorBrushes.Add("_trailingIcon", textureBrushRed);
             }
         }
-        
+
         #endregion
 
         private void UpdateHeight()
         {
-            HEIGHT = _UseTallSize ? 48 : 36;
+            HEIGHT = _UseTallSize ? 48 : Height;
+            HEIGHT = Height < 10 ? HEIGHT : Height;
             HEIGHT += _helperTextHeight;
             Size = new Size(Size.Width, HEIGHT);
         }

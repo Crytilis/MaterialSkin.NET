@@ -31,6 +31,25 @@ namespace MaterialSkin.Controls
             }
         }
 
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                base.Font = value;
+                Invalidate();
+            }
+        }
+
+        [Browsable(false)]
+        [Category("Behaviour")]
+        [DefaultValue(false)]
+        public bool Selectable
+        {
+            get => GetStyle(ControlStyles.Selectable);
+            set => SetStyle(ControlStyles.Selectable, value);
+        }
+
         public new void SelectAll()
         {
             BeginInvoke((MethodInvoker)delegate ()
@@ -224,16 +243,15 @@ namespace MaterialSkin.Controls
         {
             Items.AddRange(new[]
             {
-                    undo,
-                    seperator1,
-                    cut,
-                    copy,
-                    paste,
-                    delete,
-                    seperator2,
-                    selectAll
-                });
+                undo,
+                seperator1,
+                cut,
+                copy,
+                paste,
+                delete,
+                seperator2,
+                selectAll
+            });
         }
     }
-
 }

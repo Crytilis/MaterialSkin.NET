@@ -32,6 +32,18 @@
             }
         }
 
+        private bool _useCustomColor = false;
+        [Category("Material Skin"),
+        DefaultValue(false)]
+        public bool UseCustomColor { 
+            get => _useCustomColor;
+            set
+            {
+                _useCustomColor = value;
+                Invalidate();
+            }
+        }
+
         [Category("Material Skin"),
         DefaultValue(false)]
         public bool HighEmphasis { get; set; }
@@ -130,24 +142,47 @@
             }
         }
 
+        public static Rectangle DeflateRect(Rectangle rect, Padding padding)
+        {
+            rect.X += padding.Left;
+            rect.Y += padding.Top;
+            rect.Width -= padding.Horizontal;
+            rect.Height -= padding.Vertical;
+            return rect;
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             g.Clear(Parent.BackColor);
 
+            Rectangle rectangle = DeflateRect(base.ClientRectangle, base.Padding);
+            Image image = Image;
+
+            if (image != null)
+            {
+                DrawImage(e.Graphics, image, rectangle, RtlTranslateAlignment(ImageAlign));
+            }
+
             // Draw Text
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                NativeText.DrawMultilineTransparentText(
-                    Text,
-                    SkinManager.getLogFontByType(_fontType),
-                    Enabled ? HighEmphasis ? UseAccent ?
+                var color = ForeColor;
+                if(!UseCustomColor)
+                {
+                    color = Enabled ? HighEmphasis ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // High emphasis, accent
                     (SkinManager.Theme == MaterialSkin.MaterialSkinManager.Themes.LIGHT) ?
                     SkinManager.ColorScheme.PrimaryColor : // High emphasis, primary Light theme
                     SkinManager.ColorScheme.PrimaryColor.Lighten(0.25f) : // High emphasis, primary Dark theme
                     SkinManager.TextHighEmphasisColor : // Normal
-                    SkinManager.TextDisabledOrHintColor, // Disabled
+                    SkinManager.TextDisabledOrHintColor; // Disabled
+                }
+
+                NativeText.DrawMultilineTransparentText(
+                    Text,
+                    SkinManager.getLogFontByType(_fontType),
+                    color,
                     ClientRectangle.Location,
                     ClientRectangle.Size,
                     Alignment);

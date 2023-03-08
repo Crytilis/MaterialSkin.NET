@@ -56,6 +56,15 @@
             }
         }
 
+        private bool pushDrawer;
+
+        [Category("Drawer")]
+        public bool PushDrawer
+        {
+            get => pushDrawer;
+            set { pushDrawer = value; Invalidate(); }
+        }
+
         [Category("Drawer")]
         public bool AutoHide { get; set; }
 
@@ -139,6 +148,7 @@
         public event DrawerStateHandler DrawerShowIconsWhenHiddenChanged;
 
         public event EventHandler<Cursor> CursorUpdate;
+        public event EventHandler<string> TabAsButtonClick;
 
         // icons
         private Dictionary<string, TextureBrush> iconsBrushes;
@@ -288,7 +298,7 @@
                 var ik = string.Concat(tabPage.ImageKey, "_", tabPage.Name);
                 iconsBrushes.Add(ik, textureBrushGray);
                 iconsSelectedBrushes.Add(ik, textureBrushColor);
-                iconsSize.Add(ik, new Rectangle(0, 0, iconRect.Width, iconRect.Height));
+                iconsSize.Add(ik, new Rectangle(0, 0, TAB_HEADER_PADDING*2, TAB_HEADER_PADDING * 2));
             }
         }
 
@@ -507,7 +517,7 @@
 
                 Rectangle textRect = _drawerItemRects[currentTabIndex];
                 textRect.X += _baseTabControl.ImageList != null ? drawerItemHeight : (int)(SkinManager.FORM_PADDING * 0.75);
-                textRect.Width -= SkinManager.FORM_PADDING << 2;
+                textRect.Width -= (SkinManager.FORM_PADDING << 2) + 16;
 
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
@@ -627,13 +637,24 @@
 
             if (_drawerItemRects == null)
                 UpdateTabRects();
+
             for (var i = 0; i < _drawerItemRects.Count; i++)
             {
                 if (_drawerItemRects[i].Contains(e.Location) && _lastLocationY == Location.Y)
                 {
-                    _baseTabControl.SelectedIndex = i;
-                    if (AutoHide && !AutoShow)
-                        Hide();
+                    var tabTag = _baseTabControl.TabPages[i].Tag?.ToString() ?? "";
+                    var clickable = tabTag.ToLower().StartsWith("click");
+
+                    if (clickable && TabAsButtonClick != null)
+                    {
+                        TabAsButtonClick.Invoke(this, tabTag.Remove(0,5));
+                    }
+                    else
+                    {
+                        _baseTabControl.SelectedIndex = i;
+                        if (AutoHide && !AutoShow)
+                            Hide();
+                    }
                 }
             }
 

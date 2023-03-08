@@ -8,6 +8,34 @@
 
     public class MaterialCard : Panel, IMaterialControl
     {
+        private bool drawShadows;
+        private int radius;
+
+        [Category("Material Skin"), DefaultValue(true), Description("Draw Shadows around control")]
+        public bool DrawShadows
+        {
+            get => drawShadows;
+            set { drawShadows = value; Invalidate(); }
+        }
+
+        [Category("Material Skin"), DefaultValue(4), Description("Sets the border radius in px")]
+        public int Radius
+        {
+            get => radius;
+            set
+            {
+                if (value <= 0)
+                    value = 4;
+
+                if ((Math.Min(Width, Height) / 2) < value)
+                    value = (Math.Min(Width, Height) / 2);
+
+                radius = value;
+
+                Invalidate();
+            }
+        }
+
         [Browsable(false)]
         public int Depth { get; set; }
 
@@ -25,6 +53,8 @@
             ForeColor = SkinManager.TextHighEmphasisColor;
             Margin = new Padding(SkinManager.FORM_PADDING);
             Padding = new Padding(SkinManager.FORM_PADDING);
+
+            Radius = radius <= 0 ? 4 : radius;
         }
 
         private void drawShadowOnParent(object sender, PaintEventArgs e)
@@ -35,6 +65,8 @@
                 return;
             }
 
+            if (!DrawShadows || Parent == null) return;
+
             // paint shadow on parent
             Graphics gp = e.Graphics;
             Rectangle rect = new Rectangle(Location, ClientRectangle.Size);
@@ -44,14 +76,14 @@
 
         protected override void InitLayout()
         {
-            LocationChanged += (sender, e) => { Parent?.Invalidate(); };
+            LocationChanged += (sender, e) => { if (DrawShadows) Parent?.Invalidate(); };
             ForeColor = SkinManager.TextHighEmphasisColor;
         }
 
         protected override void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
-            if (Parent != null) AddShadowPaintEvent(Parent, drawShadowOnParent);
+            if (drawShadows && Parent != null) AddShadowPaintEvent(Parent, drawShadowOnParent);
             if (_oldParent != null) RemoveShadowPaintEvent(_oldParent, drawShadowOnParent);
             _oldParent = Parent;
         }
@@ -103,7 +135,7 @@
             RectangleF cardRectF = new RectangleF(ClientRectangle.Location, ClientRectangle.Size);
             cardRectF.X -= 0.5f;
             cardRectF.Y -= 0.5f;
-            GraphicsPath cardPath = DrawHelper.CreateRoundRect(cardRectF, 4);
+            GraphicsPath cardPath = DrawHelper.CreateRoundRect(cardRectF, Radius);
 
             // button shadow (blend with form shadow)
             DrawHelper.DrawSquareShadow(g, ClientRectangle);
