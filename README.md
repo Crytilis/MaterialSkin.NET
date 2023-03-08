@@ -8,7 +8,7 @@ Theming .NET WinForms, C# or VB.Net, to Google's Material Design Principles.
 
 ![home](https://user-images.githubusercontent.com/77468294/134770847-0f20f37f-e3e7-4e15-b838-cf53b0b32c4e.png)
 
-## Nuget Package
+## Nuget Package (not for this repository but from the repository this was forked from)
 
 A nuget package version is available [here](https://www.nuget.org/packages/MaterialSkin.2/)
 
