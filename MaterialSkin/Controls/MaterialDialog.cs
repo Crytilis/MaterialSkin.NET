@@ -169,10 +169,9 @@
         {
         }
 
-       public MaterialDialog(Form ParentForm, string Title, string Text, string ValidationButtonText, bool ShowCancelButton, string CancelButtonText) : this(ParentForm, Title, Text, ValidationButtonText, ShowCancelButton, CancelButtonText, false)
+        public MaterialDialog(Form ParentForm, string Title, string Text, string ValidationButtonText, bool ShowCancelButton, string CancelButtonText) : this(ParentForm, Title, Text, ValidationButtonText, ShowCancelButton, CancelButtonText, false)
         {
         }
-
 
         /// <summary>
         /// Sets up the Starting Location and starts the Animation
@@ -181,7 +180,7 @@
         {
             base.OnLoad(e);
 
-            Location = new Point(Convert.ToInt32(Owner.Location.X + (Owner.Width / 2) - (Width / 2)), Convert.ToInt32(Owner.Location.Y + (Owner.Height/2) - (Height / 2)));
+            Location = new Point(Convert.ToInt32(Owner.Location.X + (Owner.Width / 2) - (Width / 2)), Convert.ToInt32(Owner.Location.Y + (Owner.Height / 2) - (Height / 2)));
             _AnimationManager.StartNewAnimation(AnimationDirection.In);
         }
 
@@ -207,12 +206,12 @@
 
             e.Graphics.Clear(BackColor);
 
-            
+
             // Calc title Rect
             Rectangle titleRect = new Rectangle(
                 LEFT_RIGHT_PADDING,
                 0,
-                Width - (2 * LEFT_RIGHT_PADDING) ,
+                Width - (2 * LEFT_RIGHT_PADDING),
                 _header_Height);
 
             //Draw title
@@ -236,9 +235,9 @@
 
             Rectangle textRect = new Rectangle(
                 LEFT_RIGHT_PADDING,
-                _header_Height+17,
+                _header_Height + 17,
                 RectWidth,
-                RectHeight +19);
+                RectHeight + 19);
 
             //Draw  Text
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))

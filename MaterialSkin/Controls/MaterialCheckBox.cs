@@ -25,7 +25,7 @@
 
         private bool _ripple;
 
-        [Category("Appearance")]
+        [Category("Material Skin")]
         public bool Ripple
         {
             get { return _ripple; }
@@ -39,6 +39,17 @@
                     Margin = new Padding(0);
                 }
 
+                Invalidate();
+            }
+        }
+
+        int checkboxSize = 12;
+        [Category("Material Skin"), DefaultValue(12)]
+        public int CheckboxSize { 
+            get => checkboxSize;
+            set
+            {
+                checkboxSize = value;
                 Invalidate();
             }
         }
@@ -142,13 +153,28 @@
             // clear the control
             g.Clear(Parent.BackColor);
 
-            int CHECKBOX_CENTER = _boxOffset + CHECKBOX_SIZE_HALF - 1;
-            Point animationSource = new Point(CHECKBOX_CENTER, CHECKBOX_CENTER);
+            var width = checkboxSize;
+            var height = checkboxSize;
+
+            var x = width / 2;
+            var y = (ClientRectangle.Height / 2) - (height / 2);
+
+            if (CheckAlign == ContentAlignment.MiddleRight)
+            {
+                x = ClientRectangle.Width - width - 2;
+            }
+
+
+            //int CHECKBOX_CENTER = _boxOffset + CHECKBOX_SIZE_HALF - 1;
+            int CHECKBOX_CENTER = x + (width / 2) - 1;
+            int CHECKBOX_MIDDLE = y + (height / 2) - 1;
+            Point animationSource = new Point(CHECKBOX_CENTER, CHECKBOX_MIDDLE);
             double animationProgress = _checkAM.GetProgress();
+            Rectangle checkMarkLineFill = new Rectangle(x, y, (int)(width * animationProgress), height);
 
             int colorAlpha = Enabled ? (int)(animationProgress * 255.0) : SkinManager.CheckBoxOffDisabledColor.A;
             int backgroundAlpha = Enabled ? (int)(SkinManager.CheckboxOffColor.A * (1.0 - animationProgress)) : SkinManager.CheckBoxOffDisabledColor.A;
-            int rippleHeight = (HEIGHT_RIPPLE % 2 == 0) ? HEIGHT_RIPPLE - 3 : HEIGHT_RIPPLE - 2;
+            int rippleHeight = ((HEIGHT_RIPPLE - Padding.Right + Padding.Left) % 2 == 0) ? (HEIGHT_RIPPLE - Padding.Right + Padding.Left) - 3 : (HEIGHT_RIPPLE - Padding.Right + Padding.Left) - 2;
 
             SolidBrush brush = new SolidBrush(Color.FromArgb(colorAlpha, Enabled ? SkinManager.ColorScheme.AccentColor : SkinManager.CheckBoxOffDisabledColor));
             Pen pen = new Pen(brush.Color, 2);
@@ -157,12 +183,14 @@
             if (Ripple)
             {
                 double animationValue = _hoverAM.IsAnimating() ? _hoverAM.GetProgress() : hovered ? 1 : 0;
+                int rippleWidth = (int)((HEIGHT_RIPPLE - Padding.Right - Padding.Left) * (0.7 + (0.3 * animationValue)));
+                rippleHeight = (int)((HEIGHT_RIPPLE - Padding.Top - Padding.Bottom) * (0.7 + (0.3 * animationValue)));
                 int rippleSize = (int)(rippleHeight * (0.7 + (0.3 * animationValue)));
 
                 using (SolidBrush rippleBrush = new SolidBrush(Color.FromArgb((int)(40 * animationValue),
                     !Checked ? (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? Color.Black : Color.White) : brush.Color))) // no animation
                 {
-                    g.FillEllipse(rippleBrush, new Rectangle(animationSource.X - rippleSize / 2, animationSource.Y - rippleSize / 2, rippleSize, rippleSize));
+                    g.FillEllipse(rippleBrush, new Rectangle(animationSource.X - rippleWidth / 2, animationSource.Y - rippleHeight / 2, rippleSize, rippleSize));
                 }
             }
 
@@ -181,19 +209,7 @@
                 }
             }
 
-            var width = CHECKBOX_SIZE - Padding.Left - Padding.Right;
-            var height = CHECKBOX_SIZE - Padding.Top - Padding.Bottom;
-
-            var x = (ClientRectangle.Height / 2) - (width / 2);
-            var y = (ClientRectangle.Height / 2) - (height / 2);
-
-            if(CheckAlign == ContentAlignment.MiddleRight)
-            {
-                x = ClientRectangle.Width - width - 2;
-            }
-
-            Rectangle checkMarkLineFill = new Rectangle(x, y, (int)(width * animationProgress), height);
-            using (GraphicsPath checkmarkPath = DrawHelper.CreateRoundRect(x - 0.5f, y - 0.5f, width, height, 1))
+            using (GraphicsPath checkmarkPath = DrawHelper.CreateRoundRect(x, y, width, height, 1))
             {
                 if (Enabled)
                 {
@@ -220,14 +236,16 @@
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
                 var textSize = NativeText.MeasureString(Text, Font);
-                var textWidth = textSize.Width;
-                var textX = _boxOffset + TEXT_OFFSET;
+                var textWidth = _boxOffset + TEXT_OFFSET;
+                var textX = TEXT_OFFSET + Padding.Right + Padding.Left;
+
                 if (CheckAlign == ContentAlignment.MiddleRight || CheckAlign == ContentAlignment.TopRight || CheckAlign == ContentAlignment.BottomRight)
                 {
-                    textX = ClientRectangle.Width - textSize.Width - width - _boxOffset - 3;
+                    textX = 3 + Padding.Left;
+                    textWidth = TEXT_OFFSET;
                 }
 
-                Rectangle textLocation = new Rectangle(textX < 0 ? 0 : textX, 0, textWidth, ClientRectangle.Height);
+                Rectangle textLocation = new Rectangle(textX, 0, ClientRectangle.Width - textWidth, ClientRectangle.Height);
                 NativeText.DrawTransparentText(Text, Font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textLocation.Location,
@@ -240,22 +258,24 @@
             brush.Dispose();
         }
 
-        public override bool AutoSize
-        {
-            get { return base.AutoSize; }
-            set
-            {
-                base.AutoSize = value;
-                if (value)
-                {
-                    Size = new Size(10, 10);
-                }
-            }
-        }
+        //public override bool AutoSize
+        //{
+        //    get { return base.AutoSize; }
+        //    set
+        //    {
+        //        base.AutoSize = value;
+        //        if (value)
+        //        {
+        //            Size = new Size(10, 10);
+        //        }
+        //    }
+        //}
 
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
+            AutoSize = false;
+            Size = new Size(Width, 18);
 
             if (DesignMode) return;
 

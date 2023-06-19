@@ -9,11 +9,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace MaterialSkin.Controls
 {
-    public partial class MaterialDatePicker : Control
+    [ClassInterface(ClassInterfaceType.AutoDispatch)]
+    [DefaultProperty("Date")]
+    [DefaultEvent("DateChanged")]
+    [DefaultBindingProperty("Date")]
+    public partial class MaterialDatePicker : Control, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         [Browsable(false)]
         public int Depth { get; set; }
         [Browsable(false)]
@@ -37,6 +45,13 @@ namespace MaterialSkin.Controls
         private GraphicsPath shadowPath;
         private DateTime currentDate;
 
+        private MaterialMaskedTextBox hoursBox;
+        private MaterialMaskedTextBox minutesBox;
+        private MaterialMaskedTextBox secondsBox;
+
+        private int _gttMasterField;
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All)]
         [Browsable(true), DefaultValue(typeof(DateTime), "01.01.2023")]
         public DateTime Date { 
             get { return currentDate; }
@@ -47,7 +62,8 @@ namespace MaterialSkin.Controls
                 {
                     onDateChanged(currentDate);
                 }
-                
+                NotifyPropertyChanged();
+
                 Invalidate();
             }
         }
@@ -76,6 +92,14 @@ namespace MaterialSkin.Controls
         private Font selectedMonthFont;
         private Font selectedDayFont;
         private Font yearFont;
+        private Font hoursFont;
+        private Font minutesFont;
+        private Font secondFont;
+
+        private bool showTime;
+        private bool showHours;
+        private bool showMinutes;
+        private bool showSeconds;
         #endregion
         #region Properties
         [Category("Appearance"), Localizable(true)]
@@ -166,6 +190,93 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
+
+        [Category("Appearance"), Localizable(true)]
+        public Font HoursFont {
+            get { return hoursFont; }
+            set
+            {
+                if (value != null)
+                {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                    hoursFont = font;
+                }
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public Font MinutesFont {
+            get { return minutesFont; }
+            set
+            {
+                if (value != null)
+                {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                    minutesFont = font;
+                }
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public Font SecondsFont {
+            get { return secondFont; }
+            set
+            {
+                if (value != null)
+                {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                    secondFont = font;
+                }
+                Invalidate();
+            }
+        }
+
+
+        [Category("Appearance"), Localizable(true)]
+        public bool ShowTime
+        {
+            get => showTime;
+            set
+            {
+                showTime = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public bool ShowHours
+        {
+            get => showHours;
+            set
+            {
+                showHours = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public bool ShowMinutes
+        {
+            get => showMinutes;
+            set
+            {
+                showMinutes = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public bool ShowSeconds
+        {
+            get => showSeconds;
+            set
+            {
+                showSeconds = value;
+                Invalidate();
+            }
+        }
         #endregion
 
 
@@ -215,6 +326,12 @@ namespace MaterialSkin.Controls
             hoverX = -1;
             hoverY = -1;
             CalculateRectangles();
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -529,6 +646,13 @@ namespace MaterialSkin.Controls
                             kwRectangles[i].Rect.Right - 4, kwRectangles[i].Rect.Bottom);
                 }
             }
+
+            #region Time
+            if(ShowTime)
+            {
+
+            }
+            #endregion
 
         }
 

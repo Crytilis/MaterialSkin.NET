@@ -7,7 +7,9 @@
     using System.Drawing;
     using System.Drawing.Text;
     using System.Globalization;
+    using System.Linq;
     using System.Windows.Forms;
+    using static MaterialSkin.Controls.MaterialBaseTabSelector;
 
     public class MaterialTabSelector : Control, IMaterialControl
     {
@@ -20,31 +22,22 @@
         [Browsable(false)]
         public MouseState MouseState { get; set; }
 
-        //[Browsable(false)]
-        public enum CustomCharacterCasing
-        {
-            [Description("Text will be used as user inserted, no alteration")]
-            Normal,
-            [Description("Text will be converted to UPPER case")]
-            Upper,
-            [Description("Text will be converted to lower case")]
-            Lower,
-            [Description("Text will be converted to Proper case (aka Title case)")]
-            Proper
-        }
-
-        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        private TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        private Size originalSize;
+        private Point originalLocation;
+        private bool isMouseWheelAction = false;
 
         private MaterialTabControl _baseTabControl;
+        private MaterialBaseTabSelector baseTabSelector;
 
         [Category("Appearance"), Localizable(true)]
         public override Font Font
         {
-            get { return base.Font; }
+            get => baseTabSelector.Font;
             set
             {
                 var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
-                base.Font = font;
+                baseTabSelector.Font = font;
                 Invalidate();
             }
         }
@@ -52,409 +45,865 @@
         [Category("Material Skin"), Browsable(true)]
         public MaterialTabControl BaseTabControl
         {
-            get { return _baseTabControl; }
-            set
-            {
-                _baseTabControl = value;
-                if (_baseTabControl == null) return;
-
-                UpdateTabRects();
-
-                _previousSelectedTabIndex = _baseTabControl.SelectedIndex;
-                _baseTabControl.Deselected += (sender, args) =>
-                {
-                    _previousSelectedTabIndex = _baseTabControl.SelectedIndex;
-                };
-                _baseTabControl.SelectedIndexChanged += (sender, args) =>
-                {
-                    _animationManager.SetProgress(0);
-                    _animationManager.StartNewAnimation(AnimationDirection.In);
-                };
-                _baseTabControl.ControlAdded += delegate
-                {
-                    Invalidate();
-                };
-                _baseTabControl.ControlRemoved += delegate
-                {
-                    Invalidate();
-                };
-            }
+            get => baseTabSelector.BaseTabControl;
+            set { baseTabSelector.BaseTabControl = value; }
         }
 
-        [Category("Material Skin"), DefaultValue(160), Browsable(true)]
+        [Category("Material Skin"), DefaultValue(60), Browsable(true)]
         public int TabWidthMin {
-            get => tabWidthMin;
+            get => baseTabSelector.TabWidthMin;
             set
             {
-                tabWidthMin = value;
+                baseTabSelector.TabWidthMin = value;
                 Invalidate();
             }
         }
         [Category("Material Skin"), DefaultValue(264), Browsable(true)]
         public int TabWidthMax
         {
-            get => tabWidthMax;
+            get => baseTabSelector.TabWidthMax;
             set
             {
-                tabWidthMax = value;
+                baseTabSelector.TabWidthMax = value;
                 Invalidate();
             }
         }
 
-        [Category("Material Skin"), DefaultValue(24), Browsable(true)]
+        [Category("Material Skin"), DefaultValue(6), Browsable(true)]
         public int TabHeaderPadding
         {
-            get => tabHeaderPadding;
+            get => baseTabSelector.TabHeaderPadding;
             set
             {
-                tabHeaderPadding = value;
+                baseTabSelector.TabHeaderPadding = value;
                 Invalidate();
             }
         }
 
-        [Category("Material Skin"), DefaultValue(50), Browsable(true)]
+        [Category("Material Skin"), DefaultValue(10), Browsable(true)]
         public int FirstTabPadding
         {
-            get => firstTabPadding;
+            get => baseTabSelector.FirstTabPadding;
             set
             {
-                firstTabPadding = value;
+                baseTabSelector.FirstTabPadding = value;
                 Invalidate();
             }
         }
-
-        private int firstTabPadding = 50;
-        private int tabHeaderPadding = 24;
-        private int tabWidthMin = 160;
-        private int tabWidthMax = 264;
-        private int _previousSelectedTabIndex;
-
-        private Point _animationSource;
-
-        private readonly AnimationManager _animationManager;
-
-        private List<Rectangle> _tabRects;
-
-        private const int ICON_SIZE = 24;
-
-        private int _tab_over_index = -1;
-
-        private CustomCharacterCasing _characterCasing;
 
         [Category("Appearance")]
         public CustomCharacterCasing CharacterCasing
         {
-            get => _characterCasing;
+            get => baseTabSelector.CharacterCasing;
             set
             {
-                _characterCasing = value;
-                _baseTabControl.Invalidate();
+                baseTabSelector.CharacterCasing = value;
                 Invalidate();
             }
         }
-        private int _tab_indicator_height;
 
         [Category("Material Skin"), Browsable(true), DisplayName("Tab Indicator Height"), DefaultValue(2)]
         public int TabIndicatorHeight 
         {
-            get { return _tab_indicator_height; }
+            get { return baseTabSelector.TabIndicatorHeight; }
             set
             {
                 if (value < 1)
                     throw new ArgumentOutOfRangeException("Tab Indicator Height", value, "Value should be > 0");
                 else
                 {
-                    _tab_indicator_height = value;
+                    baseTabSelector.TabIndicatorHeight = value;
                     Refresh();
                 }
             }
         }
 
-        public enum TabLabelStyle
-        {
-            Text,
-            Icon,
-            IconAndText,
-        }
-
-        private TabLabelStyle _tabLabel;
         [Category("Material Skin"), Browsable(true), DisplayName("Tab Label"), DefaultValue(TabLabelStyle.Text)]
         public TabLabelStyle TabLabel
         {
-            get { return _tabLabel; }
+            get { return baseTabSelector.TabLabel; }
             set
             {
-                _tabLabel = value;
-                if (_tabLabel == TabLabelStyle.IconAndText && Height < 24)
-                    Height = 24;
-
-                UpdateTabRects();
+                baseTabSelector.TabLabel = value;
                 Invalidate();
             }
         }
+
+        # region Forwarding events to baseTextBox
+
+        public new event EventHandler AutoSizeChanged
+        {
+            add
+            {
+                baseTabSelector.AutoSizeChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.AutoSizeChanged -= value;
+            }
+        }
+
+        public new event EventHandler BackgroundImageChanged
+        {
+            add
+            {
+                baseTabSelector.BackgroundImageChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.BackgroundImageChanged -= value;
+            }
+        }
+
+        public new event EventHandler BackgroundImageLayoutChanged
+        {
+            add
+            {
+                baseTabSelector.BackgroundImageLayoutChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.BackgroundImageLayoutChanged -= value;
+            }
+        }
+
+        public new event EventHandler BindingContextChanged
+        {
+            add
+            {
+                baseTabSelector.BindingContextChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.BindingContextChanged -= value;
+            }
+        }
+
+        public new event EventHandler CausesValidationChanged
+        {
+            add
+            {
+                baseTabSelector.CausesValidationChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.CausesValidationChanged -= value;
+            }
+        }
+
+        public new event UICuesEventHandler ChangeUICues
+        {
+            add
+            {
+                baseTabSelector.ChangeUICues += value;
+            }
+            remove
+            {
+                baseTabSelector.ChangeUICues -= value;
+            }
+        }
+
+        public new event EventHandler Click
+        {
+            add
+            {
+                baseTabSelector.Click += value;
+            }
+            remove
+            {
+                baseTabSelector.Click -= value;
+            }
+        }
+
+        public new event EventHandler ClientSizeChanged
+        {
+            add
+            {
+                baseTabSelector.ClientSizeChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ClientSizeChanged -= value;
+            }
+        }
+
+#if NETFRAMEWORK
+        public new event EventHandler ContextMenuChanged
+        {
+            add
+            {
+                baseTabSelector.ContextMenuChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ContextMenuChanged -= value;
+            }
+        }
+#endif
+
+        public new event EventHandler ContextMenuStripChanged
+        {
+            add
+            {
+                baseTabSelector.ContextMenuStripChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ContextMenuStripChanged -= value;
+            }
+        }
+
+        public new event ControlEventHandler ControlAdded
+        {
+            add
+            {
+                baseTabSelector.ControlAdded += value;
+            }
+            remove
+            {
+                baseTabSelector.ControlAdded -= value;
+            }
+        }
+
+        public new event ControlEventHandler ControlRemoved
+        {
+            add
+            {
+                baseTabSelector.ControlRemoved += value;
+            }
+            remove
+            {
+                baseTabSelector.ControlRemoved -= value;
+            }
+        }
+
+        public new event EventHandler CursorChanged
+        {
+            add
+            {
+                baseTabSelector.CursorChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.CursorChanged -= value;
+            }
+        }
+
+        public new event EventHandler Disposed
+        {
+            add
+            {
+                baseTabSelector.Disposed += value;
+            }
+            remove
+            {
+                baseTabSelector.Disposed -= value;
+            }
+        }
+
+        public new event EventHandler DockChanged
+        {
+            add
+            {
+                baseTabSelector.DockChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.DockChanged -= value;
+            }
+        }
+
+        public new event EventHandler DoubleClick
+        {
+            add
+            {
+                baseTabSelector.DoubleClick += value;
+            }
+            remove
+            {
+                baseTabSelector.DoubleClick -= value;
+            }
+        }
+
+        public new event DragEventHandler DragDrop
+        {
+            add
+            {
+                baseTabSelector.DragDrop += value;
+            }
+            remove
+            {
+                baseTabSelector.DragDrop -= value;
+            }
+        }
+
+        public new event DragEventHandler DragEnter
+        {
+            add
+            {
+                baseTabSelector.DragEnter += value;
+            }
+            remove
+            {
+                baseTabSelector.DragEnter -= value;
+            }
+        }
+
+        public new event EventHandler DragLeave
+        {
+            add
+            {
+                baseTabSelector.DragLeave += value;
+            }
+            remove
+            {
+                baseTabSelector.DragLeave -= value;
+            }
+        }
+
+        public new event DragEventHandler DragOver
+        {
+            add
+            {
+                baseTabSelector.DragOver += value;
+            }
+            remove
+            {
+                baseTabSelector.DragOver -= value;
+            }
+        }
+
+        public new event EventHandler EnabledChanged
+        {
+            add
+            {
+                baseTabSelector.EnabledChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.EnabledChanged -= value;
+            }
+        }
+
+        public new event EventHandler Enter
+        {
+            add
+            {
+                baseTabSelector.Enter += value;
+            }
+            remove
+            {
+                baseTabSelector.Enter -= value;
+            }
+        }
+
+        public new event EventHandler FontChanged
+        {
+            add
+            {
+                baseTabSelector.FontChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.FontChanged -= value;
+            }
+        }
+
+        public new event EventHandler ForeColorChanged
+        {
+            add
+            {
+                baseTabSelector.ForeColorChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ForeColorChanged -= value;
+            }
+        }
+
+        public new event GiveFeedbackEventHandler GiveFeedback
+        {
+            add
+            {
+                baseTabSelector.GiveFeedback += value;
+            }
+            remove
+            {
+                baseTabSelector.GiveFeedback -= value;
+            }
+        }
+
+        public new event EventHandler GotFocus
+        {
+            add
+            {
+                baseTabSelector.GotFocus += value;
+            }
+            remove
+            {
+                baseTabSelector.GotFocus -= value;
+            }
+        }
+
+        public new event EventHandler HandleCreated
+        {
+            add
+            {
+                baseTabSelector.HandleCreated += value;
+            }
+            remove
+            {
+                baseTabSelector.HandleCreated -= value;
+            }
+        }
+
+        public new event EventHandler HandleDestroyed
+        {
+            add
+            {
+                baseTabSelector.HandleDestroyed += value;
+            }
+            remove
+            {
+                baseTabSelector.HandleDestroyed -= value;
+            }
+        }
+
+        public new event HelpEventHandler HelpRequested
+        {
+            add
+            {
+                baseTabSelector.HelpRequested += value;
+            }
+            remove
+            {
+                baseTabSelector.HelpRequested -= value;
+            }
+        }
+
+        public new event EventHandler ImeModeChanged
+        {
+            add
+            {
+                baseTabSelector.ImeModeChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ImeModeChanged -= value;
+            }
+        }
+
+        public new event InvalidateEventHandler Invalidated
+        {
+            add
+            {
+                baseTabSelector.Invalidated += value;
+            }
+            remove
+            {
+                baseTabSelector.Invalidated -= value;
+            }
+        }
+
+        public new event KeyEventHandler KeyDown
+        {
+            add
+            {
+                baseTabSelector.KeyDown += value;
+            }
+            remove
+            {
+                baseTabSelector.KeyDown -= value;
+            }
+        }
+
+        public new event KeyPressEventHandler KeyPress
+        {
+            add
+            {
+                baseTabSelector.KeyPress += value;
+            }
+            remove
+            {
+                baseTabSelector.KeyPress -= value;
+            }
+        }
+
+        public new event KeyEventHandler KeyUp
+        {
+            add
+            {
+                baseTabSelector.KeyUp += value;
+            }
+            remove
+            {
+                baseTabSelector.KeyUp -= value;
+            }
+        }
+
+        public new event LayoutEventHandler Layout
+        {
+            add
+            {
+                baseTabSelector.Layout += value;
+            }
+            remove
+            {
+                baseTabSelector.Layout -= value;
+            }
+        }
+
+        public new event EventHandler Leave
+        {
+            add
+            {
+                baseTabSelector.Leave += value;
+            }
+            remove
+            {
+                baseTabSelector.Leave -= value;
+            }
+        }
+
+        public new event EventHandler LocationChanged
+        {
+            add
+            {
+                baseTabSelector.LocationChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.LocationChanged -= value;
+            }
+        }
+
+        public new event EventHandler LostFocus
+        {
+            add
+            {
+                baseTabSelector.LostFocus += value;
+            }
+            remove
+            {
+                baseTabSelector.LostFocus -= value;
+            }
+        }
+
+        public new event EventHandler MarginChanged
+        {
+            add
+            {
+                baseTabSelector.MarginChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.MarginChanged -= value;
+            }
+        }
+
+        public new event EventHandler MouseCaptureChanged
+        {
+            add
+            {
+                baseTabSelector.MouseCaptureChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseCaptureChanged -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseClick
+        {
+            add
+            {
+                baseTabSelector.MouseClick += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseClick -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseDoubleClick
+        {
+            add
+            {
+                baseTabSelector.MouseDoubleClick += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseDoubleClick -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseDown
+        {
+            add
+            {
+                baseTabSelector.MouseDown += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseDown -= value;
+            }
+        }
+
+        public new event EventHandler MouseEnter
+        {
+            add
+            {
+                baseTabSelector.MouseEnter += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseEnter -= value;
+            }
+        }
+
+        public new event EventHandler MouseHover
+        {
+            add
+            {
+                baseTabSelector.MouseHover += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseHover -= value;
+            }
+        }
+
+        public new event EventHandler MouseLeave
+        {
+            add
+            {
+                baseTabSelector.MouseLeave += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseLeave -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseMove
+        {
+            add
+            {
+                baseTabSelector.MouseMove += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseMove -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseUp
+        {
+            add
+            {
+                baseTabSelector.MouseUp += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseUp -= value;
+            }
+        }
+
+        public new event MouseEventHandler MouseWheel
+        {
+            add
+            {
+                baseTabSelector.MouseWheel += value;
+            }
+            remove
+            {
+                baseTabSelector.MouseWheel -= value;
+            }
+        }
+
+        public new event EventHandler Move
+        {
+            add
+            {
+                baseTabSelector.Move += value;
+            }
+            remove
+            {
+                baseTabSelector.Move -= value;
+            }
+        }
+
+        public new event EventHandler PaddingChanged
+        {
+            add
+            {
+                baseTabSelector.PaddingChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.PaddingChanged -= value;
+            }
+        }
+
+        public new event PaintEventHandler Paint
+        {
+            add
+            {
+                baseTabSelector.Paint += value;
+            }
+            remove
+            {
+                baseTabSelector.Paint -= value;
+            }
+        }
+
+        public new event EventHandler ParentChanged
+        {
+            add
+            {
+                baseTabSelector.ParentChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.ParentChanged -= value;
+            }
+        }
+
+        public new event PreviewKeyDownEventHandler PreviewKeyDown
+        {
+            add
+            {
+                baseTabSelector.PreviewKeyDown += value;
+            }
+            remove
+            {
+                baseTabSelector.PreviewKeyDown -= value;
+            }
+        }
+
+        public new event EventHandler RegionChanged
+        {
+            add
+            {
+                baseTabSelector.RegionChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.RegionChanged -= value;
+            }
+        }
+
+        public new event EventHandler Resize
+        {
+            add
+            {
+                baseTabSelector.Resize += value;
+            }
+            remove
+            {
+                baseTabSelector.Resize -= value;
+            }
+        }
+
+        public new event EventHandler SizeChanged
+        {
+            add
+            {
+                baseTabSelector.SizeChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.SizeChanged -= value;
+            }
+        }
+
+        public new event EventHandler TabIndexChanged
+        {
+            add
+            {
+                baseTabSelector.TabIndexChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.TabIndexChanged -= value;
+            }
+        }
+
+        public new event EventHandler TabStopChanged
+        {
+            add
+            {
+                baseTabSelector.TabStopChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.TabStopChanged -= value;
+            }
+        }
+
+        public new event EventHandler Validated
+        {
+            add
+            {
+                baseTabSelector.Validated += value;
+            }
+            remove
+            {
+                baseTabSelector.Validated -= value;
+            }
+        }
+
+        public new event CancelEventHandler Validating
+        {
+            add
+            {
+                baseTabSelector.Validating += value;
+            }
+            remove
+            {
+                baseTabSelector.Validating -= value;
+            }
+        }
+
+        public new event EventHandler VisibleChanged
+        {
+            add
+            {
+                baseTabSelector.VisibleChanged += value;
+            }
+            remove
+            {
+                baseTabSelector.VisibleChanged -= value;
+            }
+        }
+        # endregion
 
 
         public MaterialTabSelector()
         {
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
+            baseTabSelector = new MaterialBaseTabSelector();
+            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
             TabIndicatorHeight = 2;
             TabLabel = TabLabelStyle.Text;
 
             Size = new Size(480, 48);
+            //baseTabSelector.Location = new Point(0, 0);
+            //baseTabSelector.Dock = DockStyle.Fill;
+            baseTabSelector.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Controls.Add(baseTabSelector);
+            originalSize = Size;
+            originalLocation = Location;
 
-            _animationManager = new AnimationManager
-            {
-                AnimationType = AnimationType.EaseOut,
-                Increment = 0.04
-            };
-            _animationManager.OnAnimationProgress += sender => Invalidate();
+            Size = new Size(480, 30);
+            FirstTabPadding = 10;
+            TabWidthMin = 60;
+            TabHeaderPadding = 6;
         }
 
-        protected override void OnCreateControl()
+        public void UpdateTabRect()
         {
-            base.OnCreateControl();
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var g = e.Graphics;
-            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-
-            g.Clear(SkinManager.ColorScheme.PrimaryColor);
-
-            if (_baseTabControl == null) return;
-
-            if (!_animationManager.IsAnimating() || _tabRects == null || _tabRects.Count != _baseTabControl.TabCount)
-                UpdateTabRects();
-
-            var animationProgress = _animationManager.GetProgress();
-
-            //Click feedback
-            if (_animationManager.IsAnimating())
-            {
-                var rippleBrush = new SolidBrush(Color.FromArgb((int)(51 - (animationProgress * 50)), Color.White));
-                var rippleSize = (int)(animationProgress * _tabRects[_baseTabControl.SelectedIndex].Width * 1.75);
-
-                g.SetClip(_tabRects[_baseTabControl.SelectedIndex]);
-                g.FillEllipse(rippleBrush, new Rectangle(_animationSource.X - rippleSize / 2, _animationSource.Y - rippleSize / 2, rippleSize, rippleSize));
-                g.ResetClip();
-                rippleBrush.Dispose();
-            }
-
-            //Draw tab headers
-            if (_tab_over_index >= 0)
-            { 
-                //Change mouse over tab background color
-                g.FillRectangle(SkinManager.BackgroundHoverBrush , _tabRects[_tab_over_index].X, _tabRects[_tab_over_index].Y , _tabRects[_tab_over_index].Width, _tabRects[_tab_over_index].Height - _tab_indicator_height);
-            }
-
-            foreach (TabPage tabPage in _baseTabControl.TabPages)
-            {
-                var currentTabIndex = _baseTabControl.TabPages.IndexOf(tabPage);
-
-                if (_tabLabel != TabLabelStyle.Icon)
-                {
-                    // Text
-                    using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
-                    {
-                        Size textSize = TextRenderer.MeasureText(_baseTabControl.TabPages[currentTabIndex].Text, Font);
-                        Rectangle textLocation = new Rectangle(
-                            _tabRects[currentTabIndex].X + (tabHeaderPadding / 2),
-                            0,
-                            _tabRects[currentTabIndex].Width - (tabHeaderPadding),
-                            Height);
-
-                        if (_tabLabel == TabLabelStyle.IconAndText)
-                        {
-                            //textLocation.Y = 46;
-                            //textLocation.Height = 26;
-                        }
-
-                        if (((tabHeaderPadding * 2) + textSize.Width < TabWidthMax))
-                        {
-                            NativeText.DrawTransparentText(
-                            CharacterCasing == CustomCharacterCasing.Upper ? tabPage.Text.ToUpper() :
-                            CharacterCasing == CustomCharacterCasing.Lower ? tabPage.Text.ToLower() :
-                            CharacterCasing == CustomCharacterCasing.Proper ? textInfo.ToTitleCase(tabPage.Text.ToLower()) : tabPage.Text,
-                            Font,
-                            Color.FromArgb(CalculateTextAlpha(currentTabIndex, animationProgress), SkinManager.ColorScheme.TextColor),
-                            textLocation.Location,
-                            textLocation.Size,
-                            NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);
-                        }
-                        else
-                        {
-                            if (_tabLabel == TabLabelStyle.IconAndText)
-                            {
-                                //textLocation.Y = 40;
-                                //textLocation.Height = 26;
-                            }
-                            NativeText.DrawMultilineTransparentText(
-                            CharacterCasing == CustomCharacterCasing.Upper ? tabPage.Text.ToUpper() :
-                            CharacterCasing == CustomCharacterCasing.Lower ? tabPage.Text.ToLower() :
-                            CharacterCasing == CustomCharacterCasing.Proper ? textInfo.ToTitleCase(tabPage.Text.ToLower()) : tabPage.Text,
-                            SkinManager.getFontByType(MaterialSkinManager.fontType.Body2),
-                            Color.FromArgb(CalculateTextAlpha(currentTabIndex, animationProgress), SkinManager.ColorScheme.TextColor),
-                            textLocation.Location,
-                            textLocation.Size,
-                            NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);
-                        }
-                    }
-                }
-
-                if (_tabLabel != TabLabelStyle.Text)
-                {
-                    // Icons
-                    if (_baseTabControl.ImageList != null && (!String.IsNullOrEmpty(tabPage.ImageKey) | tabPage.ImageIndex > -1))
-                    {
-                        Rectangle iconRect = new Rectangle(
-                            _tabRects[currentTabIndex].X + (_tabRects[currentTabIndex].Width / 2) - (ICON_SIZE / 2),
-                            _tabRects[currentTabIndex].Y + (_tabRects[currentTabIndex].Height / 2) - (ICON_SIZE / 2),
-                            ICON_SIZE, ICON_SIZE);
-                        if (_tabLabel == TabLabelStyle.IconAndText)
-                        {
-                            iconRect.Y = 12;
-                        }
-                        g.DrawImage(!String.IsNullOrEmpty(tabPage.ImageKey) ? _baseTabControl.ImageList.Images[tabPage.ImageKey]: _baseTabControl.ImageList.Images[tabPage.ImageIndex], iconRect);
-                    }
-                }
-           }
-
-            //Animate tab indicator
-            var previousSelectedTabIndexIfHasOne = _previousSelectedTabIndex == -1 ? _baseTabControl.SelectedIndex : _previousSelectedTabIndex;
-            var previousActiveTabRect = _tabRects[previousSelectedTabIndexIfHasOne];
-            var activeTabPageRect = _tabRects[_baseTabControl.SelectedIndex];
-
-            var y = activeTabPageRect.Bottom - _tab_indicator_height;
-            var x = previousActiveTabRect.X + (int)((activeTabPageRect.X - previousActiveTabRect.X) * animationProgress);
-            var width = previousActiveTabRect.Width + (int)((activeTabPageRect.Width - previousActiveTabRect.Width) * animationProgress);
-
-            g.FillRectangle(SkinManager.ColorScheme.AccentBrush, x, y, width, _tab_indicator_height);
-        }
-
-        private int CalculateTextAlpha(int tabIndex, double animationProgress)
-        {
-            int primaryA = SkinManager.TextHighEmphasisColor.A;
-            int secondaryA = SkinManager.TextMediumEmphasisColor.A;
-
-            if (tabIndex == _baseTabControl.SelectedIndex && !_animationManager.IsAnimating())
-            {
-                return primaryA;
-            }
-            if (tabIndex != _previousSelectedTabIndex && tabIndex != _baseTabControl.SelectedIndex)
-            {
-                return secondaryA;
-            }
-            if (tabIndex == _previousSelectedTabIndex)
-            {
-                return primaryA - (int)((primaryA - secondaryA) * animationProgress);
-            }
-            return secondaryA + (int)((primaryA - secondaryA) * animationProgress);
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-
-            if (_tabRects == null) UpdateTabRects();
-            for (var i = 0; i < _tabRects.Count; i++)
-            {
-                if (_tabRects[i].Contains(e.Location))
-                {
-                    _baseTabControl.SelectedIndex = i;
-                }
-            }
-
-            _animationSource = e.Location;
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            if (DesignMode)
-                return;
-
-            if (_tabRects == null)
-                UpdateTabRects();
-
-            int old_tab_over_index = _tab_over_index;
-            _tab_over_index = -1;
-            for (var i = 0; i < _tabRects.Count; i++)
-            {
-                if (_tabRects[i].Contains(e.Location))
-                {
-                    Cursor = Cursors.Hand;
-                    _tab_over_index = i;
-                    break;
-                }
-            }
-            if (_tab_over_index == -1)
-                Cursor = Cursors.Arrow;
-            if (old_tab_over_index != _tab_over_index)
-                Invalidate();
-        }
-
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            base.OnMouseLeave(e);
-            if (DesignMode)
-                return;
-
-            if (_tabRects == null)
-                UpdateTabRects();
-
-            Cursor = Cursors.Arrow;
-            _tab_over_index = -1;
-            Invalidate();
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            UpdateTabRects();
-
-            Height = Height < 24 ? 24 : Height;
-            Size = new Size(Width, Height);
-            Invalidate();
-        }
-
-        private void UpdateTabRects()
-        {
-            _tabRects = new List<Rectangle>();
-
-            //If there isn't a base tab control, the rects shouldn't be calculated
-            //If there aren't tab pages in the base tab control, the list should just be empty which has been set already; exit the void
-            if (_baseTabControl == null || _baseTabControl.TabCount == 0) return;
-
-            //Calculate the bounds of each tab header specified in the base tab control
-            using (var b = new Bitmap(1, 1))
-            {
-                using (var g = Graphics.FromImage(b))
-                {
-                    using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
-                    {
-                        for (int i = 0; i < _baseTabControl.TabPages.Count; i++)
-                        {
-                            Size textSize = TextRenderer.MeasureText(_baseTabControl.TabPages[i].Text, Font);
-                            if (_tabLabel == TabLabelStyle.Icon) textSize.Width = ICON_SIZE;
-
-                            int TabWidth = (tabHeaderPadding * 2) + textSize.Width;
-                            if (TabWidth > TabWidthMax)
-                                TabWidth = TabWidthMax;
-                            else if (TabWidth < TabWidthMin)
-                                TabWidth = TabWidthMin;
-
-                            if (i==0)
-                                _tabRects.Add(new Rectangle(FirstTabPadding - (TabHeaderPadding), 0, TabWidth, Height));
-                            else
-                                _tabRects.Add(new Rectangle(_tabRects[i - 1].Right, 0, TabWidth, Height));
-                        }
-                    }
-                }
-            }
+            baseTabSelector.UpdateTabRects();
         }
     }
 }

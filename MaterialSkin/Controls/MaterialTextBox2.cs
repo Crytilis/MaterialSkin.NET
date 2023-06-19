@@ -49,17 +49,20 @@ namespace MaterialSkin.Controls
 
         //Material Skin properties
 
-        private bool _UseTallSize;
+        private bool useTallSize;
 
-        [Category("Material Skin"), DefaultValue(true), Description("Using a larger size enables the hint to always be visible")]
-        public bool UseTallSize
+        [Category("Material Skin"), DisplayName("UseTallSize"), DefaultValue(true), Description("Using a larger size enables the hint to always be visible")]
+        public bool _UseTallSize
         {
-            get { return _UseTallSize; }
+            get { return useTallSize; }
             set
             {
-                _UseTallSize = value;
-                UpdateHeight();
-                UpdateRects();
+                useTallSize = value;
+                if(!string.IsNullOrEmpty(HelperText) || !string.IsNullOrEmpty(Hint))
+                {
+                    UpdateHeight();
+                    UpdateRects();
+                }
                 Invalidate();
             }
         }
@@ -73,11 +76,15 @@ namespace MaterialSkin.Controls
             {
                 _showAssistiveText = value;
                 if (_showAssistiveText)
+                {
                     _helperTextHeight = HELPER_TEXT_HEIGHT;
+                    UpdateHeight();
+                    UpdateRects();
+                }
                 else
+                {
                     _helperTextHeight = 0;
-                UpdateHeight();
-                //UpdateRects();
+                }
                 Invalidate();
             }
         }
@@ -117,9 +124,40 @@ namespace MaterialSkin.Controls
                 baseTextBox.Hint = value;
                 hasHint = !String.IsNullOrEmpty(baseTextBox.Hint);
                 UpdateRects();
+                UpdateHeight();
                 Invalidate();
             }
         }
+
+        private Padding hintPadding;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Padding HintPadding
+        {
+            get => hintPadding;
+            set {
+                hintPadding = value;
+                Invalidate();
+            }
+        }
+        
+        private Font hintFont;
+        [Category("Material Skin"), Localizable(true)]
+        public Font HintFont
+        {
+            get => hintFont;
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.HintFont = font;
+                }
+                hintFont = font;
+                Invalidate();
+            }
+        }
+
 
         [Category("Material Skin"), DefaultValue(true)]
         public bool UseAccent { get; set; }
@@ -225,10 +263,35 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Browsable(false)]
-        public override Color BackColor { get { return Parent == null ? SkinManager.BackgroundColor : Parent.BackColor; } }
+        private bool backcolorChanged = false;
+        [Browsable(true)]
+        public override Color BackColor { 
+            get 
+            { 
+                if(!backcolorChanged)
+                {
+                    return Parent == null ? SkinManager.BackgroundColor : Parent.BackColor;
+                } else
+                {
+                    return base.BackColor;
+                }
+            }
+            set
+            {
+                backcolorChanged = true;
+                base.BackColor = value;
+            }
+        }
 
-        public override string Text { get { return baseTextBox.Text; } set { baseTextBox.Text = value; UpdateRects(); } }
+        public override string Text
+        {
+            get { return baseTextBox?.Text ?? ""; }
+            set
+            { 
+                baseTextBox.InvokeIfRequired(() => { baseTextBox.Text = value; });
+                UpdateRects();
+            }
+        }
 
         [Category("Appearance")]
         public HorizontalAlignment TextAlign { get { return baseTextBox.TextAlign; } set { baseTextBox.TextAlign = value; } }
@@ -667,17 +730,17 @@ namespace MaterialSkin.Controls
             }
         }
 
-        public new event EventHandler Enter
-        {
-            add
-            {
-                baseTextBox.Enter += value;
-            }
-            remove
-            {
-                baseTextBox.Enter -= value;
-            }
-        }
+        //public new event EventHandler Enter
+        //{
+        //    add
+        //    {
+        //        baseTextBox.Enter += value;
+        //    }
+        //    remove
+        //    {
+        //        baseTextBox.Enter -= value;
+        //    }
+        //}
 
         public new event EventHandler FontChanged
         {
@@ -1325,6 +1388,8 @@ namespace MaterialSkin.Controls
 
         public MaterialTextBox2()
         {
+            //Fuer TriData angepasste standard werte
+            // Size, Font, HintFont & HintPadding
             // Material Properties
             UseAccent = true;
             MouseState = MouseState.OUT;
@@ -1350,7 +1415,9 @@ namespace MaterialSkin.Controls
                 preProcessIcons();
             };
 
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8.25f, FontStyle.Regular, GraphicsUnit.Point);
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7.25f, FontStyle.Regular, GraphicsUnit.Point);
+            HintPadding = new Padding(10, -2, 0, 0);
 
             baseTextBox = new BaseTextBox
             {
@@ -1365,9 +1432,9 @@ namespace MaterialSkin.Controls
 
             Enabled = true;
             ReadOnly = false;
-            Size = new Size(250, HEIGHT);
+            Size = new Size(250, 25);
 
-            UseTallSize = true;
+            _UseTallSize = true;
             PrefixSuffix = PrefixSuffixTypes.None;
             ShowAssistiveText = false;
             HelperText = string.Empty;
@@ -1416,18 +1483,21 @@ namespace MaterialSkin.Controls
         {
             var g = pevent.Graphics;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            g.Clear(Parent.BackColor);
-            SolidBrush backBrush = new SolidBrush(DrawHelper.BlendColor(Parent.BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A));
+            g.Clear(BackColor);
+            SolidBrush backBrush = new SolidBrush(DrawHelper.BlendColor(BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A));
+            SolidBrush backDisabledBrush = new SolidBrush(DrawHelper.BlendColor(BackColor, SkinManager.BackgroundDisabledColor).Darken(.2f));
             
             //backColor
             g.FillRectangle(
-                !Enabled ? SkinManager.BackgroundDisabledBrush : // Disabled
+                !Enabled ? backDisabledBrush : // Disabled
+                ReadOnly ? SkinManager.BackgroundDisabledBrush :  // Readonly
                 isFocused ? SkinManager.BackgroundFocusBrush :  // Focused
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? SkinManager.BackgroundHoverBrush : // Hover
                 backBrush, // Normal
                 ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, LINE_Y);
 
-            baseTextBox.BackColor = !Enabled ? ColorHelper.RemoveAlpha(SkinManager.BackgroundDisabledColor, BackColor) : //Disabled
+            baseTextBox.BackColor = !Enabled ? backDisabledBrush.Color : //Disabled
+                ReadOnly ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundDisabledColor, SkinManager.BackgroundDisabledColor.A) : //Readonly
                 isFocused ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundFocusColor, SkinManager.BackgroundFocusColor.A) : //Focused
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundHoverColor, SkinManager.BackgroundHoverColor.A) : // Hover
                 DrawHelper.BlendColor(BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A); // Normal
@@ -1453,8 +1523,13 @@ namespace MaterialSkin.Controls
             // HintText
             bool userTextPresent = !String.IsNullOrEmpty(Text);
             Rectangle helperTextRect = new Rectangle(LEFT_PADDING - _prefix_padding, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - (LEFT_PADDING - _prefix_padding) - _right_padding, HELPER_TEXT_HEIGHT);
-            Rectangle hintRect = new Rectangle(_left_padding - _prefix_padding, HINT_TEXT_SMALL_Y, Width - (_left_padding - _prefix_padding) - _right_padding, HINT_TEXT_SMALL_SIZE);
-            int hintTextSize = 12;
+            int hintFontSize = HINT_TEXT_SMALL_SIZE;
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+            {
+                hintFontSize = NativeText.MeasureString(Hint, HintFont).Height;
+            }
+            Rectangle hintRect = new Rectangle(HintPadding.Left - _prefix_padding, HintPadding.Top, Width - (HintPadding.Left - _prefix_padding) - HintPadding.Right, hintFontSize);
+            float hintTextSize = Font.Size - 2;
 
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -1490,10 +1565,10 @@ namespace MaterialSkin.Controls
                 {
                     Rectangle prefixRect = new Rectangle(
                         _left_padding - _prefix_padding,
-                        hasHint && UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
+                        hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
 //                        NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width,
                         _prefix_padding,
-                        hasHint && UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
+                        hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
 
                     // Draw Prefix text 
                     NativeText.DrawTransparentText(
@@ -1513,10 +1588,10 @@ namespace MaterialSkin.Controls
                 {
                     Rectangle suffixRect = new Rectangle(
                         Width - _right_padding ,
-                        hasHint && UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
+                        hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
                         //NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING,
                         _suffix_padding,
-                        hasHint && UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
+                        hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
 
                     // Draw Suffix text 
                     NativeText.DrawTransparentText(
@@ -1530,13 +1605,13 @@ namespace MaterialSkin.Controls
             }
 
             // Draw hint text
-            if(hasHint && UseTallSize && (isFocused || userTextPresent))
+            if(hasHint && _UseTallSize && (isFocused || userTextPresent))
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    HintFont,
                     Enabled ? !_errorState || (!userTextPresent && !isFocused) ? isFocused ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // Focus Accent
                     SkinManager.ColorScheme.PrimaryColor : // Focus Primary
@@ -1554,9 +1629,11 @@ namespace MaterialSkin.Controls
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
+
                     NativeText.DrawTransparentText(
                     HelperText,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    font,
                     Enabled ? !_errorState || (!userTextPresent && !isFocused) ? isFocused ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // Focus Accent
                     SkinManager.ColorScheme.PrimaryColor : // Focus Primary
@@ -1574,9 +1651,11 @@ namespace MaterialSkin.Controls
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
+
                     NativeText.DrawTransparentText(
                     ErrorMessage,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    font,
                     Enabled ? 
                     SkinManager.BackgroundHoverRedColor : // error state
                     SkinManager.TextDisabledOrHintColor, // Disabled
@@ -1658,19 +1737,13 @@ namespace MaterialSkin.Controls
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-
             UpdateRects();
             preProcessIcons();
+            UpdateHeight();
 
-            HEIGHT = Height < 10 ? 10 : Height;
-            if(_UseTallSize)
-            {
-                HEIGHT = Height < 32 ? 32 : Height;
-            }
-
+            HEIGHT = Height < 18 ? 18 : Height;
             Size = new Size(Width, HEIGHT);
             LINE_Y = HEIGHT - ACTIVATION_INDICATOR_HEIGHT - _helperTextHeight;
-
         }
 
         protected override void OnCreateControl()
@@ -1889,10 +1962,14 @@ namespace MaterialSkin.Controls
 
         private void UpdateHeight()
         {
-            HEIGHT = _UseTallSize ? 48 : Height;
-            HEIGHT = Height < 10 ? HEIGHT : Height;
+            HEIGHT = Height < 18 ? 18 : Height;
             HEIGHT += _helperTextHeight;
             Size = new Size(Size.Width, HEIGHT);
+
+            //HEIGHT = _UseTallSize ? 48 : Height;
+            //HEIGHT = Height < 10 ? HEIGHT : Height;
+            //HEIGHT += _helperTextHeight;
+            //Size = new Size(Size.Width, HEIGHT);
         }
 
         private void UpdateRects()
@@ -1911,7 +1988,7 @@ namespace MaterialSkin.Controls
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
-                    _prefix_padding = NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING;
+                    _prefix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
                     _left_padding += _prefix_padding;
                 }
             }
@@ -1922,24 +1999,35 @@ namespace MaterialSkin.Controls
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
-                    _suffix_padding = NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING;
+                    _suffix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
                     _right_padding += _suffix_padding;
                 }
             }
             else
                 _suffix_padding = 0;
 
-            if (hasHint && UseTallSize && (isFocused || !String.IsNullOrEmpty(Text)))
+            if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text)))
             {
-                baseTextBox.Location = new Point(_left_padding, 22);
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                {
+                    string text = string.IsNullOrEmpty(Text) ? "0" : Text;
+                    var newFontHeight = NativeText.MeasureString(text, Font).Height;
+                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2 + 4);
+                    baseTextBox.Height = newFontHeight;
+                }
                 baseTextBox.Width = Width - (_left_padding + _right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
             }
             else
             {
-                baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - FONT_HEIGHT / 2);
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                {
+                    string hint = string.IsNullOrEmpty(Hint) ? "0" : Hint;
+                    var textToMesure = string.IsNullOrEmpty(Text) ? hint : Text;
+                    var newFontHeight = NativeText.MeasureString(textToMesure, Font).Height;
+                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2);
+                    baseTextBox.Height = newFontHeight;
+                }
                 baseTextBox.Width = Width - (_left_padding + _right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
             }
 
             _leadingIconBounds = new Rectangle(8, ((LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);

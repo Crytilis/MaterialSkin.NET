@@ -9,7 +9,15 @@
     public class MaterialCard : Panel, IMaterialControl
     {
         private bool drawShadows;
+        private bool useCustomBackgroundColor;
         private int radius;
+
+        [Category("Material Skin"), DefaultValue(false), Description("Use Control colors set by user"), DisplayName("UseCustomBackgroundColor")]
+        public bool _UseCustomBackgroundColor
+        {
+            get => useCustomBackgroundColor;
+            set { useCustomBackgroundColor = value; Invalidate(); }
+        }
 
         [Category("Material Skin"), DefaultValue(true), Description("Draw Shadows around control")]
         public bool DrawShadows
@@ -48,6 +56,7 @@
         public MaterialCard()
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+            DrawShadows = true;
             Paint += new PaintEventHandler(paintControl);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
@@ -71,11 +80,13 @@
             Graphics gp = e.Graphics;
             Rectangle rect = new Rectangle(Location, ClientRectangle.Size);
             gp.SmoothingMode = SmoothingMode.AntiAlias;
-            DrawHelper.DrawSquareShadow(gp, rect);
+            DrawHelper.DrawSquareShadow(gp, rect, Radius);
         }
 
         protected override void InitLayout()
         {
+            base.InitLayout();
+            Invalidate();
             LocationChanged += (sender, e) => { if (DrawShadows) Parent?.Invalidate(); };
             ForeColor = SkinManager.TextHighEmphasisColor;
         }
@@ -121,7 +132,10 @@
         protected override void OnBackColorChanged(EventArgs e)
         {
             base.OnBackColorChanged(e);
-            BackColor = SkinManager.BackgroundColor;
+            if(!_UseCustomBackgroundColor)
+            {
+                BackColor = SkinManager.BackgroundColor;
+            }
         }
 
         private void paintControl(Object sender, PaintEventArgs e)
@@ -138,8 +152,8 @@
             GraphicsPath cardPath = DrawHelper.CreateRoundRect(cardRectF, Radius);
 
             // button shadow (blend with form shadow)
-            DrawHelper.DrawSquareShadow(g, ClientRectangle);
-
+            DrawHelper.DrawSquareShadow(g, ClientRectangle, Radius);
+            
             // Draw card
             using (SolidBrush normalBrush = new SolidBrush(BackColor))
             {

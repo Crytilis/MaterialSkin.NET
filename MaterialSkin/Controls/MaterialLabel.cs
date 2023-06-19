@@ -65,8 +65,23 @@
             set
             {
                 _fontType = value;
-                Font = SkinManager.getFontByType(_fontType);
+                if(value != MaterialSkinManager.fontType.Custom)
+                {
+                    Font = SkinManager.getFontByType(_fontType);
+                }
                 Refresh();
+            }
+        }
+
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
             }
         }
 
@@ -83,7 +98,7 @@
                 Size strSize;
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
-                    strSize = NativeText.MeasureLogString(Text, SkinManager.getLogFontByType(_fontType));
+                    strSize = NativeText.MeasureString(Text, Font);
                     strSize.Width += 1; // necessary to avoid a bug when autosize = true
                 }
                 return strSize;
@@ -181,17 +196,12 @@
 
                 NativeText.DrawMultilineTransparentText(
                     Text,
-                    SkinManager.getLogFontByType(_fontType),
+                    Font,
                     color,
                     ClientRectangle.Location,
                     ClientRectangle.Size,
                     Alignment);
             }
-        }
-
-        protected override void InitLayout()
-        {
-            Font = SkinManager.getFontByType(_fontType);
         }
     }
 }

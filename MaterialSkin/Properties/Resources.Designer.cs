@@ -83,6 +83,46 @@ namespace MaterialSkin.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
+        public static byte[] MaterialIcons_Regular {
+            get {
+                object obj = ResourceManager.GetObject("MaterialIcons_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        public static byte[] MaterialIconsOutlined_Regular {
+            get {
+                object obj = ResourceManager.GetObject("MaterialIconsOutlined_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        public static byte[] MaterialIconsRound_Regular {
+            get {
+                object obj = ResourceManager.GetObject("MaterialIconsRound_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        public static byte[] MaterialIconsSharp_Regular {
+            get {
+                object obj = ResourceManager.GetObject("MaterialIconsSharp_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
         public static byte[] Roboto_Black {
             get {
                 object obj = ResourceManager.GetObject("Roboto_Black", resourceCulture);

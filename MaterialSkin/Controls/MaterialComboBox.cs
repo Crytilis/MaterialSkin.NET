@@ -11,7 +11,7 @@
     public class MaterialComboBox : ComboBox, IMaterialControl
     {
         // For some reason, even when overriding the AutoSize property, it doesn't appear on the properties panel, so we have to create a new one.
-        [Browsable(true), EditorBrowsable(EditorBrowsableState.Always), Category("Layout")]
+        [Browsable(true), EditorBrowsable(EditorBrowsableState.Always), Category("Layout"), DefaultValue(false)]
         private bool _AutoResize;
 
         public bool AutoResize
@@ -21,6 +21,22 @@
             {
                 _AutoResize = value;
                 recalculateAutoSize();
+            }
+        }
+
+        private Size size;
+        [Category("Material Skin"), DefaultValue(typeof(Size), "0; 27")]
+        public Size CustomSize
+        {
+            get
+            {
+                return size.Width == 0 ? base.Size : size;
+            }
+            set
+            {
+                size = value;
+                setHeightVars();
+                Invalidate();
             }
         }
 
@@ -34,6 +50,18 @@
         [Browsable(false)]
         public MouseState MouseState { get; set; }
 
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
         private bool _UseTallSize;
 
         [Category("Material Skin"), DefaultValue(true), Description("Using a larger size enables the hint to always be visible")]
@@ -43,6 +71,20 @@
             set
             {
                 _UseTallSize = value;
+                setHeightVars();
+                Invalidate();
+            }
+        }
+
+        private bool useCustomHeight;
+
+        [Category("Material Skin"), DefaultValue(true)]
+        public bool UseCustomHeight
+        {
+            get { return useCustomHeight; }
+            set
+            {
+                useCustomHeight = value;
                 setHeightVars();
                 Invalidate();
             }
@@ -62,6 +104,48 @@
                 _hint = value;
                 hasHint = !String.IsNullOrEmpty(Hint);
                 Invalidate();
+            }
+        }
+
+        private Font hintFont;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Font HintFont
+        {
+            get => hintFont;
+            set
+            {
+                hintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                Invalidate();
+            }
+        }
+
+        private Padding hintPadding;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Padding HintPadding
+        {
+            get => hintPadding;
+            set
+            {
+                hintPadding = value;
+                Invalidate();
+            }
+        }
+
+        [DefaultValue(null)]
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Bindable(true)]
+        public new object SelectedValue
+        {
+            get
+            {
+                return base.SelectedValue;
+            }
+            set
+            {
+                base.SelectedValue = value;
             }
         }
 
@@ -106,7 +190,13 @@
             UseTallSize = true;
             MaxDropDownItems = 4;
 
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            //Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            //HintFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Caption);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8.25f, FontStyle.Regular, GraphicsUnit.Point);
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7.25f, FontStyle.Regular, GraphicsUnit.Point);
+            HintPadding = new Padding(10, -5, 0, 0);
+            UseCustomHeight = true;
+            CustomSize = new Size(Width, 27);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
             DrawMode = DrawMode.OwnerDrawVariable;
@@ -204,7 +294,7 @@
             // HintText
             bool userTextPresent = SelectedIndex >= 0;
             Rectangle hintRect = new Rectangle(SkinManager.FORM_PADDING, ClientRectangle.Y, Width, LINE_Y);
-            int hintTextSize = (int)Font.Size;
+            float hintTextSize = SelectedIndex >= 0 ? HintFont.SizeInPoints : Font.SizeInPoints;
 
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -215,8 +305,8 @@
                 if (hasHint && UseTallSize && (DroppedDown || Focused || SelectedIndex >= 0))
                 {
                     // hint text
-                    hintRect = new Rectangle(SkinManager.FORM_PADDING, TEXT_SMALL_Y, Width, TEXT_SMALL_SIZE);
-                    hintTextSize = 8;
+                    hintRect = new Rectangle(HintPadding.Left, HintPadding.Top, Width - HintPadding.Left - HintPadding.Right, TEXT_SMALL_SIZE);
+                    hintTextSize = SelectedIndex >= 0 ? HintFont.SizeInPoints : Font.SizeInPoints;
                 }
 
                 // bottom line
@@ -238,7 +328,7 @@
                         userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_Y) : ClientRectangle.Y + (int)((TEXT_SMALL_Y - ClientRectangle.Y) * animationProgress),
                         Width,
                         userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_SIZE) : (int)(LINE_Y + (TEXT_SMALL_SIZE - LINE_Y) * animationProgress));
-                    hintTextSize = userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? 8 : (int)(Font.Size + (8 - Font.Size) * animationProgress);
+                    hintTextSize = userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? Font.SizeInPoints : (int)(Font.Size + (8 - Font.Size) * animationProgress);
                 }
 
                 // Line Animation
@@ -258,11 +348,10 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
                 // Draw user text
                 NativeText.DrawTransparentText(
                     Text,
-                    font,
+                    Font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textRect.Location,
                     textRect.Size,
@@ -276,12 +365,12 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
-                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, HintFont.Style, GraphicsUnit.Point);
 
                     NativeText.DrawTransparentText(
                     Hint,
                     font,
-                    Enabled ? DroppedDown || Focused ? 
+                    Enabled ? DroppedDown || Focused ?
                     SelectedColor : // Focus 
                     SkinManager.TextMediumEmphasisColor : // not focused
                     SkinManager.TextDisabledOrHintColor, // Disabled
@@ -302,7 +391,6 @@
             if (e.Index < 0 || e.Index > Items.Count || !Focused) return;
 
             Graphics g = e.Graphics;
-
             // Draw the background of the item.
             g.FillRectangle(SkinManager.BackgroundBrush, e.Bounds);
 
@@ -322,8 +410,8 @@
                 }
                 else
                 {
-                    var table = ((DataRow)Items[e.Index].GetType().GetProperty("Row").GetValue(Items[e.Index])).Table;
-                    Text = table.Rows[e.Index][DisplayMember].ToString();
+                    var table = ((DataRow)Items[e.Index].GetType().GetProperty("Row").GetValue(Items[e.Index]));
+                    Text = table[DisplayMember].ToString();
                 }
             }
             else
@@ -333,11 +421,9 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
-
                 NativeText.DrawTransparentText(
                 Text,
-                font,
+                Font,
                 SkinManager.TextHighEmphasisNoAlphaColor,
                 new Point(e.Bounds.Location.X + SkinManager.FORM_PADDING, e.Bounds.Location.Y),
                 new Size(e.Bounds.Size.Width - SkinManager.FORM_PADDING * 2, e.Bounds.Size.Height),
@@ -366,7 +452,8 @@
 
         private void setHeightVars()
         {
-            HEIGHT = UseTallSize ? 42 : 32;
+            var defaultHeight = UseTallSize ? 42 : 32;
+            HEIGHT = UseCustomHeight ? (CustomSize.Height < 16 ? 16 : CustomSize.Height) : defaultHeight;
             Size = new Size(Size.Width, HEIGHT);
             LINE_Y = HEIGHT - BOTTOM_PADDING;
             ItemHeight = HEIGHT - 7;
@@ -387,7 +474,7 @@
                 var itemsList = this.Items.Cast<object>().Select(item => item.ToString());
                 foreach (string s in itemsList)
                 {
-                    int newWidth = NativeText.MeasureLogString(s, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + vertScrollBarWidth + padding;
+                    int newWidth = NativeText.MeasureString(s, Font).Width + vertScrollBarWidth + padding;
                     if (w < newWidth) w = newWidth;
                 }
             }

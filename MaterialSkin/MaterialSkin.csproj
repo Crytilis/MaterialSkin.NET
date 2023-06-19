@@ -29,6 +29,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -53,6 +55,9 @@
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ColorScheme.cs" />
+    <Compile Include="Controls\BaseNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\BaseTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -153,6 +158,9 @@
     <Compile Include="Controls\MaterialCard.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\MaterialBaseTabSelector.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MaterialTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -181,6 +189,7 @@
     <Compile Include="MaterialItemCollectionEditor.cs" />
     <Compile Include="MaterialSkinManager.cs" />
     <Compile Include="MouseWheelRedirector.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="NativeTextRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -226,6 +235,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Resources\MaterialIcons-Regular.ttf" />
+    <EmbeddedResource Include="Resources\MaterialIconsOutlined-Regular.otf" />
+    <EmbeddedResource Include="Resources\MaterialIconsRound-Regular.otf" />
+    <EmbeddedResource Include="Resources\MaterialIconsSharp-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\dark_mode_24.png" />

@@ -2,6 +2,7 @@ using MaterialSkin;
 using MaterialSkin.Controls;
 using MaterialSkin.Properties;
 using System;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
@@ -26,7 +27,9 @@ namespace MaterialSkinExample
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE);
-
+            materialSkinManager.CornerRadius = 4;
+            materialSkinManager.ButtonFont = new Font(materialSkinManager.GetFontFamily(materialSkinManager.CurrentFontFamily), 8.25f, FontStyle.Regular, GraphicsUnit.Point);
+            materialSkinManager.Height = 24;
             // Add dummy data to the listview
             seedListView();
             materialCheckedListBox1.Items.Add("Item1", false);
@@ -180,8 +183,13 @@ namespace MaterialSkinExample
             }
 
             var batchOperationResults = builder.ToString();
-            batchOperationResults = "Simple text";
-            var mresult = MaterialMessageBox.Show(batchOperationResults, "Batch Operation", MessageBoxButtons.YesNoCancel, FlexibleMaterialForm.ButtonsPosition.Center);
+            //batchOperationResults = "Simple text\nNew line";
+            batchOperationResults = "Wareneingang wurde verbucht.\n\nInfo:";
+            batchOperationResults += "\ninterne Rechnungsnummer: \t1023";
+            batchOperationResults += "\nexterne Rechnungsnummer: \t2534";
+            batchOperationResults += "\ninterne Lieferscheinnummer:\t1023";
+            batchOperationResults += "\nLieferantennummer: \t\t1000";
+            var mresult = MaterialMessageBox.Show(batchOperationResults, "Batch Operation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information, false, FlexibleMaterialForm.ButtonsPosition.Right);
             materialComboBox1.Items.Add("this is a very long string");
         }
 
@@ -210,7 +218,7 @@ namespace MaterialSkinExample
 
         private void materialSwitch11_CheckedChanged(object sender, EventArgs e)
         {
-            materialTextBox21.UseTallSize = materialSwitch11.Checked;
+            materialTextBox21._UseTallSize = materialSwitch11.Checked;
         }
 
         private void materialSwitch12_CheckedChanged(object sender, EventArgs e)
@@ -291,7 +299,34 @@ namespace MaterialSkinExample
             materialTextBox21.ShowAssistiveText = materialSwitch16.Checked;
         }
 
+        private void materialButton24_Click(object sender, EventArgs e)
+        {
+            mbtn7.Visible = !mbtn7.Visible;
+        }
 
+        private void materialButton5_Click(object sender, EventArgs e)
+        {
+            mbtn8.Visible = !mbtn8.Visible;
+        }
 
+        private void materialButton16_Click(object sender, EventArgs e)
+        {
+            mbtn9.Visible = !mbtn9.Visible;
+        }
+
+        private void materialButton19_Click(object sender, EventArgs e)
+        {
+            mbtn10.Visible = !mbtn10.Visible;
+        }
+
+        private void materialButton17_Click(object sender, EventArgs e)
+        {
+            mbtn11.Visible = !mbtn11.Visible;
+        }
+
+        private void materialButton18_Click(object sender, EventArgs e)
+        {
+            mbtn12.Visible = !mbtn12.Visible;
+        }
     }
 }

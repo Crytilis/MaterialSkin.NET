@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 
 namespace MaterialSkin.Controls
 {
@@ -529,7 +525,8 @@ namespace MaterialSkin.Controls
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            g.Clear(BackColor);
+            g.Clear(Parent.BackColor);
+
             Color LineColor;
             Brush DisabledBrush;
             Color BalloonColor;
@@ -602,13 +599,13 @@ namespace MaterialSkin.Controls
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
                 NativeText.DrawTransparentText(Beschreibung, Font,
-                        SkinManager.TextMediumEmphasisColor,
+                        SkinManager.TextHighEmphasisColor,
                         new Point((int)DescriptioRectangle.Location.X, (int)DescriptioRectangle.Location.Y),
                         new Size((int)DescriptioRectangle.Size.Width, (int)DescriptioRectangle.Size.Height),
                         NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);
 
                 NativeText.DrawTransparentText(Value.ToString(), Font,
-                        SkinManager.TextMediumEmphasisColor,
+                        SkinManager.TextHighEmphasisColor,
                         new Point((int)ValueRectangle.Location.X, (int)ValueRectangle.Location.Y),
                         new Size((int)ValueRectangle.Size.Width, (int)ValueRectangle.Size.Height),
                         NativeTextRenderer.TextAlignFlags.Center | NativeTextRenderer.TextAlignFlags.Middle);

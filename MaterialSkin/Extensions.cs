@@ -3,6 +3,7 @@
     using System;
     using System.Drawing;
     using System.Reflection;
+    using System.Windows.Forms;
 
     /// <summary>
     /// Defines the <see cref="Extensions" />
@@ -84,6 +85,20 @@
         public static int PercentageToColorComponent(this int percentage)
         {
             return (int)((percentage / 100d) * 255d);
+        }
+
+        public static void InvokeIfRequired(this Control control, MethodInvoker action)
+        {
+            // See Update 2 for edits Mike de Klerk suggests to insert here.
+
+            if (control.InvokeRequired)
+            {
+                control.Invoke(action);
+            }
+            else
+            {
+                action();
+            }
         }
     }
 }

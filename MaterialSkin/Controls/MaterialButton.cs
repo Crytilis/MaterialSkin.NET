@@ -21,8 +21,8 @@
         private const int ICON_SIZE = 24;
         private const int MINIMUMWIDTH = 64;
         private const int MINIMUMWIDTHICONONLY = 36; //64;
-        private const int HEIGHTDEFAULT = 36;
-        private const int HEIGHTDENSE = 32;
+        private const int HEIGHTDEFAULT = 24; // 36
+        private const int HEIGHTDENSE = 24; // 32
 
         public new Padding Padding {
             get => base.Padding;
@@ -82,6 +82,18 @@
         [Browsable(false)]
         public Color NoAccentTextColor { get; set; }
 
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(FontFamilyType.ToString()), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
         [Category("Material Skin")]
         public bool UseAccentColor
         {
@@ -121,6 +133,19 @@
         {
             get => colorType;
             set { colorType = value; preProcessIcons(); Invalidate(); }
+        }
+
+        private MaterialSkinManager.CustomFontFamily fontFaminyType = MaterialSkinManager.CustomFontFamily.Roboto;
+        [Category("Material Skin"), DefaultValue(MaterialSkinManager.CustomFontFamily.Roboto), Description("Sets button custom font, like Roboto or Material Icons")]
+        public MaterialSkinManager.CustomFontFamily FontFamilyType
+        {
+            get => fontFaminyType;
+            set
+            {
+                fontFaminyType = value;
+                Font = new Font(SkinManager.GetFontFamily(FontFamilyType.ToString()), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                Invalidate();
+            }
         }
 
         [Category("Material Skin")]
@@ -228,6 +253,8 @@
         private ContentAlignment iconAlign = ContentAlignment.MiddleLeft;
         private Rectangle iconRect;
         private Padding iconPadding = new Padding();
+        private bool iconColored = false;
+        private bool iconUseOriginalSize = false;
 
         private bool drawShadows;
         private bool highEmphasis;
@@ -282,6 +309,29 @@
                 Invalidate();
             }
         }
+        [Category("Material Skin"), DefaultValue(false), Description("Sets Icon padding")]
+        public bool IconColored
+        {
+            get => iconColored;
+            set
+            {
+                iconColored = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
+
+        [Category("Material Skin"), DefaultValue(false)]
+        public bool IconUseOriginalSize
+        {
+            get => iconUseOriginalSize;
+            set
+            {
+                iconUseOriginalSize = value;
+                preProcessIcons();
+                Invalidate();
+            }
+        }
 
 
         [Category("Material Skin"), DefaultValue(4), Description("Sets the border radius in px")]
@@ -315,13 +365,14 @@
         public MaterialButton()
         {
             DrawShadows = true;
-            HighEmphasis = true;
+            HighEmphasis = false;
             UseAccentColor = false;
             Type = MaterialButtonType.Contained;
             ColorType = MaterialButtonColorType.Primary;
             Density = MaterialButtonDensity.Default;
             NoAccentTextColor = Color.Empty;
             CharacterCasing = CharacterCasingEnum.Upper;
+            FontFamilyType = MaterialSkinManager.CustomFontFamily.Roboto;
 
             _animationManager = new AnimationManager(false)
             {
@@ -353,10 +404,11 @@
             _animationManager.OnAnimationProgress += sender => Invalidate();
 
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            AutoSize = true;
+            AutoSize = false;
             Margin = new Padding(4, 6, 4, 6);
             Padding = new Padding(0);
             Radius = radius <= 0 ? 4 : radius;
+            Size = new Size(Width, 18);
         }
 
         /// <summary>
@@ -387,7 +439,7 @@
 
         private void drawShadowOnParent(object sender, PaintEventArgs e)
         {
-            if (Parent == null)
+            if (Parent == null || !Visible)
             {
                 RemoveShadowPaintEvent((Control)sender, drawShadowOnParent);
                 return;
@@ -407,6 +459,7 @@
             if (Icon == null) return;
 
             int newWidth, newHeight;
+            Size newSize = new Size(Icon.Width, Icon.Height);
             //Resize icon if greater than IconSize
             if (Icon.Width > IconSize || Icon.Height > IconSize)
             {
@@ -440,9 +493,18 @@
             }
 
             Bitmap IconResized = new Bitmap(Icon, newWidth, newHeight);
+            if(IconUseOriginalSize)
+            {
+                IconResized = new Bitmap(Icon, newSize);
+            }
 
             // Calculate lightness and color
+            var color = GetColorByType();
             float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT & (highEmphasis == false | Enabled == false | Type != MaterialButtonType.Contained)) ? 0f : 1.5f;
+            float r = (useAccentColor ? SkinManager.ColorScheme.AccentColor.R : color.R) / 255f;
+            float g = (useAccentColor ? SkinManager.ColorScheme.AccentColor.G : color.G) / 255f;
+            float b = (useAccentColor ? SkinManager.ColorScheme.AccentColor.B : color.B) / 255f;
+
 
             // Create matrices
             float[][] matrixGray = {
@@ -452,16 +514,26 @@
                     new float[] {   0,   0,   0, Enabled ? .7f : .3f,  0}, // alpha scale factor
                     new float[] {   l,   l,   l,   0,  1}};// offset
 
+            float[][] matrixColor = {
+                    new float[] {   1,   0,   0,   0,  0}, // Red scale factor
+                    new float[] {   0,   1,   0,   0,  0}, // Green scale factor
+                    new float[] {   0,   0,   1,   0,  0}, // Blue scale factor
+                    new float[] {   0,   0,   0,   1,  0}, // alpha scale factor
+                    new float[] {   0,   0,   0,   0,  1}};// offset
+
 
             ColorMatrix colorMatrixGray = new ColorMatrix(matrixGray);
+            ColorMatrix colorMatrixColor = new ColorMatrix(matrixColor);
 
             ImageAttributes grayImageAttributes = new ImageAttributes();
+            ImageAttributes colorImageAttributes = new ImageAttributes();
 
             // Set color matrices
             grayImageAttributes.SetColorMatrix(colorMatrixGray, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            colorImageAttributes.SetColorMatrix(colorMatrixColor, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             // Image Rect
-            Rectangle destRect = new Rectangle(0, 0, IconSize, IconSize);
+            Rectangle destRect = new Rectangle(0, 0, IconResized.Width, IconResized.Height);
 
             // Create a pre-processed copy of the image (GRAY)
             Bitmap bgray = new Bitmap(destRect.Width, destRect.Height);
@@ -476,55 +548,68 @@
                     destRect, GraphicsUnit.Pixel, grayImageAttributes);
             }
 
-            // added processed image to brush for drawing
-            TextureBrush textureBrushGray = new TextureBrush(bgray)
+            // Create a pre-processed copy of the image (COLOR)
+            Bitmap bcolor = new Bitmap(destRect.Width, destRect.Height);
+            using (Graphics gColor = Graphics.FromImage(bcolor))
             {
-                WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp
-            };
+                gColor.DrawImage(IconResized,
+                    new Point[] {
+                                new Point(0, 0),
+                                new Point(destRect.Width, 0),
+                                new Point(0, destRect.Height),
+                    },
+                    destRect, GraphicsUnit.Pixel, colorImageAttributes);
+            }
+
+            // added processed image to brush for drawing
+            TextureBrush textureBrushGray = new TextureBrush(bgray) { WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp };
+            TextureBrush textureBrushColor = new TextureBrush(bcolor) { WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp };
 
             int top = 0 + IconPadding.Top;
-            int middle = (ClientRectangle.Height / 2) - (IconSize / 2);
-            int bottom = ClientRectangle.Height - IconSize - IconPadding.Bottom;
+            int middle = (ClientRectangle.Height / 2) - (IconResized.Height / 2);
+            int bottom = ClientRectangle.Height - IconResized.Height - IconPadding.Bottom;
             int left = 0 + IconPadding.Left;
-            int center = (ClientRectangle.Width / 2) - (IconSize / 2);
-            int right = ClientRectangle.Width - IconSize - IconPadding.Right;
+            int center = (ClientRectangle.Width / 2) - (IconResized.Width / 2);
+            int right = ClientRectangle.Width - IconResized.Width - IconPadding.Right;
 
             switch (IconAlign)
             {
                 case ContentAlignment.TopLeft:
-                    iconRect = new Rectangle(left, top, IconSize, IconSize);
+                    iconRect = new Rectangle(left, top, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.TopCenter:
-                    iconRect = new Rectangle(center, top, IconSize, IconSize);
+                    iconRect = new Rectangle(center, top, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.TopRight:
-                    iconRect = new Rectangle(right, top, IconSize, IconSize);
+                    iconRect = new Rectangle(right, top, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.MiddleLeft:
-                    iconRect = new Rectangle(left, middle, IconSize, IconSize);
+                    iconRect = new Rectangle(left, middle, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.MiddleCenter:
-                    iconRect = new Rectangle(center, middle, IconSize, IconSize);
+                    iconRect = new Rectangle(center, middle, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.MiddleRight:
-                    iconRect = new Rectangle(right, middle, IconSize, IconSize);
+                    iconRect = new Rectangle(right, middle, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.BottomLeft:
-                    iconRect = new Rectangle(left, bottom, IconSize, IconSize);
+                    iconRect = new Rectangle(left, bottom, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.BottomCenter:
-                    iconRect = new Rectangle(center, bottom, IconSize, IconSize);
+                    iconRect = new Rectangle(center, bottom, IconResized.Width, IconResized.Height);
                     break;
                 case ContentAlignment.BottomRight:
-                    iconRect = new Rectangle(right, bottom, IconSize, IconSize);
+                    iconRect = new Rectangle(right, bottom, IconResized.Width, IconResized.Height);
                     break;
             }
 
             // Translate the brushes to the correct positions
             textureBrushGray.TranslateTransform(iconRect.X + iconRect.Width / 2 - IconResized.Width / 2,
                                                 iconRect.Y + iconRect.Height / 2 - IconResized.Height / 2);
+            textureBrushColor.TranslateTransform(iconRect.X + iconRect.Width / 2 - IconResized.Width / 2,
+                                                iconRect.Y + iconRect.Height / 2 - IconResized.Height / 2);
 
-            iconsBrushes = textureBrushGray;
+            iconsBrushes = iconColored ? textureBrushColor : textureBrushGray;
         }
 
         private NativeTextRenderer.TextAlignFlags PreProcessTextAlign()
@@ -849,7 +934,8 @@
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                //var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+                
                 var align = PreProcessTextAlign();
                 switch (TextAlign)
                 {
@@ -886,7 +972,7 @@
                 NativeText.DrawMultilineTransparentText(
                     CharacterCasing == CharacterCasingEnum.Upper ? base.Text.ToUpper() : CharacterCasing == CharacterCasingEnum.Lower ? base.Text.ToLower() :
                         CharacterCasing == CharacterCasingEnum.Title ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(base.Text.ToLower()) : base.Text,
-                    font,
+                    Font,
                     textColor,
                     textRect.Location,
                     textRect.Size,

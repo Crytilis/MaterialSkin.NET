@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 
 namespace MaterialSkin.Controls
 {
@@ -64,6 +65,18 @@ namespace MaterialSkin.Controls
         public MouseState MouseState { get; set; }
         [Browsable(false)]
         public bool DroppedDown { get; set; }
+
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
 
 
         [Category("Material Skin"), DefaultValue(true)]
@@ -135,6 +148,10 @@ namespace MaterialSkin.Controls
 
         #region Events
         public event EventHandler PropertyChanged;
+        
+        public event EventHandler DropDown;
+
+
         protected void OnPropertyChanged()
         {
             if (PropertyChanged != null)
@@ -324,7 +341,7 @@ namespace MaterialSkin.Controls
             var textRect = new System.Drawing.Rectangle(
                 SkinManager.FORM_PADDING,
                 ClientRectangle.Y,
-                ClientRectangle.Width - SkinManager.FORM_PADDING * 3 - 8, ClientRectangle.Height);
+                ClientRectangle.Width - 32, ClientRectangle.Height);
             g.Clip = new Region(textRect);
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
@@ -399,6 +416,7 @@ namespace MaterialSkin.Controls
             dropContainer.Show();
             _dropState = eDropState.Dropped;
             Invalidate();
+            DropDown?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual Rectangle GetDropDownBounds()

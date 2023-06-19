@@ -1,12 +1,16 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace MaterialSkin.Controls
 {
-    public partial class MaterialDropDownColorPicker : DropDownControl
+    public partial class MaterialDropDownColorPicker : DropDownControl, INotifyPropertyChanged
     {
         #region Events
+        public new event PropertyChangedEventHandler PropertyChanged;
+        [Category("Action")]
         public event EventHandler ColorChanged;
         #endregion
 
@@ -18,6 +22,9 @@ namespace MaterialSkin.Controls
 
         #region Property
         public override Color BackColor { get { return Parent == null ? SkinManager.BackdropColor : Parent.BackColor; } set { } }
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All)]
+        [Browsable(true)]
         public Color Color
         {
             get { return _Color; }
@@ -26,6 +33,7 @@ namespace MaterialSkin.Controls
                 _Color = value;
                 objColorControl.Value = _Color;
                 ColorChanged?.Invoke(this, EventArgs.Empty);
+                NotifyPropertyChanged();
             }
         }
         #endregion
@@ -54,6 +62,12 @@ namespace MaterialSkin.Controls
         #endregion
 
         #region Eventhandler methods
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private void objDateControl_onColorChanged(Color newColor)
         {
             Color = newColor;

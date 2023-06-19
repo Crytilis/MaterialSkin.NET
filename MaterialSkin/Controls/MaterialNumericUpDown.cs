@@ -8,8 +8,6 @@ namespace MaterialSkin.Controls
     using System.Drawing.Imaging;
     using System.Windows.Forms;
     using MaterialSkin.Animations;
-    using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
-    using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 
     public class MaterialNumericUpDown : NumericUpDown, IMaterialControl
     {
@@ -18,7 +16,7 @@ namespace MaterialSkin.Controls
         private const int TEXT_SMALL_Y = 4;
         private const int BOTTOM_PADDING = 3;
         private const int LEFT_PADDING = 5;
-        private const int RIGHT_PADDING = 16;
+        private const int RIGHT_PADDING = 20;
         private const int ACTIVATION_INDICATOR_HEIGHT = 1;
         private const int FONT_HEIGHT = 20;
         private const int HINT_TEXT_SMALL_SIZE = 18;
@@ -58,18 +56,6 @@ namespace MaterialSkin.Controls
 
         [Category("Material Skin"), DefaultValue(true)]
         public bool UseAccent { get; set; }
-
-        [Category("Material Skin"), DefaultValue(""), Localizable(true)]
-        public string Hint
-        {
-            get { return hint; }
-            set
-            {
-                hint = value;
-                hasHint = !String.IsNullOrEmpty(Hint);
-                Invalidate();
-            }
-        }
 
         [Category("Material Skin"), DefaultValue(false), Description("Select next control which have TabStop property set to True when enter key is pressed.")]
         public bool LeaveOnEnterKey
@@ -1140,12 +1126,10 @@ namespace MaterialSkin.Controls
         public MaterialNumericUpDown()
         {
             // Material Properties
-            Hint = "";
             UseAccent = true;
 
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
-
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.Selectable | ControlStyles.OptimizedDoubleBuffer | ControlStyles.DoubleBuffer, true);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8.25f, FontStyle.Regular, GraphicsUnit.Point);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
 
@@ -1276,15 +1260,6 @@ namespace MaterialSkin.Controls
                 isFocused ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundFocusColor, SkinManager.BackgroundFocusColor.A) : //Focused
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundHoverColor, SkinManager.BackgroundHoverColor.A) : // Hover
                 DrawHelper.BlendColor(BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A); // Normal
-
-            // bottom line base
-            g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
-
-            // HintText
-            bool userTextPresent = !String.IsNullOrEmpty(Text);
-            Rectangle helperTextRect = new Rectangle(LEFT_PADDING, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - LEFT_PADDING - right_padding, HELPER_TEXT_HEIGHT);
-            Rectangle hintRect = new Rectangle(left_padding, HINT_TEXT_SMALL_Y, Width - left_padding - right_padding, HINT_TEXT_SMALL_SIZE);
-            int hintTextSize = 12;
             
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -1305,26 +1280,6 @@ namespace MaterialSkin.Controls
                     int LineAnimationWidth = (int)(Width * animationProgress);
                     int LineAnimationX = (Width / 2) - (LineAnimationWidth / 2);
                     g.FillRectangle(UseAccent ? SkinManager.ColorScheme.AccentBrush : SkinManager.ColorScheme.PrimaryBrush, LineAnimationX, LINE_Y, LineAnimationWidth, 2);
-                }
-            }
-
-            // Draw hint text
-            if (hasHint && (isFocused || userTextPresent))
-            {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
-                {
-                    NativeText.DrawTransparentText(
-                    Hint,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
-                    Enabled ? !userTextPresent && !isFocused ? isFocused ? UseAccent ?
-                    SkinManager.ColorScheme.AccentColor : // Focus Accent
-                    SkinManager.ColorScheme.PrimaryColor : // Focus Primary
-                    SkinManager.TextMediumEmphasisColor : // not focused
-                    SkinManager.BackgroundHoverRedColor : // error state
-                    SkinManager.TextDisabledOrHintColor, // Disabled
-                    hintRect.Location,
-                    hintRect.Size,
-                    NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
                 }
             }
         }
@@ -1413,18 +1368,18 @@ namespace MaterialSkin.Controls
             left_padding = LEFT_PADDING;
             right_padding = RIGHT_PADDING;
 
-            if (hasHint && (isFocused || !String.IsNullOrEmpty(Text)))
+            baseTextBox.Location = new Point(left_padding, (LINE_Y - ACTIVATION_INDICATOR_HEIGHT) / 2 - FONT_HEIGHT / 2);
+            baseTextBox.Width = Width - (left_padding + right_padding);
+            baseTextBox.Height = FONT_HEIGHT;
+
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
             {
-                baseTextBox.Location = new Point(left_padding, 22);
-                baseTextBox.Width = Width - (left_padding + right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
+                var textToMesure = string.IsNullOrEmpty(Text) ? "0" : Text;
+                var newFontHeight = NativeText.MeasureString(textToMesure, Font).Height;
+                baseTextBox.Location = new Point(left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2);
+                baseTextBox.Height = newFontHeight;
             }
-            else
-            {
-                baseTextBox.Location = new Point(left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - FONT_HEIGHT / 2);
-                baseTextBox.Width = Width - (left_padding + right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
-            }
+            baseTextBox.Width = Width - (left_padding + right_padding);
         }
 
         private void setHeightVars()

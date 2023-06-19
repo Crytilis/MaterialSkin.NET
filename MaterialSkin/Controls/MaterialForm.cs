@@ -427,6 +427,10 @@ namespace MaterialSkin.Controls
 
         #region Events
         public event EventHandler<string> DrawerTabAsButtonClick;
+
+        [Category("Action")]
+        [Description("Fires when Theme switch Icon is clicked")]
+        public event EventHandler ThemeSwitchClick;
         #endregion
 
         #region Constants
@@ -506,8 +510,8 @@ namespace MaterialSkin.Controls
             DrawerHighlightWithAccent = true;
             DrawerBackgroundWithAccent = false;
             DrawIconInOriginalColor = true;
-            DrawTitlebarText = false;
-            ShowIcon = false;
+            DrawTitlebarText = true;
+            ShowIcon = true;
             drawerControl.TabAsButtonClick += (s, e) => {
                 DrawerTabAsButtonClick?.Invoke(this, e);
             };
@@ -761,7 +765,7 @@ namespace MaterialSkin.Controls
                 {
                     _buttonState = ButtonState.DrawerDown;
                 }
-                else if (_themeSwitchButtonBounds.Contains(location))
+                else if (_themeSwitchButtonBounds.Contains(location) && ShowThemeSwitchButton)
                 {
                     _buttonState = ButtonState.ThemeSwitcherDown;
                 }
@@ -808,7 +812,7 @@ namespace MaterialSkin.Controls
                 {
                     _buttonState = ButtonState.DrawerOver;
                 }
-                else if (_themeSwitchButtonBounds.Contains(location))
+                else if (_themeSwitchButtonBounds.Contains(location) && ShowThemeSwitchButton)
                 {
                     _buttonState = ButtonState.ThemeSwitcherOver;
                 }
@@ -975,7 +979,7 @@ namespace MaterialSkin.Controls
                 _animationSource = cursorPos;
             }
             // Themeswitcher
-            if ((message == WM.LeftButtonDown || message == WM.LeftButtonDoubleClick) && _themeSwitchButtonBounds.Contains(cursorPos))
+            if ((message == WM.LeftButtonDown || message == WM.LeftButtonDoubleClick) && _themeSwitchButtonBounds.Contains(cursorPos) && ShowThemeSwitchButton)
             {
                 SkinManager.Theme = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? MaterialSkinManager.Themes.DARK : MaterialSkinManager.Themes.LIGHT;
             }
@@ -1026,7 +1030,13 @@ namespace MaterialSkin.Controls
             UpdateButtons(e.Button, e.Location);
 
             if (e.Button == MouseButtons.Left && !Maximized && _resizeCursors.Contains(Cursor))
+            {
                 ResizeForm(_resizeDir);
+            }
+            else if (e.Button == MouseButtons.Left && ShowThemeSwitchButton && _themeSwitchButtonBounds.Contains(e.Location))
+            {
+                ThemeSwitchClick?.Invoke(this, new EventArgs());
+            }
             base.OnMouseDown(e);
         }
 
@@ -1107,6 +1117,10 @@ namespace MaterialSkin.Controls
                 _resizeDir = ResizeDirection.Bottom;
                 Cursor = Cursors.SizeNS;
             }
+            else if (_showThemeSwitchButton && _themeSwitchButtonBounds.Contains(e.Location) && ThemeSwitchClick != null)
+            {
+                Cursor = Cursors.Hand;
+            }
             else
             {
                 _resizeDir = ResizeDirection.None;
@@ -1175,7 +1189,7 @@ namespace MaterialSkin.Controls
                 if (_buttonState == ButtonState.XDown && ControlBox)
                     g.FillRectangle(SkinManager.BackgroundDownRedBrush, _xButtonBounds);
 
-                if (_buttonState == ButtonState.ThemeSwitcherOver && ControlBox)
+                if (_buttonState == ButtonState.ThemeSwitcherOver && ControlBox && ShowThemeSwitchButton)
                     g.FillRectangle(hoverBrush, _themeSwitchButtonBounds);
                 if (_buttonState == ButtonState.ThemeSwitcherDown && ControlBox && ShowThemeSwitchButton)
                     g.FillRectangle(downBrush, _themeSwitchButtonBounds);

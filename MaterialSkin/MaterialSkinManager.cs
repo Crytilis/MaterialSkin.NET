@@ -43,6 +43,41 @@
         /// Roboto, Roboto Light, Roboto Medium
         /// </summary>
         public string CurrentFontFamily { get; set; }
+        public Font DefaultFont { get; set; }
+
+        #region Button options
+        private int _cornerRadius = 4;
+        public int CornerRadius
+        {
+            get => _cornerRadius;
+            set
+            {
+                _cornerRadius = value;
+            }
+        }
+
+        private Font _buttonFont;
+        public Font ButtonFont { 
+            get => _buttonFont;
+            set
+            {
+                var font = new Font(GetFontFamily(CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                _buttonFont = font;
+            }
+        }
+
+        private int _height = 36;
+        /// <summary>
+        /// Height for dialog buttons
+        /// </summary>
+        public int Height { 
+            get => _height; 
+            set
+            {
+                _height = value;
+            }
+        }
+        #endregion
 
         // Constructor
         private MaterialSkinManager()
@@ -60,8 +95,13 @@
             addFont(Resources.Roboto_Light);
             addFont(Resources.Roboto_Regular);
             addFont(Resources.Roboto_Medium);
-            addFont(Resources.Roboto_Bold);
+            //addFont(Resources.Roboto_Bold);
             addFont(Resources.Roboto_Black);
+
+            addFont(Resources.MaterialIcons_Regular);
+            addFont(Resources.MaterialIconsOutlined_Regular);
+            addFont(Resources.MaterialIconsRound_Regular);
+            addFont(Resources.MaterialIconsSharp_Regular);
 
             RobotoFontFamilies = new Dictionary<string, FontFamily>();
             foreach (FontFamily ff in privateFontCollection.Families.ToArray())
@@ -83,6 +123,7 @@
             logicalFonts.Add("Body1", createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR));
             logicalFonts.Add("Body2", createLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR));
             logicalFonts.Add("Button", createLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM));
+            logicalFonts.Add("ButtonIcon", createLogicalFont("Material Icons", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM));
             logicalFonts.Add("Caption", createLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_REGULAR));
             logicalFonts.Add("Overline", createLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR));
             // Logical fonts for textbox animation
@@ -91,6 +132,8 @@
             logicalFonts.Add("textBox14", createLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR));
             logicalFonts.Add("textBox13", createLogicalFont("Roboto Medium", 13, NativeTextRenderer.logFontWeight.FW_MEDIUM));
             logicalFonts.Add("textBox12", createLogicalFont("Roboto Medium", 12, NativeTextRenderer.logFontWeight.FW_MEDIUM));
+
+            DefaultFont = getFontByType(MaterialSkinManager.fontType.Body1);
         }
 
         // Destructor
@@ -136,6 +179,7 @@
             DARK
         }
 
+        #region Variables static readonly
         // Text
         private static readonly Color TEXT_HIGH_EMPHASIS_LIGHT = Color.FromArgb(222, 255, 255, 255); // Alpha 87%
         private static readonly Brush TEXT_HIGH_EMPHASIS_LIGHT_BRUSH = new SolidBrush(TEXT_HIGH_EMPHASIS_LIGHT);
@@ -226,7 +270,8 @@
         //Other colors
         private static readonly Color CARD_BLACK = Color.FromArgb(255, 42, 42, 42);
         private static readonly Color CARD_WHITE = Color.White;
-
+        #endregion
+        #region Properties - Using these makes handling the dark theme switching easier
         // Getters - Using these makes handling the dark theme switching easier
         // Text
         public Color TextHighEmphasisColor => Theme == Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK : TEXT_HIGH_EMPHASIS_LIGHT;
@@ -287,6 +332,8 @@
         public Color BackdropColor => Theme == Themes.LIGHT ? BACKDROP_LIGHT : BACKDROP_DARK;
         public Brush BackdropBrush => Theme == Themes.LIGHT ? BACKDROP_LIGHT_BRUSH : BACKDROP_DARK_BRUSH;
 
+        #endregion
+
         // Font Handling
         public enum fontType
         {
@@ -303,7 +350,32 @@
             Body2,
             Button,
             Caption,
-            Overline
+            Overline,
+            Custom
+        }
+
+        public enum CustomFontFamily
+        {
+            Roboto,
+            Roboto_Thin,
+            Roboto_Medium,
+            Roboto_Light,
+            //Roboto_Bold,
+            Roboto_Black,
+            Material_Icons,
+            Material_Icons_Round,
+            Material_Icons_Outlined,
+            Material_Icons_Sharp
+        }
+
+        public Font GetFont(CustomFontFamily family)
+        {
+            if(RobotoFontFamilies.ContainsKey(family.ToString()))
+            {
+                return new Font(RobotoFontFamilies[family.ToString()], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
+            }
+
+            return new Font(RobotoFontFamilies["Roboto"], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
         }
 
         public Font getFontByType(fontType type)
@@ -338,13 +410,13 @@
                     return new Font(RobotoFontFamilies["Roboto"], 12f, FontStyle.Italic, GraphicsUnit.Pixel);
 
                 case fontType.Body1:
-                    return new Font(RobotoFontFamilies["Roboto"], 14f, FontStyle.Regular, GraphicsUnit.Pixel);
+                    return new Font(RobotoFontFamilies["Roboto"], 8.25f, FontStyle.Regular, GraphicsUnit.Point);
 
                 case fontType.Body2:
                     return new Font(RobotoFontFamilies["Roboto"], 12f, FontStyle.Regular, GraphicsUnit.Pixel);
 
                 case fontType.Button:
-                    return new Font(RobotoFontFamilies["Roboto"], 14f, FontStyle.Bold, GraphicsUnit.Pixel);
+                    return new Font(RobotoFontFamilies["Roboto"], 8.25f, FontStyle.Bold, GraphicsUnit.Pixel);
 
                 case fontType.Caption:
                     return new Font(RobotoFontFamilies["Roboto"], 12f, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -414,6 +486,14 @@
             return RobotoFontFamilies[fontName];
         }
 
+        /// <summary>
+        /// font size in pt
+        /// </summary>
+        /// <param name="size"></param>
+        public void SetDefaultFontSize(float size) {
+            DefaultFont = new Font(DefaultFont.FontFamily, size, DefaultFont.Style, GraphicsUnit.Point);
+        }
+
         // Dyanmic Themes
         public void AddFormToManage(MaterialForm materialForm)
         {
@@ -463,13 +543,14 @@
             }
 
             // Other Material Skin control
-            else if (controlToUpdate.IsMaterialControl())
+            else if (controlToUpdate.IsMaterialControl() && !(controlToUpdate.HasProperty("UseCustomColor") && ((MaterialLabel)controlToUpdate).UseCustomColor))
             {
-                if(!(controlToUpdate.HasProperty("UseCustomColor") && ((MaterialLabel)controlToUpdate).UseCustomColor))
+                if(controlToUpdate.HasProperty("_UseCustomBackgroundColor") && !((MaterialCard)controlToUpdate)._UseCustomBackgroundColor)
                 {
                     controlToUpdate.BackColor = newBackColor;
-                    controlToUpdate.ForeColor = TextHighEmphasisColor;
                 }
+
+                controlToUpdate.ForeColor = TextHighEmphasisColor;
             }
 
             // Other Generic control not part of material skin
@@ -479,7 +560,22 @@
                 {
                     controlToUpdate.BackColor = controlToUpdate.Parent.BackColor;
                     controlToUpdate.ForeColor = TextHighEmphasisColor;
-                    controlToUpdate.Font = getFontByType(MaterialSkinManager.fontType.Body1);
+                    controlToUpdate.Font = DefaultFont;
+
+                    if(controlToUpdate is DataGridView)
+                    {
+                        var test = BackgroundColor;
+                        ((DataGridView)controlToUpdate).DefaultCellStyle.BackColor = BackgroundColor;
+                        ((DataGridView)controlToUpdate).DefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        ((DataGridView)controlToUpdate).DefaultCellStyle.Font = DefaultFont;
+                        ((DataGridView)controlToUpdate).RowHeadersDefaultCellStyle.BackColor = BackgroundColor;
+                        ((DataGridView)controlToUpdate).RowHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.Font = DefaultFont;
+                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.BackColor = BackgroundColor;
+                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        ((DataGridView)controlToUpdate).EnableHeadersVisualStyles = true;
+                        ((DataGridView)controlToUpdate).BackgroundColor = controlToUpdate.Parent.BackColor;
+                    }
                 }
             }
 

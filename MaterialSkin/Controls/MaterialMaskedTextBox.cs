@@ -26,25 +26,25 @@
 
         //Unused properties
         [Browsable(false)]
-        public override System.Drawing.Image BackgroundImage { get; set; }
+        public override Image BackgroundImage { get; set; }
 
         [Browsable(false)]
-        public override System.Windows.Forms.ImageLayout BackgroundImageLayout { get; set; }
+        public override ImageLayout BackgroundImageLayout { get; set; }
 
         [Browsable(false)]
-        public string SelectedText { get { return baseTextBox.SelectedText; } set { baseTextBox.SelectedText = value; } }
+        public string SelectedText { get => baseTextBox.SelectedText; set { baseTextBox.SelectedText = value; } }
 
         [Browsable(false)]
-        public int SelectionStart { get { return baseTextBox.SelectionStart; } set { baseTextBox.SelectionStart = value; } }
+        public int SelectionStart { get => baseTextBox.SelectionStart; set { baseTextBox.SelectionStart = value; } }
 
         [Browsable(false)]
-        public int SelectionLength { get { return baseTextBox.SelectionLength; } set { baseTextBox.SelectionLength = value; } }
+        public int SelectionLength { get => baseTextBox.SelectionLength; set { baseTextBox.SelectionLength = value; } }
         
         [Browsable(false)]
-        public int TextLength { get { return baseTextBox.TextLength; } }
+        public int TextLength { get => baseTextBox.TextLength; }
 
         [Browsable(false)]
-        public override System.Drawing.Color ForeColor { get; set; }
+        public override Color ForeColor { get; set; }
 
 
         //Material Skin properties
@@ -54,7 +54,7 @@
         [Category("Material Skin"), DefaultValue(true), Description("Using a larger size enables the hint to always be visible")]
         public bool UseTallSize
         {
-            get { return _UseTallSize; }
+            get => _UseTallSize;
             set
             {
                 _UseTallSize = value;
@@ -68,7 +68,7 @@
         [Category("Material Skin"), DefaultValue(false), Description("Assistive elements provide additional detail about text entered into text fields. Could be Helper text or Error message.")]
         public bool ShowAssistiveText
         {
-            get { return _showAssistiveText; }
+            get => _showAssistiveText;
             set
             {
                 _showAssistiveText = value;
@@ -87,7 +87,7 @@
         [Category("Material Skin"), DefaultValue(""), Localizable(true), Description("Helper text conveys additional guidance about the input field, such as how it will be used.")]
         public string HelperText
         {
-            get { return _helperText; }
+            get => _helperText;
             set
             {
                 _helperText = value;
@@ -100,7 +100,7 @@
         [Category("Material Skin"), DefaultValue(""), Localizable(true), Description("When text input isn't accepted, an error message can display instructions on how to fix it. Error messages are displayed below the input line, replacing helper text until fixed.")]
         public string ErrorMessage
         {
-            get { return _errorMessage; }
+            get => _errorMessage;
             set
             {
                 _errorMessage = value;
@@ -111,12 +111,43 @@
         [Category("Material Skin"), DefaultValue(""), Localizable(true)]
         public string Hint
         {
-            get { return baseTextBox.Hint; }
+            get => baseTextBox.Hint;
             set
             {
                 baseTextBox.Hint = value;
                 hasHint = !String.IsNullOrEmpty(baseTextBox.Hint);
                 UpdateRects();
+                Invalidate();
+            }
+        }
+
+        private Font hintFont;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Font HintFont
+        {
+            get => hintFont;
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.HintFont = font;
+                }
+                hintFont = font;
+                Invalidate();
+            }
+        }
+
+        private Padding hintPadding;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Padding HintPadding
+        {
+            get => hintPadding;
+            set
+            {
+                hintPadding = value;
                 Invalidate();
             }
         }
@@ -132,7 +163,7 @@
         /// </summary>
         public Image LeadingIcon
         {
-            get { return _leadingIcon; }
+            get => _leadingIcon;
             set
             {
                 _leadingIcon = value;
@@ -150,7 +181,7 @@
         /// </summary>
         public Image TrailingIcon
         {
-            get { return _trailingIcon; }
+            get => _trailingIcon;
             set
             {
                 _trailingIcon = value;
@@ -171,7 +202,7 @@
         [Category("Material Skin"), DefaultValue(PrefixSuffixTypes.None), Description("Set Prefix/Suffix/None")]
         public PrefixSuffixTypes PrefixSuffix
         {
-            get { return _prefixsuffix; }
+            get => _prefixsuffix;
             set
             {
                 _prefixsuffix = value;
@@ -188,7 +219,7 @@
         [Category("Material Skin"), DefaultValue(""), Localizable(true), Description("Set Prefix or Suffix text")]
         public string PrefixSuffixText
         {
-            get { return _prefixsuffixText; }
+            get => _prefixsuffixText;
             set
             {
                 //if (_prefixsuffixText != value)
@@ -204,7 +235,7 @@
 
         public override ContextMenuStrip ContextMenuStrip
         {
-            get { return baseTextBox.ContextMenuStrip; }
+            get => baseTextBox.ContextMenuStrip;
             set
             {
                 if (value != null)
@@ -222,63 +253,62 @@
         }
 
         [Browsable(false)]
-        public override Color BackColor { get { return Parent == null ? SkinManager.BackgroundColor : Parent.BackColor; } }
+        public override Color BackColor { get => Parent == null ? SkinManager.BackgroundColor : Parent.BackColor; }
 
-        public override string Text { get { return baseTextBox.Text; } set { baseTextBox.Text = value; } }
-
-        [Category("Appearance")]
-        public HorizontalAlignment TextAlign { get { return baseTextBox.TextAlign; } set { baseTextBox.TextAlign = value; } }
+        public override string Text { get => baseTextBox.Text; set { baseTextBox.Text = value; } }
 
         [Category("Appearance")]
-        public Char PromptChar { get { return baseTextBox.PromptChar; } set { baseTextBox.PromptChar = value; } }
+        public HorizontalAlignment TextAlign { get => baseTextBox.TextAlign; set { baseTextBox.TextAlign = value; } }
+
+        [Category("Appearance")]
+        public Char PromptChar { get => baseTextBox.PromptChar; set { baseTextBox.PromptChar = value; } }
 
         //[Category("Behavior")]
-        //public CharacterCasing CharacterCasing { get { return baseTextBox.CharacterCasing; } set { baseTextBox.CharacterCasing = value; } }
+        //public CharacterCasing CharacterCasing { get => baseTextBox.CharacterCasing; set { baseTextBox.CharacterCasing = value; } }
 
         [Category("Behavior")]
-        public bool HideSelection { get { return baseTextBox.HideSelection; } set { baseTextBox.HideSelection = value; } }
+        public bool HideSelection { get => baseTextBox.HideSelection; set { baseTextBox.HideSelection = value; } }
 
         [Category("Behavior")]
-        public bool AllowPromptAsInput { get { return baseTextBox.AllowPromptAsInput; } set { baseTextBox.AllowPromptAsInput = value; } }
+        public bool AllowPromptAsInput { get => baseTextBox.AllowPromptAsInput; set { baseTextBox.AllowPromptAsInput = value; } }
 
         [Category("Behavior")]
-        public bool AsciiOnly { get { return baseTextBox.AsciiOnly; } set { baseTextBox.AsciiOnly = value; } }
+        public bool AsciiOnly { get => baseTextBox.AsciiOnly; set { baseTextBox.AsciiOnly = value; } }
 
         [Category("Behavior")]
-        public bool BeepOnError { get { return baseTextBox.BeepOnError; } set { baseTextBox.BeepOnError = value; } }
+        public bool BeepOnError { get => baseTextBox.BeepOnError; set { baseTextBox.BeepOnError = value; } }
 
         [Category("Behavior")]
-        public MaskFormat CutCopyMaskFormat { get { return baseTextBox.CutCopyMaskFormat; } set { baseTextBox.CutCopyMaskFormat = value; } }
+        public MaskFormat CutCopyMaskFormat { get => baseTextBox.CutCopyMaskFormat; set { baseTextBox.CutCopyMaskFormat = value; } }
 
         [Category("Behavior")]
-        public bool HidePromptOnLeave { get { return baseTextBox.HidePromptOnLeave; } set { baseTextBox.HidePromptOnLeave = value; } }
+        public bool HidePromptOnLeave { get => baseTextBox.HidePromptOnLeave; set { baseTextBox.HidePromptOnLeave = value; } }
 
         [Category("Behavior")]
-        public InsertKeyMode InsertKeyMode { get { return baseTextBox.InsertKeyMode; } set { baseTextBox.InsertKeyMode = value; } }
+        public InsertKeyMode InsertKeyMode { get => baseTextBox.InsertKeyMode; set { baseTextBox.InsertKeyMode = value; } }
 
         [Category("Behavior")]
-        public string Mask { get { return baseTextBox.Mask; } set { baseTextBox.Mask = value; } }
+        public string Mask { get => baseTextBox.Mask; set { baseTextBox.Mask = value; } }
 
         [Category("Behavior")]
-        public int MaxLength { get { return baseTextBox.MaxLength; } set { baseTextBox.MaxLength = value; } }
+        public int MaxLength { get => baseTextBox.MaxLength; set { baseTextBox.MaxLength = value; } }
 
         [Category("Behavior")]
-        public char PasswordChar { get { return baseTextBox.PasswordChar; } set { baseTextBox.PasswordChar = value; } }
+        public char PasswordChar { get => baseTextBox.PasswordChar; set { baseTextBox.PasswordChar = value; } }
 
         [Category("Behavior")]
-        public bool RejectInputOnFirstFailure { get { return baseTextBox.RejectInputOnFirstFailure; } set { baseTextBox.RejectInputOnFirstFailure = value; } }
+        public bool RejectInputOnFirstFailure { get => baseTextBox.RejectInputOnFirstFailure; set { baseTextBox.RejectInputOnFirstFailure = value; } }
 
         [Category("Behavior")]
-        public bool ResetOnPrompt { get { return baseTextBox.ResetOnPrompt; } set { baseTextBox.ResetOnPrompt = value; } }
+        public bool ResetOnPrompt { get => baseTextBox.ResetOnPrompt; set { baseTextBox.ResetOnPrompt = value; } }
 
         [Category("Behavior")]
-        public bool ResetOnSpace { get { return baseTextBox.ResetOnSpace; } set { baseTextBox.ResetOnSpace = value; } }
+        public bool ResetOnSpace { get => baseTextBox.ResetOnSpace; set { baseTextBox.ResetOnSpace = value; } }
 
         [Category("Behavior")]
         public bool ShortcutsEnabled 
         { 
-            get 
-            { return baseTextBox.ShortcutsEnabled; } 
+            get => baseTextBox.ShortcutsEnabled;
             set 
             { 
                 baseTextBox.ShortcutsEnabled = value;
@@ -296,24 +326,24 @@
         }
 
         [Category("Behavior")]
-        public bool SkipLiterals { get { return baseTextBox.SkipLiterals; } set { baseTextBox.SkipLiterals = value; } }
+        public bool SkipLiterals { get => baseTextBox.SkipLiterals; set { baseTextBox.SkipLiterals = value; } }
 
         [Category("Behavior")]
-        public MaskFormat TextMaskFormat { get { return baseTextBox.TextMaskFormat; } set { baseTextBox.TextMaskFormat = value; } }
+        public MaskFormat TextMaskFormat { get => baseTextBox.TextMaskFormat; set { baseTextBox.TextMaskFormat = value; } }
 
         [Category("Behavior")]
-        public bool UseSystemPasswordChar { get { return baseTextBox.UseSystemPasswordChar; } set { baseTextBox.UseSystemPasswordChar = value; } }
+        public bool UseSystemPasswordChar { get => baseTextBox.UseSystemPasswordChar; set { baseTextBox.UseSystemPasswordChar = value; } }
 
         [Browsable(false)]
-        public Type ValidatingType { get { return baseTextBox.ValidatingType; } set { baseTextBox.ValidatingType = value; } }
+        public Type ValidatingType { get => baseTextBox.ValidatingType; set { baseTextBox.ValidatingType = value; } }
 
-        public new object Tag { get { return baseTextBox.Tag; } set { baseTextBox.Tag = value; } }
+        public new object Tag { get => baseTextBox.Tag; set { baseTextBox.Tag = value; } }
 
         private bool _readonly;
         [Category("Behavior")]
         public bool ReadOnly
         {
-            get { return _readonly; }
+            get => _readonly;
             set
             {
                 _readonly = value;
@@ -1398,6 +1428,8 @@
             };
 
             Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            HintFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Caption);
+            HintPadding = new Padding(10, 3, 0, 0);
 
             baseTextBox = new BaseMaskedTextBox
             {
@@ -1503,7 +1535,7 @@
             // HintText
             bool userTextPresent = !String.IsNullOrEmpty(Text);
             Rectangle helperTextRect = new Rectangle(LEFT_PADDING - _prefix_padding, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - (LEFT_PADDING - _prefix_padding) - _right_padding, HELPER_TEXT_HEIGHT);
-            Rectangle hintRect = new Rectangle(_left_padding - _prefix_padding, HINT_TEXT_SMALL_Y, Width - (_left_padding - _prefix_padding) - _right_padding, HINT_TEXT_SMALL_SIZE);
+            Rectangle hintRect = new Rectangle(HintPadding.Left - _prefix_padding, HintPadding.Top, Width - (HintPadding.Left - _prefix_padding) - HintPadding.Right, HINT_TEXT_SMALL_SIZE);
             int hintTextSize = 12;
 
             // bottom line base
@@ -1584,7 +1616,7 @@
                 {
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    HintFont,
                     Enabled ? !_errorState || (!userTextPresent && !isFocused) ? isFocused ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // Focus Accent
                     SkinManager.ColorScheme.PrimaryColor : // Focus Primary

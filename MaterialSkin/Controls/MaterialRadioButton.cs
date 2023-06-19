@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Data;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Text;
@@ -27,6 +28,7 @@
         private bool ripple;
         private int _boxOffset;
         private bool hovered = false;
+        private bool _checked = false;
 
         // size constants
         private const int HEIGHT_RIPPLE = 37;
@@ -37,6 +39,8 @@
         private const int RADIOBUTTON_OUTER_CIRCLE_WIDTH = 2;
         private const int RADIOBUTTON_INNER_CIRCLE_SIZE = RADIOBUTTON_SIZE - (2 * RADIOBUTTON_OUTER_CIRCLE_WIDTH);
         private const int TEXT_OFFSET = 26;
+
+        private static readonly object EVENT_CHECKEDCHANGED = new object();
         #endregion
         #region Properties
         [Browsable(false)]
@@ -50,6 +54,31 @@
 
         [Browsable(false)]
         public Point MouseLocation { get; set; }
+
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
+        public new bool Checked
+        {
+            get => _checked;
+            set
+            {
+                _checked = value;
+                //OnCheckedChanged(EventArgs.Empty);
+                CheckedChanged?.Invoke(this, EventArgs.Empty);
+                UpdateState();
+                Invalidate();
+            }
+        }
 
         [Category("Behavior")]
         public bool Ripple
@@ -79,6 +108,10 @@
         public string GroupName { get; set; }
         #endregion
 
+        #region Evetns
+        public event EventHandler CheckedChanged;
+        #endregion
+
         public MaterialRadioButton()
         {
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
@@ -106,7 +139,7 @@
 
             TabStopChanged += (sender, e) => TabStop = true;
 
-            CheckedChanged += (sender, args) =>
+            CheckedChanged += (sender, e) =>
             {
                 if (Ripple)
                     _checkAM.StartNewAnimation(Checked ? AnimationDirection.In : AnimationDirection.Out);
@@ -146,7 +179,7 @@
 
             double animationProgress = _checkAM.GetProgress();
 
-            int colorAlpha = Enabled ? (int)(animationProgress * 255.0) : SkinManager.CheckBoxOffDisabledColor.A;
+            int colorAlpha = Enabled ? 255 : SkinManager.CheckBoxOffDisabledColor.A;
             int backgroundAlpha = Enabled ? (int)(SkinManager.CheckboxOffColor.A * (1.0 - animationProgress)) : SkinManager.CheckBoxOffDisabledColor.A;
             float animationSize = (float)(animationProgress * 9f);
             float animationSizeHalf = animationSize / 2;
@@ -159,6 +192,7 @@
             {
                 double animationValue = _hoverAM.GetProgress();
                 int rippleSize = (int)(rippleHeight * (0.7 + (0.3 * animationValue)));
+                RadioColor = Color.FromArgb(colorAlpha, Enabled ? SkinManager.ColorScheme.AccentColor : SkinManager.CheckBoxOffDisabledColor);
 
                 using (SolidBrush rippleBrush = new SolidBrush(Color.FromArgb((int)(40 * animationValue),
                     !Checked ? (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? Color.Black : Color.White) : RadioColor)))
@@ -185,6 +219,10 @@
             var width = RADIOBUTTON_SIZE - Padding.Left - Padding.Right;
             var height = RADIOBUTTON_SIZE - Padding.Top - Padding.Bottom;
 
+            int centerSizeScale = 6;
+            var centerWidth = width - centerSizeScale;
+            var centerHeight = height - centerSizeScale;
+
             var x = (ClientRectangle.Height / 2) - (width / 2);
             var y = (ClientRectangle.Height / 2) - (height / 2);
 
@@ -194,7 +232,7 @@
                 g.DrawEllipse(pen, new Rectangle(x, y, width, height));
             }
 
-            if (Enabled)
+            if (Enabled && Checked)
             {
                 using (Pen pen = new Pen(RadioColor, 2))
                 {
@@ -206,7 +244,8 @@
             {
                 using (SolidBrush brush = new SolidBrush(RadioColor))
                 {
-                    g.FillEllipse(brush, new RectangleF(RADIOBUTTON_CENTER - animationSizeHalf, RADIOBUTTON_CENTER - animationSizeHalf, animationSize, animationSize));
+                    //g.FillEllipse(brush, new RectangleF(RADIOBUTTON_CENTER - animationSizeHalf, RADIOBUTTON_CENTER - animationSizeHalf, animationSize, animationSize));
+                    g.FillEllipse(brush, new RectangleF(x + (centerSizeScale/2), y + (centerSizeScale / 2), centerWidth, centerHeight));
                 }
             }
 
@@ -226,6 +265,10 @@
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
+
+            AutoSize = false;
+            Size = new Size(Width, 18);
+            Padding = new Padding(3);
 
             if (DesignMode) return;
 
@@ -316,37 +359,37 @@
             };
         }
 
-        protected override void OnCheckedChanged(EventArgs e)
+        private void UpdateState()
         {
-            base.OnCheckedChanged(e);
-
-            if (Checked)
+            if (!IsHandleCreated || !Checked)
             {
-                List<MaterialRadioButton> arbControls = null;
-                switch (GroupNameLevel)
-                {
-                    case Level.Parent:
-                        if (this.Parent != null)
-                        {
-                            arbControls = GetAll(this.Parent, typeof(MaterialRadioButton)).ToList();
-                        }
-                        break;
-                    case Level.Form:
-                        Form form = this.FindForm();
-                        if (form != null)
-                        {
-                            arbControls = GetAll(form, typeof(MaterialRadioButton)).ToList();
-                        }
-                        break;
-                }
-                if (arbControls != null)
-                {
-                    foreach (Control control in arbControls)
+                return;
+            }
+
+            List<MaterialRadioButton> arbControls = null;
+            switch (GroupNameLevel)
+            {
+                case Level.Parent:
+                    if (this.Parent != null)
                     {
-                        if (control != this && (control as MaterialRadioButton).GroupName == this.GroupName)
-                        {
-                            (control as MaterialRadioButton).Checked = false;
-                        }
+                        arbControls = GetAll(this.Parent, typeof(MaterialRadioButton)).ToList();
+                    }
+                    break;
+                case Level.Form:
+                    Form form = this.FindForm();
+                    if (form != null)
+                    {
+                        arbControls = GetAll(form, typeof(MaterialRadioButton)).ToList();
+                    }
+                    break;
+            }
+            if (arbControls != null)
+            {
+                foreach (Control control in arbControls)
+                {
+                    if (control != this && (control as MaterialRadioButton).GroupName == this.GroupName)
+                    {
+                        (control as MaterialRadioButton).Checked = false;
                     }
                 }
             }
@@ -354,8 +397,12 @@
 
         protected override void OnClick(EventArgs e)
         {
-            if (!Checked)
-                base.OnClick(e);
+            if (AutoCheck)
+            {
+                Checked = true;
+            }
+
+            Invalidate();
         }
         #endregion
 

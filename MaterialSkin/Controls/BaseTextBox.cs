@@ -31,6 +31,18 @@ namespace MaterialSkin.Controls
             }
         }
 
+        private Font hintFont;
+        public Font HintFont
+        {
+            get { return hintFont; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                hintFont = font;
+                Invalidate();
+            }
+        }
+
         public override Font Font
         {
             get { return base.Font; }
@@ -104,7 +116,7 @@ namespace MaterialSkin.Controls
                 {
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    Font,
                     Enabled ?
                     ColorHelper.RemoveAlpha(SkinManager.TextMediumEmphasisColor, BackColor) : // not focused
                     ColorHelper.RemoveAlpha(SkinManager.TextDisabledOrHintColor, BackColor), // Disabled
@@ -148,6 +160,18 @@ namespace MaterialSkin.Controls
             set
             {
                 hint = value;
+                Invalidate();
+            }
+        }
+
+        private Font hintFont;
+        public Font HintFont
+        {
+            get { return hintFont; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                hintFont = font;
                 Invalidate();
             }
         }
@@ -204,7 +228,7 @@ namespace MaterialSkin.Controls
                 {
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    Font,
                     Enabled ?
                     ColorHelper.RemoveAlpha(SkinManager.TextMediumEmphasisColor, BackColor) : // not focused
                     ColorHelper.RemoveAlpha(SkinManager.TextDisabledOrHintColor, BackColor), // Disabled
