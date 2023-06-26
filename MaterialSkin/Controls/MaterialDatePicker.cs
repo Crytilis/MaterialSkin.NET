@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.SqlServer.Server;
 
 namespace MaterialSkin.Controls
 {
@@ -20,17 +21,21 @@ namespace MaterialSkin.Controls
     [DefaultBindingProperty("Date")]
     public partial class MaterialDatePicker : Control, INotifyPropertyChanged
     {
+        #region Delegates & Events
+        public delegate void DateChangedHandler(DateTime newDateTime);
+
+
+        [Category("PropertyChanged")]
+        public event EventHandler FormatChanged;
+
+        [Browsable(false)]
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [Browsable(false)]
-        public int Depth { get; set; }
-        [Browsable(false)]
-        public MaterialSkinManager SkinManager { get => MaterialSkinManager.Instance; }
-        [Browsable(false)]
-        public MouseState MouseState { get; set; }
+        public event DateChangedHandler DateChanged;
+        #endregion
 
-        public new Color BackColor { get => SkinManager.BackgroundColor; }
 
+        #region Private Variables
         private RectangleF topDayRect;
         private RectangleF topDateRect;
         private RectangleF monthRect;
@@ -45,28 +50,10 @@ namespace MaterialSkin.Controls
         private GraphicsPath shadowPath;
         private DateTime currentDate;
 
-        private MaterialMaskedTextBox hoursBox;
-        private MaterialMaskedTextBox minutesBox;
-        private MaterialMaskedTextBox secondsBox;
+        private MaterialMaskedTextBox timeBox;
 
         private int _gttMasterField;
 
-        [Bindable(true), RefreshProperties(RefreshProperties.All)]
-        [Browsable(true), DefaultValue(typeof(DateTime), "01.01.2023")]
-        public DateTime Date { 
-            get { return currentDate; }
-            set { 
-                currentDate = value;
-
-                if(onDateChanged != null)
-                {
-                    onDateChanged(currentDate);
-                }
-                NotifyPropertyChanged();
-
-                Invalidate();
-            }
-        }
         private List<List<DateRect>> dateRectangles;
         private List<DateRect> kwRectangles;
 
@@ -79,30 +66,131 @@ namespace MaterialSkin.Controls
         private bool recentHovered;
         private bool nextHovered;
 
-        public delegate void DateChanged(DateTime newDateTime);
-        public event DateChanged onDateChanged;
-
-
+        
         private Brush HoverBrush;
 
-        #region Private Variables
         private Font dayFont;
         private Font topDayFont;
         private Font currentMonthFont;
         private Font selectedMonthFont;
         private Font selectedDayFont;
         private Font yearFont;
-        private Font hoursFont;
-        private Font minutesFont;
-        private Font secondFont;
+        private Font timeFont;
+
+        private DateTime creationTime = DateTime.Now;
+        private string customFormat;
+        private DateTimePickerFormat format;
 
         private bool showTime;
-        private bool showHours;
-        private bool showMinutes;
-        private bool showSeconds;
+        private bool timeboxWide;
         #endregion
         #region Properties
-        [Category("Appearance"), Localizable(true)]
+        [Browsable(false)]
+        public int Depth { get; set; }
+        [Browsable(false)]
+        public MaterialSkinManager SkinManager { get => MaterialSkinManager.Instance; }
+        [Browsable(false)]
+        public MouseState MouseState { get; set; }
+
+        public new Color BackColor { get => SkinManager.BackgroundColor; }
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All)]
+        [Category("MaterialSkin"), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
+        public DateTime Date { 
+            get { return currentDate; }
+            set { 
+                currentDate = value;
+
+                if(timeBox != null)
+                {
+                    timeBox.Text = currentDate.ToString("HH:mm:ss");
+                }
+                DateChanged?.Invoke(currentDate);
+                NotifyPropertyChanged();
+
+                Invalidate();
+            }
+        }
+        [Category("MaterialSkin"), DefaultValue(null), Localizable(true)]
+        public string CustomFormat
+        {
+            get
+            {
+                return customFormat;
+            }
+            set
+            {
+                if ((value != null && !value.Equals(customFormat)) || (value == null && customFormat != null))
+                {
+                    customFormat = value;
+                    if (base.IsHandleCreated && format == DateTimePickerFormat.Custom)
+                    {
+                        Invalidate();
+                    }
+                }
+            }
+        }
+
+        [Category("MaterialSkin"), DefaultValue(DateTimePickerFormat.Long), Localizable(true)]
+        public DateTimePickerFormat Format
+        {
+            get
+            {
+                return format;
+            }
+            set
+            {
+                if (format != value)
+                {
+                    format = value;
+                    //RecreateHandle();
+                    Invalidate();
+                    FormatChanged?.Invoke(this.Parent ?? this, EventArgs.Empty);
+                }
+            }
+        }
+
+        [Category("MaterialSkin"), DefaultValue(true), Localizable(true)]
+        public bool WideTimeBox
+        {
+            get => timeboxWide;
+            set
+            {
+                timeboxWide = value;
+                Invalidate();
+            }
+        }
+
+        public override string Text
+        {
+            get
+            {
+                switch (Format)
+                {
+                    case DateTimePickerFormat.Short:
+                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+                    case DateTimePickerFormat.Time:
+                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
+                    case DateTimePickerFormat.Custom:
+                        return Date.ToString(customFormat);
+                    default:
+                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern);
+                }
+            }
+            set
+            {
+                if (value == null || value.Length == 0)
+                {
+                    ResetValue();
+                }
+                else
+                {
+                    Date = DateTime.Parse(value, CultureInfo.CurrentCulture);
+                }
+            }
+        }
+
+        [Category("MaterialSkin"), Localizable(true)]
         public Font DayFont
         {
             get { return dayFont; }
@@ -116,7 +204,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public Font TopDayFont
         {
             get { return topDayFont; }
@@ -131,7 +219,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public Font SelectedMonthFont
         {
             get { return selectedMonthFont; }
@@ -146,7 +234,7 @@ namespace MaterialSkin.Controls
             }
         }
         
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public Font CurrentMonthFont
         {
             get { return currentMonthFont; }
@@ -161,7 +249,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public Font SelectedDayFont
         {
             get { return selectedDayFont; }
@@ -176,7 +264,7 @@ namespace MaterialSkin.Controls
             }
         }
         
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public Font YearFont
         {
             get { return yearFont; }
@@ -191,94 +279,55 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("Appearance"), Localizable(true)]
-        public Font HoursFont {
-            get { return hoursFont; }
+        [Category("MaterialSkin"), Localizable(true)]
+        public Font TimeFont {
+            get { return timeFont; }
             set
             {
                 if (value != null)
                 {
                     var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
-                    hoursFont = font;
-                }
-                Invalidate();
-            }
-        }
-
-        [Category("Appearance"), Localizable(true)]
-        public Font MinutesFont {
-            get { return minutesFont; }
-            set
-            {
-                if (value != null)
-                {
-                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
-                    minutesFont = font;
-                }
-                Invalidate();
-            }
-        }
-
-        [Category("Appearance"), Localizable(true)]
-        public Font SecondsFont {
-            get { return secondFont; }
-            set
-            {
-                if (value != null)
-                {
-                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
-                    secondFont = font;
+                    timeFont = font;
+                    if (timeBox != null)
+                    {
+                        timeBox.Font = font;
+                    }
                 }
                 Invalidate();
             }
         }
 
 
-        [Category("Appearance"), Localizable(true)]
+        [Category("MaterialSkin"), Localizable(true)]
         public bool ShowTime
         {
             get => showTime;
             set
             {
                 showTime = value;
+                if(timeBox != null)
+                {
+                    timeBox.Visible = showTime;
+                }
                 Invalidate();
             }
         }
 
-        [Category("Appearance"), Localizable(true)]
-        public bool ShowHours
+        public string TimeHint
         {
-            get => showHours;
+            get => timeBox?.Hint ?? "";
             set
             {
-                showHours = value;
-                Invalidate();
-            }
-        }
-
-        [Category("Appearance"), Localizable(true)]
-        public bool ShowMinutes
-        {
-            get => showMinutes;
-            set
-            {
-                showMinutes = value;
-                Invalidate();
-            }
-        }
-
-        [Category("Appearance"), Localizable(true)]
-        public bool ShowSeconds
-        {
-            get => showSeconds;
-            set
-            {
-                showSeconds = value;
-                Invalidate();
+                if(timeBox != null)
+                {
+                    timeBox.Hint = value;
+                    Invalidate();
+                }
             }
         }
         #endregion
 
+        #region Constructors & Initialize
 
         public MaterialDatePicker()
         {
@@ -312,12 +361,17 @@ namespace MaterialSkin.Controls
             shadowPath = new GraphicsPath();
             shadowPath.AddLine(-5, topDateRect.Bottom, Width, topDateRect.Bottom);
 
-            DayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 10.25f, FontStyle.Regular, GraphicsUnit.Point);
-            TopDayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 9.25f, FontStyle.Regular, GraphicsUnit.Point);
-            CurrentMonthFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12.25f, FontStyle.Bold, GraphicsUnit.Point);
-            SelectedMonthFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 16.25f, FontStyle.Bold, GraphicsUnit.Point);
-            SelectedDayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 40.25f, FontStyle.Bold, GraphicsUnit.Point);
-            YearFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 14.25f, FontStyle.Bold, GraphicsUnit.Point);
+            DayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 10f, FontStyle.Regular, GraphicsUnit.Point);
+            TopDayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 9f, FontStyle.Regular, GraphicsUnit.Point);
+            CurrentMonthFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12f, FontStyle.Bold, GraphicsUnit.Point);
+            SelectedMonthFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 16f, FontStyle.Bold, GraphicsUnit.Point);
+            SelectedDayFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 40f, FontStyle.Bold, GraphicsUnit.Point);
+            YearFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 14f, FontStyle.Bold, GraphicsUnit.Point);
+            TimeFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 10f, FontStyle.Regular, GraphicsUnit.Point);
+
+            WideTimeBox = true;
+
+            Format = DateTimePickerFormat.Long;
             
             DoubleBuffered = true;
             dateRectDefaultSize = (Width - kwPadding - 10) / 7;
@@ -326,7 +380,59 @@ namespace MaterialSkin.Controls
             hoverX = -1;
             hoverY = -1;
             CalculateRectangles();
+
+            CreateTimeControl();
         }
+
+        private void CreateTimeControl()
+        {
+            timeBox = new MaterialMaskedTextBox() {
+                Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12, FontStyle.Regular, GraphicsUnit.Point),
+                HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point),
+                HintPadding = new Padding(10, -1, 0, 0),
+                Hint = "Zeit",
+                Width = 90,
+                //Size = new Size(90, 36),
+                Size = new Size(ClientSize.Width, 36),
+                Location = new Point(0, ClientSize.Height - 36),
+                TabStop = true,
+                Visible = true,
+                Mask = "00:00:00",
+                PromptChar = '_',
+                InsertKeyMode = InsertKeyMode.Overwrite,
+                Text = Date.ToString("HH:mm:ss"),
+                TextAlign = HorizontalAlignment.Center
+            };
+            timeBox.TextChanged += TimeBox_TextChanged;
+
+            this.Controls.Add(timeBox);
+        }
+
+        private void TimeBox_TextChanged(object sender, EventArgs e)
+        {
+            var tb = sender as BaseMaskedTextBox;
+            var time = tb.Text.Split(':');
+            if (time.Length <= 1)
+            {
+                return;
+            }
+            for (int i = 0; i < time.Length; i++)
+            {
+                var num = int.Parse(string.IsNullOrWhiteSpace(time[i]) ? "0" : time[i]);
+                time[i] = (num > 59 ? 59 : num).ToString();
+                if (i == 0)
+                {
+                    time[i] = (num > 23 ? 23 : num).ToString();
+                }
+                else if (num < 10)
+                {
+                    time[i] = $"0{time[i]}";
+                }
+            }
+
+            tb.Text = string.Join(":", time);
+        }
+        #endregion
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -334,6 +440,7 @@ namespace MaterialSkin.Controls
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        #region Event Invokes
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -386,28 +493,30 @@ namespace MaterialSkin.Controls
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            base.OnMouseUp(e);
+            DateTime date = DateTime.Now;
+            int hour = currentDate.Hour, minute = currentDate.Minute, second = currentDate.Second;
+
             if (hoverX >= 0)
             {
                 selectedX = hoverX;
                 selectedY = hoverY;
-                Date = dateRectangles[selectedX][selectedY].Date;
-                return;
+                date = Date = dateRectangles[selectedX][selectedY].Date;
             }
             if (recentHovered)
             {
-                Date = FirstDayOfMonth(currentDate.AddMonths(-1));
-                CalculateRectangles();
-                Invalidate();
-                return;
+                date = FirstDayOfMonth(currentDate.AddMonths(-1));
             }
             if (nextHovered)
             {
-                Date = FirstDayOfMonth(currentDate.AddMonths(1));
-                CalculateRectangles();
-                Invalidate();
-                return;
+                date = FirstDayOfMonth(currentDate.AddMonths(1));
             }
-            base.OnMouseUp(e);
+
+            var tmpDate = $"{date:d} {hour:D2}:{minute:D2}:{second:D2}";
+            Date = DateTime.Parse(tmpDate);
+            CalculateRectangles();
+            Invalidate();
+            return;
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -419,46 +528,6 @@ namespace MaterialSkin.Controls
             Invalidate();
             base.OnMouseLeave(e);
         }
-
-
-        private void CalculateRectangles()
-        {
-            dateRectangles = new List<List<DateRect>>();
-            kwRectangles = new List<DateRect>();
-            for (int i = 0; i < 7; i++)
-            {
-                dateRectangles.Add(new List<DateRect>());
-                for (int j = 0; j < 7; j++)
-                {
-                    dateRectangles[i].Add(new DateRect(new Rectangle(5 + (j * dateRectDefaultSize) + kwPadding, (int)(currentCal_Header.Bottom + (i * dateRectDefaultSize)), dateRectDefaultSize, dateRectDefaultSize)));
-                }
-            }
-
-            for (int i = 0; i < 7; i++)
-            {
-                kwRectangles.Add(new DateRect(new Rectangle(5, (int)(currentCal_Header.Bottom + (i * dateRectDefaultSize)), dateRectDefaultSize, dateRectDefaultSize)));
-            }
-
-            DateTime FirstDay = FirstDayOfMonth(currentDate);
-            for (DateTime date = FirstDay; date <= LastDayOfMonth(currentDate); date = date.AddDays(1))
-            {
-                int WeekOfMonth = GetWeekNumber(date, FirstDay);
-                int dayOfWeek = (int)date.DayOfWeek - 1;
-                if (dayOfWeek < 0) dayOfWeek = 6;
-                if (date.DayOfYear == currentDate.DayOfYear && date.Year == currentDate.Year)
-                {
-                    selectedX = WeekOfMonth;
-                    selectedY = dayOfWeek;
-                }
-                dateRectangles[WeekOfMonth][dayOfWeek].Drawn = true;
-                dateRectangles[WeekOfMonth][dayOfWeek].Date = date;
-
-                kwRectangles[WeekOfMonth].Drawn= true;
-                kwRectangles[WeekOfMonth].Date= date;
-            }
-
-        }
-
 
         protected override void OnResize(EventArgs e)
         {
@@ -473,13 +542,25 @@ namespace MaterialSkin.Controls
             Graphics g = e.Graphics;
             HoverBrush = new SolidBrush(Color.FromArgb(100, SkinManager.ColorScheme.PrimaryColor));
 
+            if (WideTimeBox)
+            {
+                timeBox.Size = new Size(ClientSize.Width, 36);
+                timeBox.Location = new Point(0, ClientSize.Height - 36);
+            }
+            else
+            {
+                timeBox.Size = new Size(92, 36);
+                timeBox.Location = new Point((ClientSize.Width / 2) - (timeBox.Width / 2), ClientSize.Height - 36);
+            }
+
             g.Clear(Parent.BackColor);
             Rectangle rect = new Rectangle(Location, ClientRectangle.Size);
             DrawHelper.DrawSquareShadow(g, rect, 1);
 
             RectangleF dateRectF = new RectangleF(ClientRectangle.Location, ClientRectangle.Size);
-            dateRectF.X -= 0.5f;
-            dateRectF.Y -= 0.5f;
+            dateRectF.X += 1f;
+            dateRectF.Width -= 2f;
+            dateRectF.Y -= 1f;
             GraphicsPath datePath = DrawHelper.CreateRoundRect(dateRectF, 1);
 
             using (SolidBrush normalBrush = new SolidBrush(SkinManager.BackgroundColor))
@@ -646,13 +727,54 @@ namespace MaterialSkin.Controls
                             kwRectangles[i].Rect.Right - 4, kwRectangles[i].Rect.Bottom);
                 }
             }
+        }
 
-            #region Time
-            if(ShowTime)
+        #endregion
+
+        #region Private Methods
+        private void ResetValue()
+        {
+            Date = DateTime.Now;
+            DateChanged?.Invoke(Date);
+            OnTextChanged(EventArgs.Empty);
+        }
+        #endregion
+        private void CalculateRectangles()
+        {
+            dateRectangles = new List<List<DateRect>>();
+            kwRectangles = new List<DateRect>();
+            for (int i = 0; i < 7; i++)
             {
-
+                dateRectangles.Add(new List<DateRect>());
+                for (int j = 0; j < 7; j++)
+                {
+                    dateRectangles[i].Add(new DateRect(new Rectangle(5 + (j * dateRectDefaultSize) + kwPadding, (int)(currentCal_Header.Bottom + (i * dateRectDefaultSize)), dateRectDefaultSize, dateRectDefaultSize)));
+                }
             }
-            #endregion
+
+            for (int i = 0; i < 7; i++)
+            {
+                kwRectangles.Add(new DateRect(new Rectangle(5, (int)(currentCal_Header.Bottom + (i * dateRectDefaultSize)), dateRectDefaultSize, dateRectDefaultSize)));
+            }
+
+            DateTime FirstDay = FirstDayOfMonth(currentDate);
+            for (DateTime date = FirstDay; date <= LastDayOfMonth(currentDate); date = date.AddDays(1))
+            {
+                int WeekOfMonth = GetWeekNumber(date, FirstDay);
+                int dayOfWeek = (int)date.DayOfWeek - 1;
+                if (dayOfWeek < 0) dayOfWeek = 6;
+                if (date.DayOfYear == currentDate.DayOfYear && date.Year == currentDate.Year)
+                {
+                    selectedX = WeekOfMonth;
+                    selectedY = dayOfWeek;
+                }
+
+                dateRectangles[WeekOfMonth][dayOfWeek].Drawn = true;
+                dateRectangles[WeekOfMonth][dayOfWeek].Date = date;
+
+                kwRectangles[WeekOfMonth].Drawn= true;
+                kwRectangles[WeekOfMonth].Date= date;
+            }
 
         }
 
@@ -675,6 +797,25 @@ namespace MaterialSkin.Controls
             return (int)Math.Truncate((double)CurrentDate.Subtract(FirstDayOfMonth).TotalDays / 7f) + 1;
         }
 
+        internal static NativeMethods.SYSTEMTIME DateTimeToSysTime(DateTime time)
+        {
+            NativeMethods.SYSTEMTIME sYSTEMTIME = new NativeMethods.SYSTEMTIME();
+            sYSTEMTIME.wYear = (ushort)time.Year;
+            sYSTEMTIME.wMonth = (ushort)time.Month;
+            sYSTEMTIME.wDayOfWeek = (ushort)time.DayOfWeek;
+            sYSTEMTIME.wDay = (ushort)time.Day;
+            sYSTEMTIME.wHour = (ushort)time.Hour;
+            sYSTEMTIME.wMinute = (ushort)time.Minute;
+            sYSTEMTIME.wSecond = (ushort)time.Second;
+            sYSTEMTIME.wMilliseconds = 0;
+            return sYSTEMTIME;
+        }
+
+        internal static DateTime SysTimeToDateTime(NativeMethods.SYSTEMTIME s)
+        {
+            return new DateTime(s.wYear, s.wMonth, s.wDay, s.wHour, s.wMinute, s.wSecond);
+        }
+
         private class DateRect
         {
             public Rectangle Rect;
@@ -686,5 +827,7 @@ namespace MaterialSkin.Controls
                 Rect = pRect;
             }
         }
+
+
     }
 }

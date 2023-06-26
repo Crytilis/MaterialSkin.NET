@@ -117,24 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="Column1.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Column2.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Column3.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Column4.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="materialLabel8.Text" xml:space="preserve">
-    <value>Here is a list of every variant a Material Button can be. Contained button's shadows are only drawn at run-time.
-Click on them and checkout those sweet animations. Oh yeah, the buttons follow the theme and colors, try changing those too.
-Normally the buttons should be AutoSize = true, but for the sake of my OCD, it's set to false here
-If any of the buttons looks weird while designing, change the tab background color from transparent to white.</value>
-  </data>
   <metadata name="menuIconList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>219, 17</value>
   </metadata>
@@ -143,7 +125,7 @@ If any of the buttons looks weird while designing, change the tab background col
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAABa
-        NgAAAk1TRnQBSQFMAgEBEgEAAYgBDQGIAQ0BGAEAARgBAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFg
+        NgAAAk1TRnQBSQFMAgEBEgEAAVgBDgFYAQ4BGAEAARgBAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFg
         AwABeAMAAQEBAAEgBgABtP8A/wD/ADEAAwwBEAM9AWcDWQG7A1wB5wMAAf8DAAH/A2AB4wNVAa8DOQFf
         AwYBCCgAAy8BSQNgAeMDAAH/AwAB/wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wMA
         Af8DAAH/AwAB/wNgAeMDLgFI5AADPgFrA2EB6wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wMAAf8DAAH/
@@ -376,6 +358,24 @@ If any of the buttons looks weird while designing, change the tab background col
         AeABAAEHAfgBAAEfAfgBJAE/AfgBAAEfAeABAAEHAfwBAAE/AfgBYAF/AfgBAAEfAeABAAEHAf4BAAF/
         AfgB4AH/AfgBAAEfAeABAAEHAf8BAAL/AeEB/wH4AQABHwHgAQABBwT/AeMB/wH4AQABHwf/Aecc/ws=
 </value>
+  </data>
+  <metadata name="Column1.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Column2.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Column3.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Column4.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="materialLabel8.Text" xml:space="preserve">
+    <value>Here is a list of every variant a Material Button can be. Contained button's shadows are only drawn at run-time.
+Click on them and checkout those sweet animations. Oh yeah, the buttons follow the theme and colors, try changing those too.
+Normally the buttons should be AutoSize = true, but for the sake of my OCD, it's set to false here
+If any of the buttons looks weird while designing, change the tab background color from transparent to white.</value>
   </data>
   <metadata name="materialContextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

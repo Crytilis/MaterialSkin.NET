@@ -132,5 +132,18 @@ namespace MaterialSkin
         }
         [DllImport("Shell32.dll", SetLastError = false)]
         public static extern Int32 SHGetStockIconInfo(SHSTOCKICONID siid, SHGSI uFlags, ref SHSTOCKICONINFO psii);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SYSTEMTIME
+        {
+            internal ushort wYear;
+            internal ushort wMonth;
+            internal ushort wDayOfWeek;
+            internal ushort wDay;
+            internal ushort wHour;
+            internal ushort wMinute;
+            internal ushort wSecond;
+            internal ushort wMilliseconds;
+        }
     }
 }

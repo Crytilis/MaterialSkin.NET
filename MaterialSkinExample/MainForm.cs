@@ -328,5 +328,26 @@ namespace MaterialSkinExample
         {
             mbtn12.Visible = !mbtn12.Visible;
         }
+
+        private void materialNumericUpDown1_Enter(object sender, EventArgs e)
+        {
+            //var test = ((MaterialNumericUpDown)sender).Text;
+
+            ((MaterialSkin.Controls.MaterialNumericUpDown)sender).SelectAll();
+
+        }
+
+        private void materialButton10_Click(object sender, EventArgs e)
+        {
+            materialNumericUpDown1.Enabled = !materialNumericUpDown1.Enabled;
+        }
+
+        private void materialNumericUpDown1_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(((MaterialSkin.Controls.MaterialNumericUpDown)sender).Text))
+            {
+                ((MaterialSkin.Controls.MaterialNumericUpDown)sender).Text = "0";
+            }
+        }
     }
 }

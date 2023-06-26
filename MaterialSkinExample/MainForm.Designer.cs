@@ -34,41 +34,33 @@ namespace MaterialSkinExample
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            MaterialSkin.MaterialListBoxItem materialListBoxItem1 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem2 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem3 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem4 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem5 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem6 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem7 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem8 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem9 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem10 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem11 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem12 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem13 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem14 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem15 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem16 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem17 = new MaterialSkin.MaterialListBoxItem();
-            MaterialSkin.MaterialListBoxItem materialListBoxItem18 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem55 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem56 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem57 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem58 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem59 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem60 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem61 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem62 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem63 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem64 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem65 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem66 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem67 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem68 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem69 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem70 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem71 = new MaterialSkin.MaterialListBoxItem();
+            MaterialSkin.MaterialListBoxItem materialListBoxItem72 = new MaterialSkin.MaterialListBoxItem();
             this.materialCheckbox3 = new MaterialSkin.Controls.MaterialCheckbox();
             this.materialCheckbox1 = new MaterialSkin.Controls.MaterialCheckbox();
             this.materialTabControl1 = new MaterialSkin.Controls.MaterialTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.materialLabel63 = new MaterialSkin.Controls.MaterialLabel();
-            this.materialLabel62 = new MaterialSkin.Controls.MaterialLabel();
-            this.materialLabel61 = new MaterialSkin.Controls.MaterialLabel();
-            this.materialTextBox25 = new MaterialSkin.Controls.MaterialTextBox2();
-            this.materialTextBox24 = new MaterialSkin.Controls.MaterialTextBox2();
-            this.materialTextBox23 = new MaterialSkin.Controls.MaterialTextBox2();
             this.materialMaskedTextBox2 = new MaterialSkin.Controls.MaterialMaskedTextBox();
-            this.materialDatePicker1 = new MaterialSkin.Controls.MaterialDatePicker(this.components);
-            this.materialDropDownDatePicker2 = new MaterialSkin.Controls.MaterialDropDownDatePicker();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -149,6 +141,7 @@ namespace MaterialSkinExample
             this.materialCheckbox2 = new MaterialSkin.Controls.MaterialCheckbox();
             this.materialCheckBox5 = new MaterialSkin.Controls.MaterialCheckbox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.materialButton10 = new MaterialSkin.Controls.MaterialButton();
             this.materialMultiLineTextBox23 = new MaterialSkin.Controls.MaterialMultiLineTextBox2();
             this.materialNumericUpDown1 = new MaterialSkin.Controls.MaterialNumericUpDown();
             this.materialMaskedTextBox1 = new MaterialSkin.Controls.MaterialMaskedTextBox();
@@ -218,6 +211,8 @@ namespace MaterialSkinExample
             this.materialListBox2 = new MaterialSkin.Controls.MaterialListBox();
             this.materialListBox1 = new MaterialSkin.Controls.MaterialListBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.materialDropDownDatePicker2 = new MaterialSkin.Controls.MaterialDropDownDatePicker();
+            this.materialDatePicker1 = new MaterialSkin.Controls.MaterialDatePicker(this.components);
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.materialExpansionPanel1 = new MaterialSkin.Controls.MaterialExpansionPanel();
             this.materialLabel51 = new MaterialSkin.Controls.MaterialLabel();
@@ -337,15 +332,7 @@ namespace MaterialSkinExample
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.White;
-            this.tabPage1.Controls.Add(this.materialLabel63);
-            this.tabPage1.Controls.Add(this.materialLabel62);
-            this.tabPage1.Controls.Add(this.materialLabel61);
-            this.tabPage1.Controls.Add(this.materialTextBox25);
-            this.tabPage1.Controls.Add(this.materialTextBox24);
-            this.tabPage1.Controls.Add(this.materialTextBox23);
             this.tabPage1.Controls.Add(this.materialMaskedTextBox2);
-            this.tabPage1.Controls.Add(this.materialDatePicker1);
-            this.tabPage1.Controls.Add(this.materialDropDownDatePicker2);
             this.tabPage1.Controls.Add(this.dataGridView1);
             this.tabPage1.Controls.Add(this.materialButton25);
             this.tabPage1.Controls.Add(this.materialButton6);
@@ -371,143 +358,6 @@ namespace MaterialSkinExample
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Home";
             // 
-            // materialLabel63
-            // 
-            this.materialLabel63.AutoSize = true;
-            this.materialLabel63.Depth = 0;
-            this.materialLabel63.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.materialLabel63.Location = new System.Drawing.Point(477, 418);
-            this.materialLabel63.Margin = new System.Windows.Forms.Padding(0);
-            this.materialLabel63.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialLabel63.Name = "materialLabel63";
-            this.materialLabel63.Size = new System.Drawing.Size(4, 13);
-            this.materialLabel63.TabIndex = 84;
-            this.materialLabel63.Text = ":";
-            // 
-            // materialLabel62
-            // 
-            this.materialLabel62.AutoSize = true;
-            this.materialLabel62.Depth = 0;
-            this.materialLabel62.Font = new System.Drawing.Font("Roboto", 15F, System.Drawing.FontStyle.Bold);
-            this.materialLabel62.FontType = MaterialSkin.MaterialSkinManager.fontType.H6;
-            this.materialLabel62.Location = new System.Drawing.Point(581, 441);
-            this.materialLabel62.Margin = new System.Windows.Forms.Padding(0);
-            this.materialLabel62.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialLabel62.Name = "materialLabel62";
-            this.materialLabel62.Size = new System.Drawing.Size(7, 24);
-            this.materialLabel62.TabIndex = 84;
-            this.materialLabel62.Text = ":";
-            // 
-            // materialLabel61
-            // 
-            this.materialLabel61.AutoSize = true;
-            this.materialLabel61.Depth = 0;
-            this.materialLabel61.Font = new System.Drawing.Font("Roboto", 15F, System.Drawing.FontStyle.Bold);
-            this.materialLabel61.FontType = MaterialSkin.MaterialSkinManager.fontType.H6;
-            this.materialLabel61.Location = new System.Drawing.Point(526, 442);
-            this.materialLabel61.Margin = new System.Windows.Forms.Padding(0);
-            this.materialLabel61.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialLabel61.Name = "materialLabel61";
-            this.materialLabel61.Size = new System.Drawing.Size(7, 24);
-            this.materialLabel61.TabIndex = 84;
-            this.materialLabel61.Text = ":";
-            // 
-            // materialTextBox25
-            // 
-            this.materialTextBox25.AnimateReadOnly = false;
-            this.materialTextBox25.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
-            this.materialTextBox25.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
-            this.materialTextBox25.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.materialTextBox25.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.materialTextBox25.Depth = 0;
-            this.materialTextBox25.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.materialTextBox25.HideSelection = true;
-            this.materialTextBox25.HintFont = new System.Drawing.Font("Roboto", 7.25F);
-            this.materialTextBox25.HintPadding = new System.Windows.Forms.Padding(10, -2, 0, 0);
-            this.materialTextBox25.LeadingIcon = null;
-            this.materialTextBox25.Location = new System.Drawing.Point(591, 441);
-            this.materialTextBox25.MaxLength = 2;
-            this.materialTextBox25.MouseState = MaterialSkin.MouseState.OUT;
-            this.materialTextBox25.Name = "materialTextBox25";
-            this.materialTextBox25.PasswordChar = '\0';
-            this.materialTextBox25.PrefixSuffixText = null;
-            this.materialTextBox25.ReadOnly = false;
-            this.materialTextBox25.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.materialTextBox25.SelectedText = "";
-            this.materialTextBox25.SelectionLength = 0;
-            this.materialTextBox25.SelectionStart = 0;
-            this.materialTextBox25.ShortcutsEnabled = true;
-            this.materialTextBox25.Size = new System.Drawing.Size(42, 25);
-            this.materialTextBox25.TabIndex = 83;
-            this.materialTextBox25.Text = "00";
-            this.materialTextBox25.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.materialTextBox25.TrailingIcon = null;
-            this.materialTextBox25.UseSystemPasswordChar = false;
-            // 
-            // materialTextBox24
-            // 
-            this.materialTextBox24.AnimateReadOnly = false;
-            this.materialTextBox24.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
-            this.materialTextBox24.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
-            this.materialTextBox24.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.materialTextBox24.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.materialTextBox24.Depth = 0;
-            this.materialTextBox24.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.materialTextBox24.HideSelection = true;
-            this.materialTextBox24.HintFont = new System.Drawing.Font("Roboto", 7.25F);
-            this.materialTextBox24.HintPadding = new System.Windows.Forms.Padding(10, -2, 0, 0);
-            this.materialTextBox24.LeadingIcon = null;
-            this.materialTextBox24.Location = new System.Drawing.Point(536, 441);
-            this.materialTextBox24.MaxLength = 2;
-            this.materialTextBox24.MouseState = MaterialSkin.MouseState.OUT;
-            this.materialTextBox24.Name = "materialTextBox24";
-            this.materialTextBox24.PasswordChar = '\0';
-            this.materialTextBox24.PrefixSuffixText = null;
-            this.materialTextBox24.ReadOnly = false;
-            this.materialTextBox24.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.materialTextBox24.SelectedText = "";
-            this.materialTextBox24.SelectionLength = 0;
-            this.materialTextBox24.SelectionStart = 0;
-            this.materialTextBox24.ShortcutsEnabled = true;
-            this.materialTextBox24.Size = new System.Drawing.Size(42, 25);
-            this.materialTextBox24.TabIndex = 83;
-            this.materialTextBox24.Text = "00";
-            this.materialTextBox24.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.materialTextBox24.TrailingIcon = null;
-            this.materialTextBox24.UseSystemPasswordChar = false;
-            // 
-            // materialTextBox23
-            // 
-            this.materialTextBox23.AnimateReadOnly = false;
-            this.materialTextBox23.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
-            this.materialTextBox23.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
-            this.materialTextBox23.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.materialTextBox23.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.materialTextBox23.Depth = 0;
-            this.materialTextBox23.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.materialTextBox23.HideSelection = true;
-            this.materialTextBox23.HintFont = new System.Drawing.Font("Roboto", 7.25F);
-            this.materialTextBox23.HintPadding = new System.Windows.Forms.Padding(10, -2, 0, 0);
-            this.materialTextBox23.LeadingIcon = null;
-            this.materialTextBox23.Location = new System.Drawing.Point(481, 441);
-            this.materialTextBox23.MaxLength = 2;
-            this.materialTextBox23.MouseState = MaterialSkin.MouseState.OUT;
-            this.materialTextBox23.Name = "materialTextBox23";
-            this.materialTextBox23.PasswordChar = '\0';
-            this.materialTextBox23.PrefixSuffixText = null;
-            this.materialTextBox23.ReadOnly = false;
-            this.materialTextBox23.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.materialTextBox23.SelectedText = "";
-            this.materialTextBox23.SelectionLength = 0;
-            this.materialTextBox23.SelectionStart = 0;
-            this.materialTextBox23.ShortcutsEnabled = true;
-            this.materialTextBox23.Size = new System.Drawing.Size(42, 25);
-            this.materialTextBox23.TabIndex = 83;
-            this.materialTextBox23.Text = "00";
-            this.materialTextBox23.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.materialTextBox23.TrailingIcon = null;
-            this.materialTextBox23.UseSystemPasswordChar = false;
-            // 
             // materialMaskedTextBox2
             // 
             this.materialMaskedTextBox2.AllowPromptAsInput = true;
@@ -517,7 +367,7 @@ namespace MaterialSkinExample
             this.materialMaskedTextBox2.BeepOnError = false;
             this.materialMaskedTextBox2.CutCopyMaskFormat = System.Windows.Forms.MaskFormat.IncludeLiterals;
             this.materialMaskedTextBox2.Depth = 0;
-            this.materialMaskedTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.materialMaskedTextBox2.Font = new System.Drawing.Font("Roboto", 12F);
             this.materialMaskedTextBox2.HidePromptOnLeave = true;
             this.materialMaskedTextBox2.HideSelection = false;
             this.materialMaskedTextBox2.HintFont = new System.Drawing.Font("Roboto", 8F);
@@ -546,86 +396,47 @@ namespace MaterialSkinExample
             this.materialMaskedTextBox2.SkipLiterals = true;
             this.materialMaskedTextBox2.TabIndex = 82;
             this.materialMaskedTextBox2.TabStop = false;
-            this.materialMaskedTextBox2.Text = "00:00:00";
+            this.materialMaskedTextBox2.Text = "0 :00:00";
             this.materialMaskedTextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.materialMaskedTextBox2.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludeLiterals;
             this.materialMaskedTextBox2.TrailingIcon = null;
             this.materialMaskedTextBox2.UseSystemPasswordChar = false;
             this.materialMaskedTextBox2.ValidatingType = null;
             // 
-            // materialDatePicker1
-            // 
-            this.materialDatePicker1.CurrentMonthFont = new System.Drawing.Font("Roboto", 12.25F, System.Drawing.FontStyle.Bold);
-            this.materialDatePicker1.Date = new System.DateTime(2023, 6, 17, 15, 7, 0, 118);
-            this.materialDatePicker1.DayFont = new System.Drawing.Font("Roboto", 10.25F);
-            this.materialDatePicker1.Depth = 0;
-            this.materialDatePicker1.HoursFont = null;
-            this.materialDatePicker1.Location = new System.Drawing.Point(420, 41);
-            this.materialDatePicker1.MinutesFont = null;
-            this.materialDatePicker1.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialDatePicker1.Name = "materialDatePicker1";
-            this.materialDatePicker1.SecondsFont = null;
-            this.materialDatePicker1.SelectedDayFont = new System.Drawing.Font("Roboto", 40.25F, System.Drawing.FontStyle.Bold);
-            this.materialDatePicker1.SelectedMonthFont = new System.Drawing.Font("Roboto", 16.25F, System.Drawing.FontStyle.Bold);
-            this.materialDatePicker1.ShowHours = false;
-            this.materialDatePicker1.ShowMinutes = false;
-            this.materialDatePicker1.ShowSeconds = false;
-            this.materialDatePicker1.ShowTime = false;
-            this.materialDatePicker1.Size = new System.Drawing.Size(280, 425);
-            this.materialDatePicker1.TabIndex = 44;
-            this.materialDatePicker1.Text = "materialDatePicker1";
-            this.materialDatePicker1.TopDayFont = new System.Drawing.Font("Roboto", 9.25F);
-            this.materialDatePicker1.YearFont = new System.Drawing.Font("Roboto", 14.25F, System.Drawing.FontStyle.Bold);
-            // 
-            // materialDropDownDatePicker2
-            // 
-            this.materialDropDownDatePicker2.AnchorSize = new System.Drawing.Size(150, 18);
-            this.materialDropDownDatePicker2.Date = new System.DateTime(2023, 6, 17, 15, 5, 17, 608);
-            this.materialDropDownDatePicker2.Depth = 0;
-            this.materialDropDownDatePicker2.DockSide = MaterialSkin.Controls.DropDownControl.eDockSide.Left;
-            this.materialDropDownDatePicker2.DroppedDown = false;
-            this.materialDropDownDatePicker2.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.materialDropDownDatePicker2.Location = new System.Drawing.Point(348, 17);
-            this.materialDropDownDatePicker2.MouseState = MaterialSkin.MouseState.OUT;
-            this.materialDropDownDatePicker2.Name = "materialDropDownDatePicker2";
-            this.materialDropDownDatePicker2.Size = new System.Drawing.Size(150, 18);
-            this.materialDropDownDatePicker2.TabIndex = 43;
-            this.materialDropDownDatePicker2.UseAccent = false;
-            // 
             // dataGridView1
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2,
             this.Column3,
             this.Column4});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle11;
             this.dataGridView1.Location = new System.Drawing.Point(505, 323);
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.dataGridView1.Size = new System.Drawing.Size(443, 95);
             this.dataGridView1.TabIndex = 42;
             // 
@@ -1607,12 +1418,17 @@ namespace MaterialSkinExample
             this.materialDropDownDatePicker1.Date = new System.DateTime(2023, 3, 10, 13, 38, 38, 428);
             this.materialDropDownDatePicker1.Depth = 0;
             this.materialDropDownDatePicker1.DockSide = MaterialSkin.Controls.DropDownControl.eDockSide.Left;
+            this.materialDropDownDatePicker1.DropDownShowTime = false;
+            this.materialDropDownDatePicker1.DropDownTimeFont = new System.Drawing.Font("Roboto", 10F);
+            this.materialDropDownDatePicker1.DropDownTimeHint = "Zeit";
+            this.materialDropDownDatePicker1.DropDownWideTimevox = true;
             this.materialDropDownDatePicker1.DroppedDown = false;
             this.materialDropDownDatePicker1.Font = new System.Drawing.Font("Roboto", 8.25F);
             this.materialDropDownDatePicker1.Location = new System.Drawing.Point(678, 352);
             this.materialDropDownDatePicker1.Margin = new System.Windows.Forms.Padding(4);
             this.materialDropDownDatePicker1.MouseState = MaterialSkin.MouseState.OUT;
             this.materialDropDownDatePicker1.Name = "materialDropDownDatePicker1";
+            this.materialDropDownDatePicker1.ShowCheckBox = false;
             this.materialDropDownDatePicker1.Size = new System.Drawing.Size(273, 41);
             this.materialDropDownDatePicker1.TabIndex = 76;
             this.materialDropDownDatePicker1.UseAccent = false;
@@ -2283,6 +2099,7 @@ namespace MaterialSkinExample
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.White;
+            this.tabPage3.Controls.Add(this.materialButton10);
             this.tabPage3.Controls.Add(this.materialMultiLineTextBox23);
             this.tabPage3.Controls.Add(this.materialNumericUpDown1);
             this.tabPage3.Controls.Add(this.materialMaskedTextBox1);
@@ -2314,6 +2131,29 @@ namespace MaterialSkinExample
             this.tabPage3.Size = new System.Drawing.Size(962, 560);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Textbox";
+            // 
+            // materialButton10
+            // 
+            this.materialButton10.AutoSize = false;
+            this.materialButton10.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.materialButton10.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            this.materialButton10.Depth = 0;
+            this.materialButton10.Font = new System.Drawing.Font("Roboto", 8.25F);
+            this.materialButton10.HighEmphasis = false;
+            this.materialButton10.Icon = null;
+            this.materialButton10.IconPadding = new System.Windows.Forms.Padding(0);
+            this.materialButton10.Location = new System.Drawing.Point(606, 18);
+            this.materialButton10.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.materialButton10.MouseState = MaterialSkin.MouseState.HOVER;
+            this.materialButton10.Name = "materialButton10";
+            this.materialButton10.NoAccentTextColor = System.Drawing.Color.Empty;
+            this.materialButton10.Size = new System.Drawing.Size(114, 24);
+            this.materialButton10.TabIndex = 2;
+            this.materialButton10.Text = "Enabled";
+            this.materialButton10.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            this.materialButton10.UseAccentColor = false;
+            this.materialButton10.UseVisualStyleBackColor = true;
+            this.materialButton10.Click += new System.EventHandler(this.materialButton10_Click);
             // 
             // materialMultiLineTextBox23
             // 
@@ -2356,8 +2196,9 @@ namespace MaterialSkinExample
             this.materialNumericUpDown1.SelectionStart = 0;
             this.materialNumericUpDown1.ShortcutsEnabled = true;
             this.materialNumericUpDown1.Size = new System.Drawing.Size(250, 24);
-            this.materialNumericUpDown1.TabIndex = 82;
-            this.materialNumericUpDown1.TabStop = false;
+            this.materialNumericUpDown1.TabIndex = 1;
+            this.materialNumericUpDown1.Enter += new System.EventHandler(this.materialNumericUpDown1_Enter);
+            this.materialNumericUpDown1.Leave += new System.EventHandler(this.materialNumericUpDown1_Leave);
             // 
             // materialMaskedTextBox1
             // 
@@ -2368,7 +2209,7 @@ namespace MaterialSkinExample
             this.materialMaskedTextBox1.BeepOnError = false;
             this.materialMaskedTextBox1.CutCopyMaskFormat = System.Windows.Forms.MaskFormat.IncludeLiterals;
             this.materialMaskedTextBox1.Depth = 0;
-            this.materialMaskedTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.materialMaskedTextBox1.Font = new System.Drawing.Font("Roboto", 12F);
             this.materialMaskedTextBox1.HidePromptOnLeave = true;
             this.materialMaskedTextBox1.HideSelection = false;
             this.materialMaskedTextBox1.Hint = "Phone number mask";
@@ -3503,30 +3344,30 @@ namespace MaterialSkinExample
             this.materialListBox3.BorderColor = System.Drawing.Color.LightGray;
             this.materialListBox3.Depth = 0;
             this.materialListBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            materialListBoxItem1.SecondaryText = "A very very long secondary text to display 1 ";
-            materialListBoxItem1.Tag = null;
-            materialListBoxItem1.Text = "ListBoxItem1";
-            materialListBoxItem2.SecondaryText = "A very very long secondary text to display 2";
-            materialListBoxItem2.Tag = null;
-            materialListBoxItem2.Text = "ListBoxItem2";
-            materialListBoxItem3.SecondaryText = "A very very long secondary text to display 3";
-            materialListBoxItem3.Tag = null;
-            materialListBoxItem3.Text = "ListBoxItem3";
-            materialListBoxItem4.SecondaryText = "A very very long secondary text to display 4";
-            materialListBoxItem4.Tag = null;
-            materialListBoxItem4.Text = "ListBoxItem4";
-            materialListBoxItem5.SecondaryText = "A very very long secondary text to display 5";
-            materialListBoxItem5.Tag = null;
-            materialListBoxItem5.Text = "ListBoxItem5";
-            materialListBoxItem6.SecondaryText = "A very very long secondary text to display 6";
-            materialListBoxItem6.Tag = null;
-            materialListBoxItem6.Text = "ListBoxItem6";
-            this.materialListBox3.Items.Add(materialListBoxItem1);
-            this.materialListBox3.Items.Add(materialListBoxItem2);
-            this.materialListBox3.Items.Add(materialListBoxItem3);
-            this.materialListBox3.Items.Add(materialListBoxItem4);
-            this.materialListBox3.Items.Add(materialListBoxItem5);
-            this.materialListBox3.Items.Add(materialListBoxItem6);
+            materialListBoxItem55.SecondaryText = "A very very long secondary text to display 1 ";
+            materialListBoxItem55.Tag = null;
+            materialListBoxItem55.Text = "ListBoxItem1";
+            materialListBoxItem56.SecondaryText = "A very very long secondary text to display 2";
+            materialListBoxItem56.Tag = null;
+            materialListBoxItem56.Text = "ListBoxItem2";
+            materialListBoxItem57.SecondaryText = "A very very long secondary text to display 3";
+            materialListBoxItem57.Tag = null;
+            materialListBoxItem57.Text = "ListBoxItem3";
+            materialListBoxItem58.SecondaryText = "A very very long secondary text to display 4";
+            materialListBoxItem58.Tag = null;
+            materialListBoxItem58.Text = "ListBoxItem4";
+            materialListBoxItem59.SecondaryText = "A very very long secondary text to display 5";
+            materialListBoxItem59.Tag = null;
+            materialListBoxItem59.Text = "ListBoxItem5";
+            materialListBoxItem60.SecondaryText = "A very very long secondary text to display 6";
+            materialListBoxItem60.Tag = null;
+            materialListBoxItem60.Text = "ListBoxItem6";
+            this.materialListBox3.Items.Add(materialListBoxItem55);
+            this.materialListBox3.Items.Add(materialListBoxItem56);
+            this.materialListBox3.Items.Add(materialListBoxItem57);
+            this.materialListBox3.Items.Add(materialListBoxItem58);
+            this.materialListBox3.Items.Add(materialListBoxItem59);
+            this.materialListBox3.Items.Add(materialListBoxItem60);
             this.materialListBox3.Location = new System.Drawing.Point(579, 132);
             this.materialListBox3.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialListBox3.Name = "materialListBox3";
@@ -3542,30 +3383,30 @@ namespace MaterialSkinExample
             this.materialListBox2.BorderColor = System.Drawing.Color.LightGray;
             this.materialListBox2.Depth = 0;
             this.materialListBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            materialListBoxItem7.SecondaryText = "Secondary text1";
-            materialListBoxItem7.Tag = null;
-            materialListBoxItem7.Text = "ListBoxItem1";
-            materialListBoxItem8.SecondaryText = "Secondary text2";
-            materialListBoxItem8.Tag = null;
-            materialListBoxItem8.Text = "ListBoxItem2";
-            materialListBoxItem9.SecondaryText = "Secondary text3";
-            materialListBoxItem9.Tag = null;
-            materialListBoxItem9.Text = "ListBoxItem3";
-            materialListBoxItem10.SecondaryText = "Secondary text4";
-            materialListBoxItem10.Tag = null;
-            materialListBoxItem10.Text = "ListBoxItem4";
-            materialListBoxItem11.SecondaryText = "Secondary text5";
-            materialListBoxItem11.Tag = null;
-            materialListBoxItem11.Text = "ListBoxItem5";
-            materialListBoxItem12.SecondaryText = "Secondary text6";
-            materialListBoxItem12.Tag = null;
-            materialListBoxItem12.Text = "ListBoxItem6";
-            this.materialListBox2.Items.Add(materialListBoxItem7);
-            this.materialListBox2.Items.Add(materialListBoxItem8);
-            this.materialListBox2.Items.Add(materialListBoxItem9);
-            this.materialListBox2.Items.Add(materialListBoxItem10);
-            this.materialListBox2.Items.Add(materialListBoxItem11);
-            this.materialListBox2.Items.Add(materialListBoxItem12);
+            materialListBoxItem61.SecondaryText = "Secondary text1";
+            materialListBoxItem61.Tag = null;
+            materialListBoxItem61.Text = "ListBoxItem1";
+            materialListBoxItem62.SecondaryText = "Secondary text2";
+            materialListBoxItem62.Tag = null;
+            materialListBoxItem62.Text = "ListBoxItem2";
+            materialListBoxItem63.SecondaryText = "Secondary text3";
+            materialListBoxItem63.Tag = null;
+            materialListBoxItem63.Text = "ListBoxItem3";
+            materialListBoxItem64.SecondaryText = "Secondary text4";
+            materialListBoxItem64.Tag = null;
+            materialListBoxItem64.Text = "ListBoxItem4";
+            materialListBoxItem65.SecondaryText = "Secondary text5";
+            materialListBoxItem65.Tag = null;
+            materialListBoxItem65.Text = "ListBoxItem5";
+            materialListBoxItem66.SecondaryText = "Secondary text6";
+            materialListBoxItem66.Tag = null;
+            materialListBoxItem66.Text = "ListBoxItem6";
+            this.materialListBox2.Items.Add(materialListBoxItem61);
+            this.materialListBox2.Items.Add(materialListBoxItem62);
+            this.materialListBox2.Items.Add(materialListBoxItem63);
+            this.materialListBox2.Items.Add(materialListBoxItem64);
+            this.materialListBox2.Items.Add(materialListBoxItem65);
+            this.materialListBox2.Items.Add(materialListBoxItem66);
             this.materialListBox2.Location = new System.Drawing.Point(306, 132);
             this.materialListBox2.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialListBox2.Name = "materialListBox2";
@@ -3582,30 +3423,30 @@ namespace MaterialSkinExample
             this.materialListBox1.BorderColor = System.Drawing.Color.LightGray;
             this.materialListBox1.Depth = 0;
             this.materialListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            materialListBoxItem13.SecondaryText = "";
-            materialListBoxItem13.Tag = null;
-            materialListBoxItem13.Text = "ListBoxItem1";
-            materialListBoxItem14.SecondaryText = "";
-            materialListBoxItem14.Tag = null;
-            materialListBoxItem14.Text = "ListBoxItem2";
-            materialListBoxItem15.SecondaryText = "";
-            materialListBoxItem15.Tag = null;
-            materialListBoxItem15.Text = "ListBoxItem3";
-            materialListBoxItem16.SecondaryText = "";
-            materialListBoxItem16.Tag = null;
-            materialListBoxItem16.Text = "ListBoxItem4";
-            materialListBoxItem17.SecondaryText = "";
-            materialListBoxItem17.Tag = null;
-            materialListBoxItem17.Text = "ListBoxItem5";
-            materialListBoxItem18.SecondaryText = "";
-            materialListBoxItem18.Tag = null;
-            materialListBoxItem18.Text = "ListBoxItem6";
-            this.materialListBox1.Items.Add(materialListBoxItem13);
-            this.materialListBox1.Items.Add(materialListBoxItem14);
-            this.materialListBox1.Items.Add(materialListBoxItem15);
-            this.materialListBox1.Items.Add(materialListBoxItem16);
-            this.materialListBox1.Items.Add(materialListBoxItem17);
-            this.materialListBox1.Items.Add(materialListBoxItem18);
+            materialListBoxItem67.SecondaryText = "";
+            materialListBoxItem67.Tag = null;
+            materialListBoxItem67.Text = "ListBoxItem1";
+            materialListBoxItem68.SecondaryText = "";
+            materialListBoxItem68.Tag = null;
+            materialListBoxItem68.Text = "ListBoxItem2";
+            materialListBoxItem69.SecondaryText = "";
+            materialListBoxItem69.Tag = null;
+            materialListBoxItem69.Text = "ListBoxItem3";
+            materialListBoxItem70.SecondaryText = "";
+            materialListBoxItem70.Tag = null;
+            materialListBoxItem70.Text = "ListBoxItem4";
+            materialListBoxItem71.SecondaryText = "";
+            materialListBoxItem71.Tag = null;
+            materialListBoxItem71.Text = "ListBoxItem5";
+            materialListBoxItem72.SecondaryText = "";
+            materialListBoxItem72.Tag = null;
+            materialListBoxItem72.Text = "ListBoxItem6";
+            this.materialListBox1.Items.Add(materialListBoxItem67);
+            this.materialListBox1.Items.Add(materialListBoxItem68);
+            this.materialListBox1.Items.Add(materialListBoxItem69);
+            this.materialListBox1.Items.Add(materialListBoxItem70);
+            this.materialListBox1.Items.Add(materialListBoxItem71);
+            this.materialListBox1.Items.Add(materialListBoxItem72);
             this.materialListBox1.Location = new System.Drawing.Point(38, 132);
             this.materialListBox1.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialListBox1.Name = "materialListBox1";
@@ -3617,6 +3458,8 @@ namespace MaterialSkinExample
             // tabPage11
             // 
             this.tabPage11.BackColor = System.Drawing.Color.White;
+            this.tabPage11.Controls.Add(this.materialDropDownDatePicker2);
+            this.tabPage11.Controls.Add(this.materialDatePicker1);
             this.tabPage11.Controls.Add(this.flowLayoutPanel1);
             this.tabPage11.ImageKey = "round_http_white_24dp.png";
             this.tabPage11.Location = new System.Drawing.Point(4, 31);
@@ -3624,6 +3467,50 @@ namespace MaterialSkinExample
             this.tabPage11.Size = new System.Drawing.Size(962, 560);
             this.tabPage11.TabIndex = 8;
             this.tabPage11.Text = "Expansion panel";
+            // 
+            // materialDropDownDatePicker2
+            // 
+            this.materialDropDownDatePicker2.AnchorSize = new System.Drawing.Size(150, 18);
+            this.materialDropDownDatePicker2.CustomFormat = "dd.MM.yyyy HH:mm";
+            this.materialDropDownDatePicker2.Date = new System.DateTime(2023, 6, 26, 15, 58, 2, 0);
+            this.materialDropDownDatePicker2.Depth = 0;
+            this.materialDropDownDatePicker2.DockSide = MaterialSkin.Controls.DropDownControl.eDockSide.Left;
+            this.materialDropDownDatePicker2.DropDownTimeFont = new System.Drawing.Font("Roboto", 10F);
+            this.materialDropDownDatePicker2.DropDownTimeHint = "Zeit";
+            this.materialDropDownDatePicker2.DropDownWideTimevox = false;
+            this.materialDropDownDatePicker2.DroppedDown = false;
+            this.materialDropDownDatePicker2.Font = new System.Drawing.Font("Roboto", 8F);
+            this.materialDropDownDatePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.materialDropDownDatePicker2.Location = new System.Drawing.Point(570, 3);
+            this.materialDropDownDatePicker2.MouseState = MaterialSkin.MouseState.OUT;
+            this.materialDropDownDatePicker2.Name = "materialDropDownDatePicker2";
+            this.materialDropDownDatePicker2.ShowCheckBox = false;
+            this.materialDropDownDatePicker2.Size = new System.Drawing.Size(150, 18);
+            this.materialDropDownDatePicker2.TabIndex = 86;
+            this.materialDropDownDatePicker2.UseAccent = false;
+            // 
+            // materialDatePicker1
+            // 
+            this.materialDatePicker1.CurrentMonthFont = new System.Drawing.Font("Roboto", 12F, System.Drawing.FontStyle.Bold);
+            this.materialDatePicker1.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            this.materialDatePicker1.Date = new System.DateTime(2023, 6, 26, 16, 32, 17, 0);
+            this.materialDatePicker1.DayFont = new System.Drawing.Font("Roboto", 10F);
+            this.materialDatePicker1.Depth = 0;
+            this.materialDatePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.materialDatePicker1.Location = new System.Drawing.Point(570, 92);
+            this.materialDatePicker1.MouseState = MaterialSkin.MouseState.HOVER;
+            this.materialDatePicker1.Name = "materialDatePicker1";
+            this.materialDatePicker1.SelectedDayFont = new System.Drawing.Font("Roboto", 40F, System.Drawing.FontStyle.Bold);
+            this.materialDatePicker1.SelectedMonthFont = new System.Drawing.Font("Roboto", 16F, System.Drawing.FontStyle.Bold);
+            this.materialDatePicker1.ShowTime = true;
+            this.materialDatePicker1.Size = new System.Drawing.Size(280, 425);
+            this.materialDatePicker1.TabIndex = 85;
+            this.materialDatePicker1.Text = "26.06.2023 16:32:17";
+            this.materialDatePicker1.TimeFont = new System.Drawing.Font("Roboto", 12F);
+            this.materialDatePicker1.TimeHint = "Zeit";
+            this.materialDatePicker1.TopDayFont = new System.Drawing.Font("Roboto", 9.25F);
+            this.materialDatePicker1.WideTimeBox = false;
+            this.materialDatePicker1.YearFont = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Bold);
             // 
             // flowLayoutPanel1
             // 
@@ -4149,7 +4036,6 @@ namespace MaterialSkinExample
         private MaterialSkin.Controls.MaterialCheckbox materialCheckbox1;
         private MaterialSkin.Controls.MaterialCheckbox materialCheckbox3;
         private MaterialTabControl materialTabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
         private MaterialCheckbox materialCheckBox5;
@@ -4197,17 +4083,11 @@ namespace MaterialSkinExample
         private MaterialTabSelector materialTabSelector1;
         private MaterialTabControl materialTabControl2;
         private TabPage tabPage8;
-        private MaterialLabel materialLabel9;
         private TabPage tabPage9;
         private MaterialLabel materialLabel10;
-        private MaterialButton MaterialButton4;
-        private MaterialButton materialButton7;
         private MaterialSwitch materialSwitch3;
         private MaterialSwitch materialSwitch2;
         private MaterialSwitch materialSwitch1;
-        private MaterialSwitch materialSwitch4;
-        private MaterialSwitch materialSwitch6;
-        private MaterialSwitch materialSwitch5;
         private MaterialRadioButton materialRadioButton4;
         private MaterialRadioButton materialRadioButton1;
         private MaterialRadioButton materialRadioButton2;
@@ -4215,7 +4095,6 @@ namespace MaterialSkinExample
         private MaterialTextBox2 materialTextBox2;
         private MaterialTextBox2 materialTextBox1;
         private MaterialTextBox2 materialSingleLineTextField2;
-        private MaterialLabel materialLabel24;
         private MaterialLabel materialLabel25;
         private MaterialLabel materialLabel26;
         private MaterialLabel materialLabel27;
@@ -4236,8 +4115,6 @@ namespace MaterialSkinExample
         private MaterialLabel materialLabel35;
         private MaterialLabel materialLabel5;
         private MaterialCheckedListBox materialCheckedListBox1;
-        private MaterialButton MaterialButton3;
-        private MaterialLabel materialLabel6;
         private MaterialLabel materialLabel39;
         private MaterialButton mbtn7;
         private MaterialTextBox2 materialTextBox3;
@@ -4248,7 +4125,6 @@ namespace MaterialSkinExample
         private MaterialComboBox materialComboBox6;
         private MaterialTextBox2 materialTextBox5;
         private MaterialTextBox2 materialTextBox4;
-        private MaterialSwitch materialSwitch8;
         private MaterialLabel materialLabel7;
         private MaterialLabel materialLabel45;
         private MaterialLabel materialLabel44;
@@ -4274,11 +4150,6 @@ namespace MaterialSkinExample
         private MaterialExpansionPanel materialExpansionPanel1;
         private MaterialExpansionPanel materialExpansionPanel2;
         private MaterialLabel materialLabel51;
-        private MaterialSwitch materialSwitch9;
-        private MaterialListBox materialListBoxFormStyle;
-        private MaterialLabel materialLabel52;
-        private MaterialButton materialButton6;
-        private MaterialLabel materialLabel53;
         private MaterialMultiLineTextBox2 materialMultiLineTextBox21;
         private TabPage tabPage12;
         private MaterialLabel materialLabel55;
@@ -4311,8 +4182,6 @@ namespace MaterialSkinExample
         private MaterialSwitch materialSwitch14;
         private MaterialSwitch msReadOnly;
         private MaterialMaskedTextBox materialMaskedTextBox1;
-        private MaterialButton materialButton25;
-        private MaterialLabel materialLabel57;
         private MaterialSwitch materialSwitch16;
         private MaterialLabel materialLabel58;
         private MaterialButton materialButton26;
@@ -4328,19 +4197,32 @@ namespace MaterialSkinExample
         private MaterialButton materialButton9;
         private MaterialMultiLineTextBox2 materialMultiLineTextBox23;
         private MaterialTextBox2 materialTextBox22;
+        private MaterialButton materialButton10;
+        private TabPage tabPage1;
+        private MaterialMaskedTextBox materialMaskedTextBox2;
         private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewCheckBoxColumn Column2;
         private DataGridViewComboBoxColumn Column3;
         private DataGridViewLinkColumn Column4;
-        private MaterialDropDownDatePicker materialDropDownDatePicker2;
+        private MaterialButton materialButton25;
+        private MaterialButton materialButton6;
+        private MaterialLabel materialLabel57;
+        private MaterialLabel materialLabel53;
+        private MaterialLabel materialLabel52;
+        private MaterialListBox materialListBoxFormStyle;
+        private MaterialButton MaterialButton3;
+        private MaterialSwitch materialSwitch8;
+        private MaterialLabel materialLabel24;
+        private MaterialSwitch materialSwitch6;
+        private MaterialLabel materialLabel6;
+        private MaterialLabel materialLabel9;
+        private MaterialSwitch materialSwitch5;
+        private MaterialButton materialButton7;
+        private MaterialSwitch materialSwitch9;
+        private MaterialSwitch materialSwitch4;
+        private MaterialButton MaterialButton4;
         private MaterialDatePicker materialDatePicker1;
-        private MaterialMaskedTextBox materialMaskedTextBox2;
-        private MaterialLabel materialLabel63;
-        private MaterialLabel materialLabel62;
-        private MaterialLabel materialLabel61;
-        private MaterialTextBox2 materialTextBox25;
-        private MaterialTextBox2 materialTextBox24;
-        private MaterialTextBox2 materialTextBox23;
+        private MaterialDropDownDatePicker materialDropDownDatePicker2;
     }
 }

@@ -71,6 +71,15 @@ namespace MaterialSkin.Controls
             });
         }
 
+        public new void Select(int start, int length)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                base.Focus();
+                base.Select(start, length);
+            });
+        }
+
         #endregion
 
         public BaseTextBox()
@@ -126,14 +135,13 @@ namespace MaterialSkin.Controls
                 }
             }
 
-            if (m.Msg == EM_SETBKGNDCOLOR)
+            if (m.Msg == EM_SETBKGNDCOLOR || m.Msg == WM_KILLFOCUS)
             {
                 Invalidate();
             }
-
-            if (m.Msg == WM_KILLFOCUS) //set border back to normal on lost focus
+            else
             {
-                Invalidate();
+                base.WndProc(ref m);
             }
 
         }

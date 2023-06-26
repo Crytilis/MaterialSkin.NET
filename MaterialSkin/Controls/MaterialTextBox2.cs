@@ -1415,8 +1415,8 @@ namespace MaterialSkin.Controls
                 preProcessIcons();
             };
 
-            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8.25f, FontStyle.Regular, GraphicsUnit.Point);
-            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7.25f, FontStyle.Regular, GraphicsUnit.Point);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point);
             HintPadding = new Padding(10, -2, 0, 0);
 
             baseTextBox = new BaseTextBox
@@ -1566,7 +1566,6 @@ namespace MaterialSkin.Controls
                     Rectangle prefixRect = new Rectangle(
                         _left_padding - _prefix_padding,
                         hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
-//                        NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width,
                         _prefix_padding,
                         hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
 
@@ -1589,7 +1588,6 @@ namespace MaterialSkin.Controls
                     Rectangle suffixRect = new Rectangle(
                         Width - _right_padding ,
                         hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
-                        //NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING,
                         _suffix_padding,
                         hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
 
@@ -1897,7 +1895,6 @@ namespace MaterialSkin.Controls
                 iconsBrushes.Add("_leadingIcon", textureBrushGray);
 
                 iconsErrorBrushes.Add("_leadingIcon", textureBrushRed);
-
             }
 
             if (_trailingIcon != null)

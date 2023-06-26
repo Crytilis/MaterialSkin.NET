@@ -260,6 +260,22 @@
         [Category("Appearance")]
         public HorizontalAlignment TextAlign { get => baseTextBox.TextAlign; set { baseTextBox.TextAlign = value; } }
 
+        [Category("Appearance"), Localizable(true)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.Font = font;
+                }
+                base.Font = font;
+                Invalidate();
+            }
+        }
+
         [Category("Appearance")]
         public Char PromptChar { get => baseTextBox.PromptChar; set { baseTextBox.PromptChar = value; } }
 
@@ -1427,9 +1443,9 @@
                 preProcessIcons();
             };
 
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
-            HintFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Caption);
-            HintPadding = new Padding(10, 3, 0, 0);
+            Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point);
+            HintPadding = new Padding(10, -2, 0, 0);
 
             baseTextBox = new BaseMaskedTextBox
             {
@@ -1444,7 +1460,7 @@
 
             Enabled = true;
             ReadOnly = false;
-            Size = new Size(250, HEIGHT);
+            Size = new Size(250, 25);
 
             UseTallSize = true;
             PrefixSuffix = PrefixSuffixTypes.None;
@@ -1484,7 +1500,6 @@
             cms.Opening += ContextMenuStripOnOpening;
             cms.OnItemClickStart += ContextMenuStripOnItemClickStart;
             ContextMenuStrip = cms;
-
         }
 
         private void Redraw(object sencer, EventArgs e)
@@ -1492,6 +1507,8 @@
             SuspendLayout();
             Invalidate();
             ResumeLayout(false);
+
+
         }
 
         protected override void OnPaint(PaintEventArgs pevent)
@@ -1500,16 +1517,19 @@
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
             g.Clear(Parent.BackColor);
             SolidBrush backBrush = new SolidBrush(DrawHelper.BlendColor(Parent.BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A));
-            
+            SolidBrush backDisabledBrush = new SolidBrush(DrawHelper.BlendColor(BackColor, SkinManager.BackgroundDisabledColor).Darken(.2f));
+
             //backColor
             g.FillRectangle(
-                !Enabled ? SkinManager.BackgroundDisabledBrush : // Disabled
+                !Enabled ? backDisabledBrush : // Disabled
+                ReadOnly ? SkinManager.BackgroundDisabledBrush :  // Readonly
                 isFocused ? SkinManager.BackgroundFocusBrush :  // Focused
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? SkinManager.BackgroundHoverBrush : // Hover
                 backBrush, // Normal
                 ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, LINE_Y);
 
             baseTextBox.BackColor = !Enabled ? ColorHelper.RemoveAlpha(SkinManager.BackgroundDisabledColor, BackColor) : //Disabled
+                ReadOnly ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundDisabledColor, SkinManager.BackgroundDisabledColor.A) : //Readonly
                 isFocused ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundFocusColor, SkinManager.BackgroundFocusColor.A) : //Focused
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundHoverColor, SkinManager.BackgroundHoverColor.A) : // Hover
                 DrawHelper.BlendColor(BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A); // Normal
@@ -1535,8 +1555,13 @@
             // HintText
             bool userTextPresent = !String.IsNullOrEmpty(Text);
             Rectangle helperTextRect = new Rectangle(LEFT_PADDING - _prefix_padding, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - (LEFT_PADDING - _prefix_padding) - _right_padding, HELPER_TEXT_HEIGHT);
-            Rectangle hintRect = new Rectangle(HintPadding.Left - _prefix_padding, HintPadding.Top, Width - (HintPadding.Left - _prefix_padding) - HintPadding.Right, HINT_TEXT_SMALL_SIZE);
-            int hintTextSize = 12;
+            int hintFontSize = HINT_TEXT_SMALL_SIZE;
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+            {
+                hintFontSize = NativeText.MeasureString(Hint, HintFont).Height;
+            }
+            Rectangle hintRect = new Rectangle(HintPadding.Left - _prefix_padding, HintPadding.Top, Width - (HintPadding.Left - _prefix_padding) - HintPadding.Right, hintFontSize);
+            float hintTextSize = Font.Size - 2;
 
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -1634,9 +1659,11 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
+
                     NativeText.DrawTransparentText(
                     HelperText,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    font,
                     Enabled ? !_errorState || (!userTextPresent && !isFocused) ? isFocused ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // Focus Accent
                     SkinManager.ColorScheme.PrimaryColor : // Focus Primary
@@ -1654,9 +1681,11 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
+                    var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), hintTextSize, Font.Style, GraphicsUnit.Point);
+
                     NativeText.DrawTransparentText(
                     ErrorMessage,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    font,
                     Enabled ? 
                     SkinManager.BackgroundHoverRedColor : // error state
                     SkinManager.TextDisabledOrHintColor, // Disabled
@@ -1739,13 +1768,11 @@
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-
             UpdateRects();
             preProcessIcons();
+            UpdateHeight();
 
-            Size = new Size(Width, HEIGHT);
             LINE_Y = HEIGHT - ACTIVATION_INDICATOR_HEIGHT - _helperTextHeight;
-
         }
 
         protected override void OnCreateControl()
@@ -1893,7 +1920,6 @@
                 iconsBrushes.Add("_leadingIcon", textureBrushGray);
 
                 iconsErrorBrushes.Add("_leadingIcon", textureBrushRed);
-
             }
 
             if (_trailingIcon != null)
@@ -1957,7 +1983,7 @@
 
         private void UpdateHeight()
         {
-            HEIGHT = _UseTallSize ? 48 : 36;
+            HEIGHT = Height < 18 ? 18 : Height;
             HEIGHT += _helperTextHeight;
             Size = new Size(Size.Width, HEIGHT);
         }
@@ -1978,34 +2004,46 @@
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
-                    _prefix_padding = NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING;
+                    _prefix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
                     _left_padding += _prefix_padding;
                 }
             }
             else
                 _prefix_padding = 0;
+                
             if (_prefixsuffix == PrefixSuffixTypes.Suffix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
-                    _suffix_padding = NativeText.MeasureLogString(_prefixsuffixText, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width + PREFIX_SUFFIX_PADDING;
+                    _suffix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
                     _right_padding += _suffix_padding;
                 }
             }
             else
                 _suffix_padding = 0;
 
-            if (hasHint && UseTallSize && (isFocused || !String.IsNullOrEmpty(Text)))
+            if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text)))
             {
-                baseTextBox.Location = new Point(_left_padding, 22);
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                {
+                    string text = string.IsNullOrEmpty(Text) ? "0" : Text;
+                    var newFontHeight = NativeText.MeasureString(text, Font).Height;
+                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2 + 4);
+                    baseTextBox.Height = newFontHeight;
+                }
                 baseTextBox.Width = Width - (_left_padding + _right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
             }
             else
             {
-                baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - FONT_HEIGHT / 2);
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                {
+                    string hint = string.IsNullOrEmpty(Hint) ? "0" : Hint;
+                    var textToMesure = string.IsNullOrEmpty(Text) ? hint : Text;
+                    var newFontHeight = NativeText.MeasureString(textToMesure, Font).Height;
+                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2);
+                    baseTextBox.Height = newFontHeight;
+                }
                 baseTextBox.Width = Width - (_left_padding + _right_padding);
-                baseTextBox.Height = FONT_HEIGHT;
             }
 
             _leadingIconBounds = new Rectangle(8, ((LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
