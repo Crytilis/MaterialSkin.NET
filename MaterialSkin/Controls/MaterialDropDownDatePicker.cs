@@ -24,6 +24,8 @@ namespace MaterialSkin.Controls
         #region Private Variables
         private MaterialDatePicker objDateControl;
         private DateTime date;
+        private DateTime mindate = DateTime.MinValue;
+        private DateTime maxdate = DateTime.MaxValue;
 
         private bool showCheckbox = false;
         #endregion
@@ -56,22 +58,55 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Bindable(true), RefreshProperties(RefreshProperties.All)]
-        [Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
         public DateTime Date
         {
             get => date;
             set
             {
-                date = value; objDateControl.Date = date;
+                var tmpdate = value < MinDate ? MinDate : (value > MaxDate ? MaxDate : value);
+                date = tmpdate;
                 Text = objDateControl.Text;
                 NotifyPropertyChanged();
             }
         }
+        
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true)]
+        public DateTime MinDate
+        {
+            get => mindate;
+            set
+            {
+                if (value < DateTime.MinValue)
+                {
+                    throw new ArgumentOutOfRangeException("MinDate");
+                }
+
+                mindate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true)]
+        public DateTime MaxDate
+        {
+            get => maxdate;
+            set
+            {
+                if (value > DateTime.MaxValue)
+                {
+                    throw new ArgumentOutOfRangeException("MaxDate");
+                }
+
+                maxdate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public override Color BackColor { get => Parent == null ? SkinManager.BackdropColor : Parent.BackColor; set { } }
 
         #region MaterialSkin
-        [Category("MaterialSkin"), DefaultValue(null), Localizable(true)]
+        [Category("Material Skin"), DefaultValue(null), Localizable(true)]
         public string CustomFormat
         {
             get
@@ -91,7 +126,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), DefaultValue(DateTimePickerFormat.Long), Localizable(true)]
+        [Category("Material Skin"), DefaultValue(DateTimePickerFormat.Long), Localizable(true)]
         public DateTimePickerFormat Format
         {
             get
@@ -108,7 +143,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font DropDownTimeFont
         {
             get { return objDateControl.TimeFont; }
@@ -124,7 +159,7 @@ namespace MaterialSkin.Controls
         }
 
 
-        [Category("MaterialSkin"), DefaultValue(true), Localizable(true)]
+        [Category("Material Skin"), DefaultValue(true), Localizable(true)]
         public bool DropDownShowTime
         {
             get => objDateControl.ShowTime;
@@ -135,7 +170,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public string DropDownTimeHint
         {
             get => objDateControl.TimeHint;
@@ -145,7 +180,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public bool DropDownWideTimevox
         {
             get => objDateControl.WideTimeBox;
@@ -166,15 +201,30 @@ namespace MaterialSkin.Controls
             InitializeDropDown(objDateControl);
 
             Binding bindingDate = new Binding("Date", this, "Date");
+            Binding bindingMinDate = new Binding("MinDate", this, "MinDate");
+            Binding bindingMaxDate = new Binding("MaxDate", this, "MaxDate");
             Binding bindingText = new Binding("Text", this, "Text");
             objDateControl.DataBindings.Add(bindingDate);
+            objDateControl.DataBindings.Add(bindingMinDate);
+            objDateControl.DataBindings.Add(bindingMaxDate);
             objDateControl.DataBindings.Add(bindingText);
+            objDateControl.DateChanged += ObjDateControl_DateChanged;
             Date = DateTime.Now;
             AutoSize = false;
             Size = new Size(Width, 27);
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
             DropDownTimeFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12f, FontStyle.Regular, GraphicsUnit.Point);
             Format = DateTimePickerFormat.Long;
+        }
+
+        private void ObjDateControl_DateChanged(DateTime newDateTime)
+        {
+            this.Refresh();
+        }
+
+        ~MaterialDropDownDatePicker()
+        {
+            objDateControl.DateChanged -= ObjDateControl_DateChanged;
         }
         #endregion
 

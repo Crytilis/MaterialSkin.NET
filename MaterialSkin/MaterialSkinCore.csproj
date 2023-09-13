@@ -45,9 +45,7 @@
 		<Reference Include="System.Design" />
 	</ItemGroup>
     <ItemGroup>
-      <Compile Update="Controls\BaseTextBox.cs">
-        <SubType>Component</SubType>
-      </Compile>
+      <Compile Update="Controls\BaseTextBox.cs" />
       <Compile Update="Controls\MaterialListBox.cs">
         <SubType>Component</SubType>
       </Compile>

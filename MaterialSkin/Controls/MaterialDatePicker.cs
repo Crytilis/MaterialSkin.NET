@@ -49,6 +49,8 @@ namespace MaterialSkin.Controls
         private RectangleF nextCal;
         private GraphicsPath shadowPath;
         private DateTime currentDate;
+        private DateTime mindate = DateTime.MinValue;
+        private DateTime maxdate = DateTime.MaxValue;
 
         private MaterialMaskedTextBox timeBox;
 
@@ -95,11 +97,11 @@ namespace MaterialSkin.Controls
         public new Color BackColor { get => SkinManager.BackgroundColor; }
 
         [Bindable(true), RefreshProperties(RefreshProperties.All)]
-        [Category("MaterialSkin"), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
+        [Category("Material Skin"), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
         public DateTime Date { 
             get { return currentDate; }
             set { 
-                currentDate = value;
+                currentDate = value < MinDate ? MinDate : (value > MaxDate ? MaxDate : value);
 
                 if(timeBox != null)
                 {
@@ -111,7 +113,38 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("MaterialSkin"), DefaultValue(null), Localizable(true)]
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Category("Material Skin"), Browsable(true)]
+        public DateTime MinDate
+        {
+            get => mindate;
+            set
+            {
+                if (value < DateTime.MinValue)
+                {
+                    throw new ArgumentOutOfRangeException("MinDate");
+                }
+
+                mindate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Category("Material Skin"), Browsable(true)]
+        public DateTime MaxDate
+        {
+            get => maxdate;
+            set
+            {
+                if (value > DateTime.MaxValue)
+                {
+                    throw new ArgumentOutOfRangeException("MaxDate");
+                }
+
+                maxdate = value;
+                NotifyPropertyChanged();
+            }
+        }
+        [Category("Material Skin"), DefaultValue(null), Localizable(true)]
         public string CustomFormat
         {
             get
@@ -131,7 +164,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), DefaultValue(DateTimePickerFormat.Long), Localizable(true)]
+        [Category("Material Skin"), DefaultValue(DateTimePickerFormat.Long), Localizable(true)]
         public DateTimePickerFormat Format
         {
             get
@@ -150,7 +183,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), DefaultValue(true), Localizable(true)]
+        [Category("Material Skin"), DefaultValue(true), Localizable(true)]
         public bool WideTimeBox
         {
             get => timeboxWide;
@@ -190,7 +223,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font DayFont
         {
             get { return dayFont; }
@@ -204,7 +237,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font TopDayFont
         {
             get { return topDayFont; }
@@ -219,7 +252,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font SelectedMonthFont
         {
             get { return selectedMonthFont; }
@@ -234,7 +267,7 @@ namespace MaterialSkin.Controls
             }
         }
         
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font CurrentMonthFont
         {
             get { return currentMonthFont; }
@@ -249,7 +282,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font SelectedDayFont
         {
             get { return selectedDayFont; }
@@ -264,7 +297,7 @@ namespace MaterialSkin.Controls
             }
         }
         
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font YearFont
         {
             get { return yearFont; }
@@ -279,7 +312,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public Font TimeFont {
             get { return timeFont; }
             set
@@ -298,7 +331,7 @@ namespace MaterialSkin.Controls
         }
 
 
-        [Category("MaterialSkin"), Localizable(true)]
+        [Category("Material Skin"), Localizable(true)]
         public bool ShowTime
         {
             get => showTime;

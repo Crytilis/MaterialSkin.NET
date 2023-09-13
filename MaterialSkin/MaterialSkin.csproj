@@ -58,6 +58,9 @@
     <Compile Include="Controls\BaseNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\MaterialDataTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\BaseTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
