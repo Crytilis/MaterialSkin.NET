@@ -88,7 +88,7 @@
         /// <summary>
         /// The Text which gets displayed as the Content
         /// </summary>
-        [Category("Material Skin"), DefaultValue("OK")]
+        [Category("Material Skin"), Localizable(true), DefaultValue("OK")]
         public String ActionButtonText
         {
             get

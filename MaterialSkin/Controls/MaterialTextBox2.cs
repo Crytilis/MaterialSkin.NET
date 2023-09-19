@@ -206,7 +206,7 @@ namespace MaterialSkin.Controls
         }
 
         private PrefixSuffixTypes _prefixsuffix;
-        [Category("Material Skin"), DefaultValue(PrefixSuffixTypes.None), Description("Set Prefix/Suffix/None")]
+        [Category("Material Skin"), DefaultValue(PrefixSuffixTypes.None), Localizable(true), Description("Set Prefix/Suffix/None")]
         public PrefixSuffixTypes PrefixSuffix
         {
             get { return _prefixsuffix; }
@@ -1572,7 +1572,7 @@ namespace MaterialSkin.Controls
                     // Draw Prefix text 
                     NativeText.DrawTransparentText(
                     _prefixsuffixText,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    Font,
                     Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     prefixRect.Location,
                     prefixRect.Size,
@@ -1594,7 +1594,7 @@ namespace MaterialSkin.Controls
                     // Draw Suffix text 
                     NativeText.DrawTransparentText(
                     _prefixsuffixText,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    Font,
                     Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     suffixRect.Location,
                     suffixRect.Size,

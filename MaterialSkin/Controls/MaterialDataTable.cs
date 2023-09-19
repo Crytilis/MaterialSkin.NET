@@ -36,7 +36,7 @@ namespace MaterialSkin.Controls
 
         [Browsable(true)]
         [DefaultValue(true)]
-        [Category("MaterialSkin2")]
+        [Category("Material Skin")]
         public bool ShowVerticalScroll
         {
             get => showScrollBar;
@@ -51,7 +51,7 @@ namespace MaterialSkin.Controls
 
         [Browsable(true)]
         [DefaultValue(false)]
-        [Category("MaterialSkin2")]
+        [Category("Material Skin")]
         public bool ShowColorStripping
         {
             get => showColorStripping;
@@ -90,7 +90,7 @@ namespace MaterialSkin.Controls
         private Primary colorStripColor { get; set; }
 
         [Browsable(true)]
-        [Category("MaterialSkin2")]
+        [Category("Material Skin")]
         public Primary ColorStripColor
         {
             get => colorStripColor;
@@ -111,10 +111,10 @@ namespace MaterialSkin.Controls
             }
         }
         [Browsable(true)]
-        [Category("MaterialSkin2")]
+        [Category("Material Skin")]
         private Primary cellSelectionPrimaryColor { get; set; }
         [Browsable(true)]
-        [Category("MaterialSkin2")]
+        [Category("Material Skin")]
         public Primary CellSelectionPrimaryColor
         {
             get => cellSelectionPrimaryColor;

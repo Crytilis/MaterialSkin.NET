@@ -98,7 +98,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [DefaultValue("Title")]
+        [DefaultValue("Title"), Localizable(true)]
         [Category("Material Skin"), DisplayName("Title")]
         [Description("Title to show in expansion panel's header")]
         public string Title
@@ -111,7 +111,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [DefaultValue("Description")]
+        [DefaultValue("Description"), Localizable(true)]
         [Category("Material Skin"), DisplayName("Description")]
         [Description("Description to show in expansion panel's header")]
         public string Description
@@ -160,7 +160,7 @@ namespace MaterialSkin.Controls
             set { _showValidationButtons = value; UpdateRects(); Invalidate(); }
         }
 
-        [DefaultValue("SAVE")]
+        [DefaultValue("SAVE"), Localizable(true)]
         [Category("Material Skin"), DisplayName("Validation button text")]
         [Description("Set Validation button text")]
         public string ValidationButtonText
@@ -169,7 +169,7 @@ namespace MaterialSkin.Controls
             set { _validationButtonText = value; UpdateRects(); Invalidate(); }
         }
 
-        [DefaultValue("CANCEL")]
+        [DefaultValue("CANCEL"), Localizable(true)]
         [Category("Material Skin"), DisplayName("Cancel button text")]
         [Description("Set Cancel button text")]
         public string CancelButtonText

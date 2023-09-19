@@ -25,7 +25,7 @@
         }
 
         private Size size;
-        [Category("Material Skin"), DefaultValue(typeof(Size), "0; 27")]
+        [Category("Material Skin"), Localizable(true), DefaultValue(typeof(Size), "0; 27")]
         public Size CustomSize
         {
             get
@@ -109,7 +109,7 @@
 
         private Font hintFont;
 
-        [Category("Material Skin"), Localizable(true)]
+        [Category("Material Skin")]
         public Font HintFont
         {
             get => hintFont;

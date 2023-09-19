@@ -414,6 +414,7 @@
         /// <summary>
         /// Gets or sets the Text
         /// </summary>
+        [Localizable(true)]
         public override string Text
         {
             get => base.Text;

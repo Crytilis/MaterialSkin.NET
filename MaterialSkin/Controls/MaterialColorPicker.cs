@@ -318,7 +318,7 @@ namespace MaterialSkin.Controls
         [Browsable(false)]
         public MouseState MouseState { get; set; }
         [Browsable(false)]
-        [Category("Appearance"), Localizable(true)]
+        [Category("Appearance")]
         public override Font Font
         {
             get { return base.Font; }

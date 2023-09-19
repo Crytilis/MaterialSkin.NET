@@ -335,7 +335,7 @@ namespace MaterialSkin.Controls
         ///    Gets or sets the value
         ///       assigned to the up-down control.
         ///  
-        [Category("Appearance"), Bindable(true)]
+        [Category("Appearance"), Localizable(true), Bindable(true)]
         public Decimal Value
         {
             get

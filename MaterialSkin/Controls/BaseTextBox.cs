@@ -5,7 +5,7 @@ namespace MaterialSkin.Controls
     using System.Drawing;
     using System.Windows.Forms;
 
-    [ToolboxItem(false)]
+    //[ToolboxItem(false)]
     public class BaseTextBox : TextBox, IMaterialControl
     {
         #region "Public Properties"
@@ -21,6 +21,7 @@ namespace MaterialSkin.Controls
         public MouseState MouseState { get; set; }
 
         private string hint = string.Empty;
+        [Localizable(true), Bindable(true)]
         public string Hint
         {
             get { return hint; }
@@ -86,7 +87,6 @@ namespace MaterialSkin.Controls
         {
         }
 
-
         protected override void OnGotFocus(EventArgs e)
         {
             base.OnGotFocus(e);
@@ -139,11 +139,6 @@ namespace MaterialSkin.Controls
             {
                 Invalidate();
             }
-            else
-            {
-                base.WndProc(ref m);
-            }
-
         }
 
     }
@@ -162,6 +157,7 @@ namespace MaterialSkin.Controls
         public MouseState MouseState { get; set; }
 
         private string hint = string.Empty;
+        [Localizable(true), Bindable(true)]
         public string Hint
         {
             get { return hint; }
