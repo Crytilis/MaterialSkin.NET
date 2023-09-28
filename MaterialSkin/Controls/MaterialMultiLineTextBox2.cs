@@ -6,6 +6,7 @@ namespace MaterialSkin.Controls
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
+    using System.Windows.Media.Media3D;
     using MaterialSkin.Animations;
 
     public class MaterialMultiLineTextBox2 : Control, IMaterialControl
@@ -59,6 +60,35 @@ namespace MaterialSkin.Controls
             }
         }
 
+        private Padding hintPadding;
+
+        [Category("Material Skin"), DefaultValue(typeof(Padding), "10, -2, 0, 0"), Localizable(true)]
+        public Padding HintPadding
+        {
+            get => hintPadding;
+            set {
+                hintPadding = value;
+                Invalidate();
+            }
+        }
+        
+        private Font hintFont;
+        [Category("Material Skin"), Localizable(true)]
+        public Font HintFont
+        {
+            get => hintFont;
+            set
+            {
+                var font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                if (baseTextBox != null)
+                {
+                    baseTextBox.HintFont = font;
+                }
+                hintFont = font;
+                Invalidate();
+            }
+        }
+
         [Category("Material Skin"), DefaultValue(true)]
         public bool UseAccent { get; set; }
 
@@ -91,7 +121,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Category("Layout"), DefaultValue(typeof(Padding), "5, 5, 0, 4"), Localizable(true)]
+        [Category("Layout"), DefaultValue(typeof(Padding), "5, 10, 0, 0"), Localizable(true)]
         public new Padding Padding
         {
             get { return baseTextBox.Padding; }
@@ -1165,8 +1195,11 @@ namespace MaterialSkin.Controls
         private const int BOTTOM_PADDING = 3;
         private const int LEFT_PADDING = 3;
         private const int RIGHT_PADDING = 0;
+        private const int FONT_HEIGHT = 20;
+        private int HEIGHT = 32;
         private int LINE_Y;
         private bool hasHint;
+        private bool _errorState = false;
         private readonly int SB_LINEUP = 0;
         private readonly int SB_LINEDOWN = 1;
         private readonly uint WM_VSCROLL = 277;
@@ -1190,14 +1223,20 @@ namespace MaterialSkin.Controls
                 InterruptAnimation = false
             };
             _animationManager.OnAnimationProgress += sender => Invalidate();
+            
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), Font.SizeInPoints, Font.Style, GraphicsUnit.Point);
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point);
+            HintPadding = new Padding(10, -2, 0, 0);
 
             baseTextBox = new BaseTextBox
             {
                 BorderStyle = BorderStyle.None,
                 Font = Font,
                 ForeColor = SkinManager.TextHighEmphasisColor,
-                Multiline = true
+                Multiline = true,
+                Location = new Point(LEFT_PADDING, (HEIGHT / 2) - (FONT_HEIGHT / 2)),
+                Width = Width - (LEFT_PADDING + RIGHT_PADDING),
+                Height = FONT_HEIGHT
             };
 
             Cursor = Cursors.IBeam;
@@ -1264,6 +1303,16 @@ namespace MaterialSkin.Controls
                 MouseState == MouseState.HOVER && (!ReadOnly || (ReadOnly && !AnimateReadOnly)) ? DrawHelper.BlendColor(BackColor, SkinManager.BackgroundHoverColor, SkinManager.BackgroundHoverColor.A) : // Hover
                 DrawHelper.BlendColor(BackColor, SkinManager.BackgroundAlternativeColor, SkinManager.BackgroundAlternativeColor.A); // Normal
 
+            // HintText
+            bool userTextPresent = !String.IsNullOrEmpty(Text);
+            int hintFontSize = HINT_TEXT_SMALL_SIZE;
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+            {
+                hintFontSize = NativeText.MeasureString(Hint, HintFont).Height;
+            }
+            Rectangle hintRect = new Rectangle(HintPadding.Left, HintPadding.Top, Width - HintPadding.Left - HintPadding.Right, hintFontSize);
+            float hintTextSize = Font.Size - 2;
+
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
 
@@ -1289,11 +1338,47 @@ namespace MaterialSkin.Controls
                     g.FillRectangle(UseAccent ? SkinManager.ColorScheme.AccentBrush : SkinManager.ColorScheme.PrimaryBrush, LineAnimationX, LINE_Y, LineAnimationWidth, 2);
                 }
             }
+
+            // Draw hint text
+            if(hasHint && (isFocused || userTextPresent))
+            {
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
+                {
+                    NativeText.DrawTransparentText(
+                    Hint,
+                    HintFont,
+                    Enabled ? !_errorState || (!userTextPresent && !isFocused) ? isFocused ? UseAccent ?
+                    SkinManager.ColorScheme.AccentColor : // Focus Accent
+                    SkinManager.ColorScheme.PrimaryColor : // Focus Primary
+                    SkinManager.TextMediumEmphasisColor : // not focused
+                    SkinManager.BackgroundHoverRedColor : // error state
+                    SkinManager.TextDisabledOrHintColor, // Disabled
+                    hintRect.Location,
+                    hintRect.Size,
+                    NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                }
+            }
         }
 
 
         [DllImport("User32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
         protected static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        public void SetErrorState(bool ErrorState)
+        {
+            _errorState = ErrorState;
+            if (_errorState)
+                baseTextBox.ForeColor = SkinManager.BackgroundHoverRedColor;
+            else
+                baseTextBox.ForeColor = SkinManager.TextHighEmphasisColor;
+            baseTextBox.Invalidate();
+            Invalidate();
+        }
+
+        public bool GetErrorState()
+        {
+            return _errorState;
+        }
 
         protected void OnMouseWheel(object sender, MouseEventArgs e)
         {
