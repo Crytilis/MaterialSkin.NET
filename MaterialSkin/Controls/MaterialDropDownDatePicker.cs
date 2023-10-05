@@ -23,9 +23,6 @@ namespace MaterialSkin.Controls
 
         #region Private Variables
         private MaterialDatePicker objDateControl;
-        private DateTime date;
-        private DateTime mindate = DateTime.MinValue;
-        private DateTime maxdate = DateTime.MaxValue;
 
         private bool showCheckbox = false;
         #endregion
@@ -61,11 +58,11 @@ namespace MaterialSkin.Controls
         [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
         public DateTime Date
         {
-            get => date;
+            get => objDateControl.Date;
             set
             {
                 var tmpdate = value < MinDate ? MinDate : (value > MaxDate ? MaxDate : value);
-                date = tmpdate;
+                objDateControl.Date = tmpdate;
                 Text = objDateControl.Text;
                 NotifyPropertyChanged();
             }
@@ -74,7 +71,7 @@ namespace MaterialSkin.Controls
         [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true)]
         public DateTime MinDate
         {
-            get => mindate;
+            get => objDateControl.MinDate;
             set
             {
                 if (value < DateTime.MinValue)
@@ -82,7 +79,7 @@ namespace MaterialSkin.Controls
                     throw new ArgumentOutOfRangeException("MinDate");
                 }
 
-                mindate = value;
+                objDateControl.MinDate = value;
                 NotifyPropertyChanged();
             }
         }
@@ -90,7 +87,7 @@ namespace MaterialSkin.Controls
         [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true)]
         public DateTime MaxDate
         {
-            get => maxdate;
+            get => objDateControl.MaxDate;
             set
             {
                 if (value > DateTime.MaxValue)
@@ -98,7 +95,7 @@ namespace MaterialSkin.Controls
                     throw new ArgumentOutOfRangeException("MaxDate");
                 }
 
-                maxdate = value;
+                objDateControl.MaxDate = value;
                 NotifyPropertyChanged();
             }
         }

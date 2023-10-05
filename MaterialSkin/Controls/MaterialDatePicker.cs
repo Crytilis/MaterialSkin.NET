@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.SqlServer.Server;
 
 namespace MaterialSkin.Controls
 {
@@ -85,6 +80,7 @@ namespace MaterialSkin.Controls
 
         private bool showTime;
         private bool timeboxWide;
+        private bool initialized = false;
         #endregion
         #region Properties
         [Browsable(false)]
@@ -378,6 +374,7 @@ namespace MaterialSkin.Controls
 
         private void Initialize()
         {
+            CreateTimeControl();
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
 
             Width = 280;
@@ -414,7 +411,6 @@ namespace MaterialSkin.Controls
             hoverY = -1;
             CalculateRectangles();
 
-            CreateTimeControl();
         }
 
         private void CreateTimeControl()
@@ -436,9 +432,23 @@ namespace MaterialSkin.Controls
                 Text = Date.ToString("HH:mm:ss"),
                 TextAlign = HorizontalAlignment.Center
             };
-            timeBox.TextChanged += TimeBox_TextChanged;
 
             this.Controls.Add(timeBox);
+        }
+
+        ~MaterialDatePicker()
+        {
+            timeBox.TextChanged -= TimeBox_TextChanged;
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if(!initialized && this.Visible)
+            {
+                initialized = true;
+                timeBox.TextChanged += TimeBox_TextChanged;
+            }
         }
 
         private void TimeBox_TextChanged(object sender, EventArgs e)
@@ -459,11 +469,14 @@ namespace MaterialSkin.Controls
                 }
                 else if (num < 10)
                 {
-                    time[i] = $"0{time[i]}";
+                    time[i] = $"{num:D2}";
                 }
             }
 
             tb.Text = string.Join(":", time);
+
+            var tmpDate = $"{currentDate:d} {tb.Text}";
+            Date = DateTime.Parse(tmpDate);
         }
         #endregion
 
@@ -528,13 +541,12 @@ namespace MaterialSkin.Controls
         {
             base.OnMouseUp(e);
             DateTime date = DateTime.Now;
-            int hour = currentDate.Hour, minute = currentDate.Minute, second = currentDate.Second;
 
             if (hoverX >= 0)
             {
                 selectedX = hoverX;
                 selectedY = hoverY;
-                date = Date = dateRectangles[selectedX][selectedY].Date;
+                date = dateRectangles[selectedX][selectedY].Date;
             }
             if (recentHovered)
             {
@@ -545,7 +557,7 @@ namespace MaterialSkin.Controls
                 date = FirstDayOfMonth(currentDate.AddMonths(1));
             }
 
-            var tmpDate = $"{date:d} {hour:D2}:{minute:D2}:{second:D2}";
+            var tmpDate = $"{date:d} {timeBox.Text}";
             Date = DateTime.Parse(tmpDate);
             CalculateRectangles();
             Invalidate();
@@ -768,7 +780,6 @@ namespace MaterialSkin.Controls
         private void ResetValue()
         {
             Date = DateTime.Now;
-            DateChanged?.Invoke(Date);
             OnTextChanged(EventArgs.Empty);
         }
         #endregion
