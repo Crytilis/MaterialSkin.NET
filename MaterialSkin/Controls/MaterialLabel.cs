@@ -169,7 +169,14 @@
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.Clear(Parent.BackColor);
+            var backColor = BackColor;
+
+            if(!UseCustomColor)
+            {
+                g.Clear(Parent.BackColor);
+            }
+            
+            g.Clear(backColor);
 
             Rectangle rectangle = DeflateRect(base.ClientRectangle, base.Padding);
             Image image = Image;

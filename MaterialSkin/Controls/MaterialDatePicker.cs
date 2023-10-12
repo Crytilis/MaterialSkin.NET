@@ -27,6 +27,8 @@ namespace MaterialSkin.Controls
         public event PropertyChangedEventHandler PropertyChanged;
 
         public event DateChangedHandler DateChanged;
+
+        public event EventHandler ValueChanged;
         #endregion
 
 
@@ -104,6 +106,7 @@ namespace MaterialSkin.Controls
                     timeBox.Text = currentDate.ToString("HH:mm:ss");
                 }
                 DateChanged?.Invoke(currentDate);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
                 NotifyPropertyChanged();
 
                 Invalidate();

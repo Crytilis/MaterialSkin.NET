@@ -246,7 +246,7 @@
                 }
 
                 Rectangle textLocation = new Rectangle(textX, 0, ClientRectangle.Width - textWidth, ClientRectangle.Height);
-                NativeText.DrawTransparentText(Text, Font,
+                NativeText.DrawMultilineTransparentText(Text, Font,
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textLocation.Location,
                     textLocation.Size,

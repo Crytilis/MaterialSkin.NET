@@ -19,6 +19,9 @@ namespace MaterialSkin.Controls
             add { objDateControl.DateChanged += value; }
             remove { objDateControl.DateChanged -= value; }
         }
+
+        [Category("Action")]
+        public event EventHandler ValueChanged;
         #endregion
 
         #region Private Variables
@@ -56,8 +59,17 @@ namespace MaterialSkin.Controls
         }
 
         [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
+        [Obsolete("Use \"Value\" instead, this is to make it more inline with the default DateTimePicker")]
         public DateTime Date
         {
+            get => Value;
+            set => Value = value;
+        }
+
+        [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
+        public DateTime Value
+        {
+            
             get => objDateControl.Date;
             set
             {
@@ -206,7 +218,7 @@ namespace MaterialSkin.Controls
             objDateControl.DataBindings.Add(bindingMaxDate);
             objDateControl.DataBindings.Add(bindingText);
             objDateControl.DateChanged += ObjDateControl_DateChanged;
-            Date = DateTime.Now;
+            Value = DateTime.Now;
             AutoSize = false;
             Size = new Size(Width, 27);
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
@@ -216,6 +228,7 @@ namespace MaterialSkin.Controls
 
         private void ObjDateControl_DateChanged(DateTime newDateTime)
         {
+            ValueChanged?.Invoke(this, EventArgs.Empty);
             this.Refresh();
         }
 
