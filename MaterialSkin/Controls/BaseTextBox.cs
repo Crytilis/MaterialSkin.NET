@@ -94,6 +94,7 @@ namespace MaterialSkin.Controls
 
         public BaseTextBox()
         {
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.DoubleBuffer, true);
         }
 
         protected override void OnGotFocus(EventArgs e)
@@ -117,20 +118,16 @@ namespace MaterialSkin.Controls
         {
             base.WndProc(ref m);
 
-
-            if (m.Msg == WM_PAINT)
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(Graphics.FromHwnd(m.HWnd)))
             {
-                if (m.Msg == WM_ENABLE)
+                if (m.Msg == WM_PAINT && m.Msg == WM_ENABLE)
                 {
                     Graphics g = Graphics.FromHwnd(Handle);
-                    Rectangle bounds = new Rectangle(0, 0, Width, Height);
+                    Rectangle bounds = new Rectangle(0, 0, Width, NativeText.MeasureString(string.IsNullOrEmpty(Text) ? "ABC" : Text, Font).Height);
                     g.FillRectangle(SkinManager.BackgroundDisabledBrush, bounds);
                 }
-            }
 
-            if (m.Msg == WM_PAINT && String.IsNullOrEmpty(Text) && !Focused && !UseSmallHint)
-            {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(Graphics.FromHwnd(m.HWnd)))
+                if (m.Msg == WM_PAINT && String.IsNullOrEmpty(Text) && !Focused && !UseSmallHint)
                 {
                     NativeText.DrawTransparentText(
                     Hint,
@@ -149,7 +146,6 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-
     }
 
     [ToolboxItem(false)]

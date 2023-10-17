@@ -2015,7 +2015,7 @@ namespace MaterialSkin.Controls
             else
                 _suffix_padding = 0;
 
-            if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text)))
+            if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text) || UseSmallHint))
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
                 {
