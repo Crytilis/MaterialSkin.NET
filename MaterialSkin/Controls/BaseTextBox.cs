@@ -44,6 +44,15 @@ namespace MaterialSkin.Controls
             }
         }
 
+        private bool useSmallHint = false;
+        public bool UseSmallHint {
+            get => useSmallHint;
+            set {
+                useSmallHint = value;
+                Invalidate();
+            }
+        }
+
         public override Font Font
         {
             get { return base.Font; }
@@ -119,7 +128,7 @@ namespace MaterialSkin.Controls
                 }
             }
 
-            if (m.Msg == WM_PAINT && String.IsNullOrEmpty(Text) && !Focused)
+            if (m.Msg == WM_PAINT && String.IsNullOrEmpty(Text) && !Focused && !UseSmallHint)
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(Graphics.FromHwnd(m.HWnd)))
                 {

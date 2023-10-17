@@ -129,6 +129,18 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [Category("Material Skin"), DefaultValue(false)]
+        public bool UseSmallHint
+        {
+            get { return baseTextBox.UseSmallHint; }
+            set
+            {
+                baseTextBox.UseSmallHint = value;
+                UpdateRects();
+                Invalidate();
+            }
+        }
+
         private Padding hintPadding;
 
         [Category("Material Skin"), Localizable(true)]
@@ -1603,7 +1615,7 @@ namespace MaterialSkin.Controls
             }
 
             // Draw hint text
-            if(hasHint && _UseTallSize && (isFocused || userTextPresent))
+            if(hasHint && _UseTallSize && (isFocused || userTextPresent || UseSmallHint))
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
