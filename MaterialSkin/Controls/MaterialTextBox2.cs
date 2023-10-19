@@ -210,6 +210,31 @@ namespace MaterialSkin.Controls
             }
         }
 
+
+        private Padding _prefixsuffixPadding;
+
+        [Category("Material Skin"), Localizable(true)]
+        public Padding PrefixSuffixPadding
+        {
+            get => _prefixsuffixPadding;
+            set {
+                _prefixsuffixPadding = value;
+                Invalidate();
+            }
+        }
+
+        private Font _prefixsuffixFont;
+        [Category("Material Skin"), Localizable(true)]
+        public Font PrefixSuffixFont
+        {
+            get => _prefixsuffixFont;
+            set
+            {
+                _prefixsuffixFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                Invalidate();
+            }
+        }
+
         public enum PrefixSuffixTypes
         {
             None,
@@ -1428,6 +1453,8 @@ namespace MaterialSkin.Controls
             };
 
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
+            PrefixSuffixFont = Font;
+            PrefixSuffixPadding = new Padding(0, 0, 0, 0);
             HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point);
             HintPadding = new Padding(10, -2, 0, 0);
 
@@ -1571,20 +1598,20 @@ namespace MaterialSkin.Controls
             }
 
             // Prefix:
-            if (_prefixsuffix == PrefixSuffixTypes.Prefix && _prefixsuffixText != null && _prefixsuffixText.Length > 0 && (isFocused || userTextPresent || !hasHint))
+            if (_prefixsuffix == PrefixSuffixTypes.Prefix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
                     Rectangle prefixRect = new Rectangle(
-                        _left_padding - _prefix_padding,
-                        hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
+                        _left_padding - _prefix_padding + PrefixSuffixPadding.Left,
+                        baseTextBox.Top + PrefixSuffixPadding.Top,
                         _prefix_padding,
-                        hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
+                        baseTextBox.Height);
 
                     // Draw Prefix text 
                     NativeText.DrawTransparentText(
                     _prefixsuffixText,
-                    Font,
+                    PrefixSuffixFont,
                     Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     prefixRect.Location,
                     prefixRect.Size,
@@ -1593,20 +1620,20 @@ namespace MaterialSkin.Controls
             }
 
             // Suffix:
-            if (_prefixsuffix == PrefixSuffixTypes.Suffix && _prefixsuffixText != null && _prefixsuffixText.Length > 0 && (isFocused || userTextPresent || !hasHint))
+            if (_prefixsuffix == PrefixSuffixTypes.Suffix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
             {
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
                     Rectangle suffixRect = new Rectangle(
-                        Width - _right_padding ,
-                        hasHint && _UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
+                        Width - _right_padding - PrefixSuffixPadding.Right,
+                        baseTextBox.Top + PrefixSuffixPadding.Top,
                         _suffix_padding,
-                        hasHint && _UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
+                        baseTextBox.Height);
 
                     // Draw Suffix text 
                     NativeText.DrawTransparentText(
                     _prefixsuffixText,
-                    Font,
+                    PrefixSuffixFont,
                     Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     suffixRect.Location,
                     suffixRect.Size,

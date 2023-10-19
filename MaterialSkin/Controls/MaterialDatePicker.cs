@@ -11,22 +11,17 @@ using System.Runtime.InteropServices;
 namespace MaterialSkin.Controls
 {
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
-    [DefaultProperty("Date")]
-    [DefaultEvent("DateChanged")]
-    [DefaultBindingProperty("Date")]
+    [DefaultProperty("Value")]
+    [DefaultEvent("ValueChanged")]
+    [DefaultBindingProperty("Value")]
     public partial class MaterialDatePicker : Control, INotifyPropertyChanged
     {
         #region Delegates & Events
-        public delegate void DateChangedHandler(DateTime newDateTime);
-
-
         [Category("PropertyChanged")]
         public event EventHandler FormatChanged;
 
         [Browsable(false)]
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public event DateChangedHandler DateChanged;
 
         public event EventHandler ValueChanged;
         #endregion
@@ -96,7 +91,7 @@ namespace MaterialSkin.Controls
 
         [Bindable(true), RefreshProperties(RefreshProperties.All)]
         [Category("Material Skin"), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
-        public DateTime Date { 
+        public DateTime Value { 
             get { return currentDate; }
             set { 
                 currentDate = value < MinDate ? MinDate : (value > MaxDate ? MaxDate : value);
@@ -105,14 +100,14 @@ namespace MaterialSkin.Controls
                 {
                     timeBox.Text = currentDate.ToString("HH:mm:ss");
                 }
-                DateChanged?.Invoke(currentDate);
+                
                 ValueChanged?.Invoke(this, EventArgs.Empty);
                 NotifyPropertyChanged();
 
                 Invalidate();
             }
         }
-        [Bindable(true), RefreshProperties(RefreshProperties.All), Category("Material Skin"), Browsable(true)]
+        [Bindable(true), RefreshProperties(RefreshProperties.All), DefaultValue(typeof(DateTime), "MinValue"), Category("Material Skin"), Browsable(true)]
         public DateTime MinDate
         {
             get => mindate;
@@ -128,7 +123,7 @@ namespace MaterialSkin.Controls
             }
         }
 
-        [Bindable(true), RefreshProperties(RefreshProperties.All), Category("Material Skin"), Browsable(true)]
+        [Bindable(true), RefreshProperties(RefreshProperties.All), DefaultValue(typeof(DateTime), "MaxValue"), Category("Material Skin"), Browsable(true)]
         public DateTime MaxDate
         {
             get => maxdate;
@@ -200,13 +195,13 @@ namespace MaterialSkin.Controls
                 switch (Format)
                 {
                     case DateTimePickerFormat.Short:
-                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+                        return Value.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
                     case DateTimePickerFormat.Time:
-                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
+                        return Value.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
                     case DateTimePickerFormat.Custom:
-                        return Date.ToString(customFormat);
+                        return Value.ToString(customFormat);
                     default:
-                        return Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern);
+                        return Value.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern);
                 }
             }
             set
@@ -217,7 +212,7 @@ namespace MaterialSkin.Controls
                 }
                 else
                 {
-                    Date = DateTime.Parse(value, CultureInfo.CurrentCulture);
+                    Value = DateTime.Parse(value, CultureInfo.CurrentCulture);
                 }
             }
         }
@@ -404,11 +399,13 @@ namespace MaterialSkin.Controls
 
             WideTimeBox = true;
 
+            Value = DateTime.Now;
+            MinDate = DateTime.MinValue;
+            MaxDate = DateTime.MaxValue;
             Format = DateTimePickerFormat.Long;
             
             DoubleBuffered = true;
             dateRectDefaultSize = (Width - kwPadding - 10) / 7;
-            Date = DateTime.Now;
 
             hoverX = -1;
             hoverY = -1;
@@ -432,7 +429,7 @@ namespace MaterialSkin.Controls
                 Mask = "00:00:00",
                 PromptChar = '_',
                 InsertKeyMode = InsertKeyMode.Overwrite,
-                Text = Date.ToString("HH:mm:ss"),
+                Text = Value.ToString("HH:mm:ss"),
                 TextAlign = HorizontalAlignment.Center
             };
 
@@ -479,7 +476,7 @@ namespace MaterialSkin.Controls
             tb.Text = string.Join(":", time);
 
             var tmpDate = $"{currentDate:d} {tb.Text}";
-            Date = DateTime.Parse(tmpDate);
+            Value = DateTime.Parse(tmpDate);
         }
         #endregion
 
@@ -561,7 +558,7 @@ namespace MaterialSkin.Controls
             }
 
             var tmpDate = $"{date:d} {timeBox.Text}";
-            Date = DateTime.Parse(tmpDate);
+            Value = DateTime.Parse(tmpDate);
             CalculateRectangles();
             Invalidate();
             return;
@@ -782,7 +779,7 @@ namespace MaterialSkin.Controls
         #region Private Methods
         private void ResetValue()
         {
-            Date = DateTime.Now;
+            Value = DateTime.Now;
             OnTextChanged(EventArgs.Empty);
         }
         #endregion

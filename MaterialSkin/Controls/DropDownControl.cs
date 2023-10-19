@@ -52,6 +52,18 @@ namespace MaterialSkin.Controls
         private string text;
         private readonly AnimationManager _animationManager;
 
+        private bool showIcon = false;
+        private string iconToShow = "";
+        private Padding iconPadding;
+        private Font iconFont;
+        private string hint;
+        private bool hasHint = false;
+        private Padding hintPadding;
+        private Font hintFont;
+        private bool useSmallHint = false;
+
+        protected bool drawHintBackground = false;
+
         #endregion
 
         #region Properties
@@ -66,7 +78,7 @@ namespace MaterialSkin.Controls
         [Browsable(false)]
         public bool DroppedDown { get; set; }
 
-        [Category("Appearance"), Localizable(true)]
+        [Category("Appearance")]
         public override Font Font
         {
             get { return base.Font; }
@@ -79,8 +91,91 @@ namespace MaterialSkin.Controls
         }
 
 
-        [Category("Material Skin"), DefaultValue(true)]
+        [Category("Material Skin")]
         public bool UseAccent { get; set; }
+
+        [Category("Material Skin"), DefaultValue(""), Localizable(true)]
+        public string Hint
+        {
+            get { return hint; }
+            set
+            {
+                hint = value;
+                hasHint = !String.IsNullOrEmpty(hint);
+                Invalidate();
+            }
+        }
+
+        [Category("Material Skin"), Localizable(true)]
+        public Padding HintPadding
+        {
+            get => hintPadding;
+            set {
+                hintPadding = value;
+                Invalidate();
+            }
+        }
+        
+        [Category("Material Skin"), DefaultValue(typeof(Font), "Roboto, 7pt")]
+        public Font HintFont
+        {
+            get => hintFont;
+            set
+            {
+                hintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                Invalidate();
+            }
+        }
+        [Category("Material Skin"), DefaultValue(false)]
+        public bool UseSmallHint
+        {
+            get { return useSmallHint; }
+            set
+            {
+                useSmallHint = value;
+                Invalidate();
+            }
+        }
+        
+        [Category("Material Skin")]
+        public bool ShowIcon
+        {
+            get => showIcon;
+            set
+            {
+                showIcon = value;
+                Invalidate();
+            }
+        }
+        [Category("Material Skin"), DefaultValue(""), Localizable(true)]
+        public string IconToShow
+        {
+            get => iconToShow;
+            set
+            {
+                iconToShow = value;
+                Invalidate();
+            }
+        }
+        [Category("Material Skin")]
+        public Padding IconPadding
+        {
+            get => iconPadding;
+            set {
+                iconPadding = value;
+                Invalidate();
+            }
+        }
+        [Category("Material Skin"), DefaultValue(typeof(Font), "Roboto, 7pt")]
+        public Font IconFont
+        {
+            get => iconFont;
+            set
+            {
+                iconFont = new Font(SkinManager.GetFont(MaterialSkinManager.CustomFontFamily.Material_Icons).FontFamily, value.SizeInPoints, value.Style, GraphicsUnit.Point);
+                Invalidate();
+            }
+        }
 
         public override string Text
         {
@@ -221,6 +316,12 @@ namespace MaterialSkin.Controls
             if (this.Controls.Contains(dropDownItem))
                 this.Controls.Remove(dropDownItem);
             _dropDownItem = dropDownItem;
+
+            HintFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 7, FontStyle.Regular, GraphicsUnit.Point);
+            HintPadding = new Padding(10,-2,0,0);
+            IconFont = new Font(SkinManager.GetFont(MaterialSkinManager.CustomFontFamily.Material_Icons).FontFamily, 8, FontStyle.Regular, GraphicsUnit.Point);
+            IconToShow = "";
+            ShowIcon = false;
         }
         #endregion
 
@@ -285,6 +386,8 @@ namespace MaterialSkin.Controls
                 SkinManager.BackgroundDisabledBrush // Disabled
                 , ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, LINE_Y);
 
+            PaintSomething(e);
+
             //Set color and brush
             Color SelectedColor = new Color();
             if (UseAccent)
@@ -293,6 +396,7 @@ namespace MaterialSkin.Controls
                 SelectedColor = SkinManager.ColorScheme.PrimaryColor;
             SolidBrush SelectedBrush = new SolidBrush(SelectedColor);
 
+            #region Arrow
             // Create and Draw the arrow
             GraphicsPath pth = new GraphicsPath();
             PointF TopRight = new PointF(this.Width - 0.5f - RIGHT_PADDING, (this.Height >> 1) - 2.5f);
@@ -308,6 +412,78 @@ namespace MaterialSkin.Controls
                 new SolidBrush(DrawHelper.BlendColor(SkinManager.TextHighEmphasisColor, SkinManager.SwitchOffDisabledThumbColor, 197))  //Disabled
                 ), pth);
             g.SmoothingMode = SmoothingMode.None;
+            #endregion
+
+            #region Icon
+            if (ShowIcon && IconToShow != null && !string.IsNullOrEmpty(IconToShow))
+            {
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
+                {
+                    var iconSIze = NativeText.MeasureString(iconToShow, IconFont);
+
+                    Rectangle suffixRect = new Rectangle(
+                        Width - IconPadding.Right,
+                        ClientRectangle.Top + IconPadding.Top,
+                        iconSIze.Width,
+                        ClientRectangle.Height);
+
+                    // Draw Icon
+                    NativeText.DrawTransparentText(
+                    IconToShow,
+                    IconFont,
+                    Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
+                    suffixRect.Location,
+                    suffixRect.Size,
+                    NativeTextRenderer.TextAlignFlags.Right | NativeTextRenderer.TextAlignFlags.Middle);
+                }
+            }
+            #endregion
+            #region Hint
+            // HintText
+            Size hintFontSize = new Size(12,12);
+            
+            if(!string.IsNullOrEmpty(Hint))
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+            {
+                hintFontSize = NativeText.MeasureString(Hint, HintFont);
+            }
+            
+            bool userTextPresent = !string.IsNullOrEmpty(Text);
+            bool isFocused = this.Focused;
+            Rectangle hintRect = new Rectangle(HintPadding.Left, HintPadding.Top, Width - HintPadding.Left - HintPadding.Right, hintFontSize.Height);
+
+            // Draw hint text
+            if(hasHint && (isFocused || userTextPresent || UseSmallHint))
+            {
+                if(drawHintBackground)
+                {
+                    Size hintBackgroundSize = new Size(hintRect.Location.X + (hintFontSize.Width + 4) , hintRect.Location.Y + (hintFontSize.Height * 1));
+                    g.FillRectangle(SkinManager.BackdropBrush, 0, 0, hintBackgroundSize.Width, hintBackgroundSize.Height);
+                    g.FillRectangle(Enabled ? Focused ?
+                        SkinManager.BackgroundFocusBrush :  // Focused
+                        MouseState == MouseState.HOVER ?
+                        SkinManager.BackgroundHoverBrush :  // Hover
+                        SkinManager.BackgroundAlternativeBrush :       // normal
+                        SkinManager.BackgroundDisabledBrush // Disabled
+                        , 0, 0, hintBackgroundSize.Width, hintBackgroundSize.Height);
+                }
+                using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
+                {
+                    NativeText.DrawTransparentText(
+                    Hint,
+                    HintFont,
+                    Enabled ? !userTextPresent && !isFocused ? isFocused ? UseAccent ?
+                    SkinManager.ColorScheme.AccentColor :   // Focus Accent
+                    SkinManager.ColorScheme.PrimaryColor :  // Focus Primary
+                    SkinManager.TextMediumEmphasisColor :   // not focused
+                    SkinManager.TextMediumEmphasisColor :   // error state (there is no error state)
+                    SkinManager.TextDisabledOrHintColor,    // Disabled
+                    hintRect.Location,
+                    hintRect.Size,
+                    NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
+                }
+            }
+            #endregion
 
             // bottom line base
             g.FillRectangle(SkinManager.DividersAlternativeBrush, 0, LINE_Y, Width, 1);
@@ -362,6 +538,9 @@ namespace MaterialSkin.Controls
         #endregion
 
         #region Private Methods
+        protected virtual void PaintSomething(PaintEventArgs e)
+        {
+        }
         private void setHeightVars()
         {
             LINE_Y = Height - BOTTOM_PADDING;

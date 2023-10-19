@@ -6,6 +6,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
 using System.Threading;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
+using System.Collections.Generic;
 
 namespace MaterialSkin.Controls
 {
@@ -13,12 +14,6 @@ namespace MaterialSkin.Controls
     {
         #region Events
         public new event PropertyChangedEventHandler PropertyChanged;
-        [Category("Action")]
-        public event MaterialDatePicker.DateChangedHandler DateChanged
-        {
-            add { objDateControl.DateChanged += value; }
-            remove { objDateControl.DateChanged -= value; }
-        }
 
         [Category("Action")]
         public event EventHandler ValueChanged;
@@ -28,6 +23,7 @@ namespace MaterialSkin.Controls
         private MaterialDatePicker objDateControl;
 
         private bool showCheckbox = false;
+        
         #endregion
 
         #region Properties
@@ -59,22 +55,14 @@ namespace MaterialSkin.Controls
         }
 
         [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
-        [Obsolete("Use \"Value\" instead, this is to make it more inline with the default DateTimePicker")]
-        public DateTime Date
-        {
-            get => Value;
-            set => Value = value;
-        }
-
-        [Bindable(true), RefreshProperties(RefreshProperties.All), Browsable(true), DefaultValue(typeof(DateTime), "NOW")]
         public DateTime Value
         {
             
-            get => objDateControl.Date;
+            get => objDateControl.Value;
             set
             {
                 var tmpdate = value < MinDate ? MinDate : (value > MaxDate ? MaxDate : value);
-                objDateControl.Date = tmpdate;
+                objDateControl.Value = tmpdate;
                 Text = objDateControl.Text;
                 NotifyPropertyChanged();
             }
@@ -189,7 +177,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("Material Skin"), Localizable(true)]
+        [Category("Material Skin")]
         public bool DropDownWideTimevox
         {
             get => objDateControl.WideTimeBox;
@@ -209,32 +197,23 @@ namespace MaterialSkin.Controls
             objDateControl = new MaterialDatePicker();
             InitializeDropDown(objDateControl);
 
-            Binding bindingDate = new Binding("Date", this, "Date");
+            Binding bindingValue = new Binding("Value", this, "Value");
             Binding bindingMinDate = new Binding("MinDate", this, "MinDate");
             Binding bindingMaxDate = new Binding("MaxDate", this, "MaxDate");
             Binding bindingText = new Binding("Text", this, "Text");
-            objDateControl.DataBindings.Add(bindingDate);
+            objDateControl.DataBindings.Add(bindingValue);
             objDateControl.DataBindings.Add(bindingMinDate);
             objDateControl.DataBindings.Add(bindingMaxDate);
             objDateControl.DataBindings.Add(bindingText);
-            objDateControl.DateChanged += ObjDateControl_DateChanged;
             Value = DateTime.Now;
             AutoSize = false;
             Size = new Size(Width, 27);
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
             DropDownTimeFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12f, FontStyle.Regular, GraphicsUnit.Point);
             Format = DateTimePickerFormat.Long;
-        }
-
-        private void ObjDateControl_DateChanged(DateTime newDateTime)
-        {
-            ValueChanged?.Invoke(this, EventArgs.Empty);
-            this.Refresh();
-        }
-
-        ~MaterialDropDownDatePicker()
-        {
-            objDateControl.DateChanged -= ObjDateControl_DateChanged;
+            IconToShow = "\uebcc";
+            ShowIcon = true;
+            UseSmallHint = true;
         }
         #endregion
 

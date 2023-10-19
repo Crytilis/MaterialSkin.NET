@@ -46,18 +46,26 @@ namespace MaterialSkin.Controls
             Color = SkinManager.ColorScheme.AccentColor;
             objColorControl.onColorChanged += objDateControl_onColorChanged;
             InitializeDropDown(objColorControl);
+            IconToShow = "\ue40a";
+            ShowIcon = true;
+            UseSmallHint = true;
+            drawHintBackground = true;
         }
         #endregion
 
         #region Override methods
+        protected override void PaintSomething(PaintEventArgs e)
+        {
+            base.PaintSomething(e);
+            ColorRect = new Rectangle();
+            ColorRect.Location = new Point(1, 1);
+            ColorRect.Size = new Size((int)(Width - 18), (int)(Height * 0.9));
+
+            e.Graphics.FillRectangle(new SolidBrush(Color), ColorRect);
+        }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            ColorRect = new Rectangle();
-            ColorRect.Location = new Point(1, 1);
-            ColorRect.Size = new Size((int)(Width - 18), (int)(Height * 0.8));
-
-            e.Graphics.FillRectangle(new SolidBrush(Color), ColorRect);
         }
         #endregion
 
