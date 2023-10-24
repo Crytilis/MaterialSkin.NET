@@ -157,7 +157,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("Material Skin")]
+        [Category("Material Skin"), DefaultValue(typeof(Padding), "0;-2;35;0")]
         public Padding IconPadding
         {
             get => iconPadding;
@@ -166,7 +166,7 @@ namespace MaterialSkin.Controls
                 Invalidate();
             }
         }
-        [Category("Material Skin"), DefaultValue(typeof(Font), "Roboto, 7pt")]
+        [Category("Material Skin"), DefaultValue(typeof(Font), "Roboto, 10pt")]
         public Font IconFont
         {
             get => iconFont;

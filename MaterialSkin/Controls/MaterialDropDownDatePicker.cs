@@ -178,7 +178,7 @@ namespace MaterialSkin.Controls
             }
         }
         [Category("Material Skin")]
-        public bool DropDownWideTimevox
+        public bool DropDownWideTimeBox
         {
             get => objDateControl.WideTimeBox;
             set
@@ -211,6 +211,8 @@ namespace MaterialSkin.Controls
             Font = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 8, FontStyle.Regular, GraphicsUnit.Point);
             DropDownTimeFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12f, FontStyle.Regular, GraphicsUnit.Point);
             Format = DateTimePickerFormat.Long;
+            IconFont = new Font(SkinManager.GetFontFamily(SkinManager.CurrentFontFamily), 12f, FontStyle.Regular, GraphicsUnit.Point);
+            IconPadding = new Padding(0,-2,35,0);
             IconToShow = "\uebcc";
             ShowIcon = true;
             UseSmallHint = true;
