@@ -1380,6 +1380,11 @@ namespace MaterialSkin.Controls
             return _errorState;
         }
 
+        protected void Select(int start, int length)
+        {
+            baseTextBox.Select(start, length);
+        }
+
         protected void OnMouseWheel(object sender, MouseEventArgs e)
         {
             if (AllowScroll)

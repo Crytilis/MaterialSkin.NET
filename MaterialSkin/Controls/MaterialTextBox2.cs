@@ -14,6 +14,7 @@ namespace MaterialSkin.Controls
         MaterialContextMenuStrip cms = new BaseTextBoxContextMenuStrip();
         ContextMenuStrip _lastContextMenuStrip = new ContextMenuStrip();
 
+        #region Properties
         //Properties for managing the material design properties
         [Browsable(false)]
         public int Depth { get; set; }
@@ -274,6 +275,7 @@ namespace MaterialSkin.Controls
                 //}
             }
         }
+        #endregion
 
         #region TextBox properties
 
@@ -1390,8 +1392,9 @@ namespace MaterialSkin.Controls
                 baseTextBox.VisibleChanged -= value;
             }
         }
-        # endregion
+        #endregion
 
+        #region Other variables
         private readonly AnimationManager _animationManager;
 
         public bool isFocused = false;
@@ -1422,6 +1425,7 @@ namespace MaterialSkin.Controls
         private Dictionary<string, TextureBrush> iconsErrorBrushes;
 
         protected readonly BaseTextBox baseTextBox;
+        #endregion
 
         public MaterialTextBox2()
         {
@@ -1795,6 +1799,11 @@ namespace MaterialSkin.Controls
         public new bool Focus()
         {
             return baseTextBox.Focus();
+        }
+
+        public void Select(int start, int length)
+        {
+            baseTextBox.Select(start, length);
         }
 
         #region Icon
