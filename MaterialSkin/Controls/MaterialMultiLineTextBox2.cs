@@ -1380,7 +1380,7 @@ namespace MaterialSkin.Controls
             return _errorState;
         }
 
-        protected void Select(int start, int length)
+        public void Select(int start, int length)
         {
             baseTextBox.Select(start, length);
         }
