@@ -8,8 +8,6 @@
     using System.Drawing.Imaging;
     using System.Drawing.Text;
     using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
     using System.Windows.Forms;
 
     /// <summary>

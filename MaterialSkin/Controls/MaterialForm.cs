@@ -8,7 +8,6 @@ namespace MaterialSkin.Controls
     using System.Drawing.Text;
     using System.Linq;
     using System.Runtime.InteropServices;
-    using System.Windows.Controls.Primitives;
     using System.Windows.Forms;
 
 #if NETFRAMEWORK

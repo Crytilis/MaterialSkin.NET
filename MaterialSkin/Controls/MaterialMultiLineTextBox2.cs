@@ -1,13 +1,12 @@
 ﻿
 namespace MaterialSkin.Controls
 {
+    using MaterialSkin.Animations;
     using System;
     using System.ComponentModel;
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
-    using System.Windows.Media.Media3D;
-    using MaterialSkin.Animations;
 
     public class MaterialMultiLineTextBox2 : Control, IMaterialControl
     {

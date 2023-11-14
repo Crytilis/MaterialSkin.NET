@@ -7,7 +7,6 @@ namespace MaterialSkin.Controls
     using System.Drawing.Imaging;
     using System.Windows.Forms;
     using MaterialSkin.Animations;
-    using Microsoft.SqlServer.Server;
 
     public class MaterialTextBox2 : Control, IMaterialControl
     {
@@ -72,6 +71,8 @@ namespace MaterialSkin.Controls
 
         [Category("Behavior")]
         public bool WordWrap { get { return baseTextBox.WordWrap; } set { baseTextBox.WordWrap = value; Invalidate(); } }
+        [Category("Layout"), DefaultValue(typeof(Padding), "14, 0, 14, 0")]
+        public new Padding Padding { get { return base.Padding; } set { base.Padding = value; Invalidate(); } }
 
         //Material Skin properties
 
@@ -1830,6 +1831,8 @@ namespace MaterialSkin.Controls
 
             // events
             MouseState = MouseState.OUT;
+            // properties
+            Padding = new Padding(14,0,14,0);
 
         }
 

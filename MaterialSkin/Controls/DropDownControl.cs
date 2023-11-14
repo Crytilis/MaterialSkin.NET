@@ -1,11 +1,9 @@
 ﻿using MaterialSkin.Animations;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 
 namespace MaterialSkin.Controls
 {
