@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Data;
     using System.Windows.Forms;
+    using static System.Net.Mime.MediaTypeNames;
 
     public class MaterialComboBox : ComboBox, IMaterialControl
     {
@@ -73,6 +74,7 @@
                 _UseTallSize = value;
                 setHeightVars();
                 Invalidate();
+                if (editBox != null) editBox._UseTallSize = value;
             }
         }
 
@@ -87,6 +89,7 @@
                 useCustomHeight = value;
                 setHeightVars();
                 Invalidate();
+                if (editBox != null) editBox._UseTallSize = value;
             }
         }
 
@@ -104,6 +107,7 @@
                 _hint = value;
                 hasHint = !String.IsNullOrEmpty(Hint);
                 Invalidate();
+                if (editBox != null) editBox.Hint = value;
             }
         }
 
@@ -173,12 +177,39 @@
         private const int TEXT_SMALL_SIZE = 18;
         private const int TEXT_SMALL_Y = 4;
         private const int BOTTOM_PADDING = 3;
+
+        #region constants adjusted for dpi
+        private int TextSmallSize;
+        private int TextSmallY;
+        private int BottomPadding;
+        #endregion
+
         private int HEIGHT = 50;
         private int LINE_Y;
 
         private bool hasHint;
 
         private readonly AnimationManager _animationManager;
+
+        #region Editable DropDown
+        private MaterialTextBox2 editBox;
+
+        public new event EventHandler TextChanged;
+
+        private string _text;
+        public override string Text { 
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                if (editBox != null) editBox.Text = value;
+                _text = value;
+                TextChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        #endregion
 
         public MaterialComboBox()
         {
@@ -346,6 +377,7 @@
 
             g.Clip = new Region(textRect);
 
+            if (Text != null)
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
                 // Draw user text
@@ -388,7 +420,7 @@
 
         private void CustomDrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
         {
-            if (e.Index < 0 || e.Index > Items.Count || !Focused) return;
+            //if (e.Index < 0 || e.Index > Items.Count || !Focused) return;
 
             Graphics g = e.Graphics;
             // Draw the background of the item.
@@ -406,7 +438,7 @@
                 if (!Items[e.Index].GetType().Equals(typeof(DataRowView)))
                 {
                     var item = Items[e.Index].GetType().GetProperty(DisplayMember).GetValue(Items[e.Index]);
-                    Text = item.ToString();
+                    Text = item?.ToString();
                 }
                 else
                 {
@@ -416,7 +448,10 @@
             }
             else
             {
-                Text = Items[e.Index].ToString();
+                if (e.Index >= 0 && e.Index < Items.Count)
+                {
+                    Text = Items[e.Index].ToString();
+                }
             }
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
@@ -437,10 +472,15 @@
             MouseState = MouseState.OUT;
             MeasureItem += CustomMeasureItem;
             DrawItem += CustomDrawItem;
-            DropDownStyle = ComboBoxStyle.DropDownList;
             DrawMode = DrawMode.OwnerDrawVariable;
+            
             recalculateAutoSize();
             setHeightVars();
+
+            if (!DesignMode)
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList;
+            }
         }
 
         protected override void OnResize(EventArgs e)

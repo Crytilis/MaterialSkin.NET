@@ -97,6 +97,12 @@
     <Compile Include="Controls\MaterialListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\MaterialMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MaterialProgressSnackBar.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\MaterialScrollBar.cs">
       <SubType>Component</SubType>
     </Compile>

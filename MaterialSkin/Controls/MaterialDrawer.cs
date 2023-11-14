@@ -10,7 +10,7 @@
     using System.Drawing.Text;
     using System.Windows.Forms;
 
-    public class MaterialDrawer : Control, IMaterialControl
+    public class MaterialDrawer : Control, IMaterialControl, IDisposable
     {
         // TODO: Invalidate when changing custom properties
 
@@ -242,7 +242,7 @@
             foreach (TabPage tabPage in _baseTabControl.TabPages)
             {
                 // skip items without image
-                if (String.IsNullOrEmpty(tabPage.ImageKey) || _drawerItemRects == null)
+                if (String.IsNullOrEmpty(tabPage.ImageKey) || _drawerItemRects == null || iconsBrushes.ContainsKey(tabPage.ImageKey))
                     continue;
 
                 // Image Rect
@@ -303,6 +303,8 @@
         }
 
         private int _previousSelectedTabIndex;
+        private int _highlightTabIndex = -1;
+        private Pen highlightPen;
 
         private Point _animationSource;
 
@@ -379,6 +381,11 @@
             MouseWheel += MaterialDrawer_MouseWheel;
         }
 
+        public new void Dispose()
+        {
+            if (highlightPen != null) highlightPen.Dispose();
+        }
+
         private void MaterialDrawer_MouseWheel(object sender, MouseEventArgs e)
         {
             int step = 20;
@@ -408,6 +415,7 @@
             _showHideAnimManager.SetProgress(_isOpen ? 0 : 1);
             showHideAnimation();
             Invalidate();
+            highlightPen = new Pen(SkinManager.ColorScheme.AccentColor, 2f);
 
             base.InitLayout();
         }
@@ -505,6 +513,11 @@
                     SkinManager.ColorScheme.LightPrimaryColor)); // default dark
                 g.FillPath(bgBrush, _drawerItemPaths[currentTabIndex]);
                 bgBrush.Dispose();
+                
+                if (_highlightTabIndex == currentTabIndex && highlightPen != null)
+                {
+                    g.DrawPath(highlightPen, _drawerItemPaths[currentTabIndex]);
+                }
 
                 // Text
                 Color textColor = Color.FromArgb(CalculateAlphaZeroWhenClosed(SkinManager.TextHighEmphasisColor.A, UseColors ? SkinManager.TextMediumEmphasisColor.A : 255, currentTabIndex, clickAnimProgress, 1 - showHideAnimProgress), // alpha
@@ -795,6 +808,18 @@
 
                 _drawerItemPaths[i] = DrawHelper.CreateRoundRect(new RectangleF(_drawerItemRects[i].X - 0.5f, _drawerItemRects[i].Y - 0.5f, _drawerItemRects[i].Width, _drawerItemRects[i].Height), 4);
             }
+        }
+
+        public void SetHighlight(int tabIndex)
+        {
+            _highlightTabIndex = tabIndex;
+            Invalidate(false);
+        }
+
+        public void ClearHighlight()
+        {
+            _highlightTabIndex = -1;
+            Invalidate(false);
         }
     }
 }

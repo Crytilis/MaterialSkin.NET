@@ -8,7 +8,10 @@ namespace MaterialSkin.Controls
 {
     public class MaterialSlider : Control, IMaterialControl
     {
+        public enum Directions { Normal, Reverse }
+
         #region "Private members"
+        protected int _stepChange;
         private bool _mousePressed;
         private int _mouseX;
         //private int _indicatorSize;
@@ -24,6 +27,16 @@ namespace MaterialSkin.Controls
         private const int _inactiveTrack = 4;
         private const int _thumbRadius = 20;
         private const int _thumbRadiusHoverPressed = 40;
+        private int _value;
+        private int _valueMax;
+        private int _rangeMax;
+        private int _rangeMin;
+        private string _text;
+        private string _valueSuffix;
+        private bool _showText;
+        private bool _showValue;
+        private bool _useAccentColor;
+        private MaterialSkinManager.fontType _fontType = MaterialSkinManager.fontType.Body1;
 
 
         #endregion
@@ -36,7 +49,6 @@ namespace MaterialSkin.Controls
         [Browsable(false)]
         public MouseState MouseState { get; set; }
 
-        private int _value;
         [DefaultValue(50)]
         [Category("Material Skin")]
         [Description("Define control value")]
@@ -57,7 +69,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private int _valueMax;
         [DefaultValue(0)]
         [Category("Material Skin")]
         [Description("Define position indicator maximum value. Ignored when set to 0.")]
@@ -75,7 +86,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private int _rangeMax;
         [DefaultValue(100)]
         [Category("Material Skin")]
         [Description("Define control range maximum value")]
@@ -91,7 +101,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private int _rangeMin;
         [DefaultValue(0)]
         [Category("Material Skin")]
         [Description("Define control range minimum value")]
@@ -107,7 +116,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private string _text;
         [DefaultValue("MyData")]
         [Category("Material Skin")]
         [Description("Set control text")]
@@ -122,7 +130,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private string _valueSuffix;
         [DefaultValue("")]
         [Category("Material Skin")]
         [Description("Set control value suffix text")]
@@ -136,7 +143,6 @@ namespace MaterialSkin.Controls
             }
         }
 
-        private Boolean _showText;
         [DefaultValue(true)]
         [Category("Material Skin"), DisplayName("Show text")]
         [Description("Show text")]
@@ -146,7 +152,6 @@ namespace MaterialSkin.Controls
             set { _showText = value; UpdateRects(); Invalidate(); }
         }
 
-        private Boolean _showValue;
         [DefaultValue(true)]
         [Category("Material Skin"), DisplayName("Show value")]
         [Description("Show value")]
@@ -156,7 +161,6 @@ namespace MaterialSkin.Controls
             set { _showValue = value; UpdateRects(); Invalidate(); }
         }
 
-        private bool _useAccentColor;
         [Category("Material Skin"), DefaultValue(false), DisplayName("Use Accent Color")]
         public bool UseAccentColor
         {
@@ -164,7 +168,6 @@ namespace MaterialSkin.Controls
             set { _useAccentColor = value; Invalidate(); }
         }
 
-        private MaterialSkinManager.fontType _fontType = MaterialSkinManager.fontType.Body1;
 
         [Category("Material Skin"),
         DefaultValue(typeof(MaterialSkinManager.fontType), "Body1")]
@@ -182,7 +185,19 @@ namespace MaterialSkin.Controls
             }
         }
 
+        [DefaultValue(2)]
+		[Category("Material Skin")]
+		[Description("Define control step change value")]
+		public int StepChange
+		{
+			get => _stepChange;
+			set => _stepChange = value.Clamp(1, RangeMax);
+		}
 
+		[DefaultValue(Directions.Normal)]
+		[Category("Material Skin")]
+		[Description("Define control direction change value with mouse wheel")]
+		public Directions ScrollDirection { get; set; }
         #endregion
 
         #region "Events"
@@ -255,11 +270,10 @@ namespace MaterialSkin.Controls
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            if (_valueMax != 0 && (Value + e.Delta / -40) > _valueMax)
-                Value = _valueMax;
-            else
-                Value += e.Delta/-40;
-            onValueChanged?.Invoke(this, _value);
+            int scrollLines = SystemInformation.MouseWheelScrollLines;
+			Value += e.Delta / 40 / scrollLines * StepChange * (ScrollDirection == Directions.Normal ? 1 : -1);
+			Value = Value.Clamp(RangeMin, RangeMax);
+			onValueChanged?.Invoke(this, _value);
         }
 
         protected override void OnMouseEnter(EventArgs e)

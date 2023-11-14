@@ -18,13 +18,13 @@
         private const int TEXT_BOTTOM_PADDING = 28;
         private int _header_Height = 40;
 
-        private MaterialButton _validationButton = new MaterialButton();
-        private MaterialButton _cancelButton = new MaterialButton();
-        private AnimationManager _AnimationManager;
-        private bool CloseAnimation = false;
-        private Form _formOverlay;
-        private String _text;
-        private String _title;
+        protected MaterialButton _validationButton = new MaterialButton();
+        protected MaterialButton _cancelButton = new MaterialButton();
+        protected AnimationManager _AnimationManager;
+        protected bool CloseAnimation = false;
+        protected Form _formOverlay;
+        protected String _text;
+        protected String _title;
 
         /// <summary>
         /// The Collection for the Buttons

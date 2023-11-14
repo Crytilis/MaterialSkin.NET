@@ -1,5 +1,6 @@
 namespace MaterialSkin
 {
+    using System;
     using System.Drawing;
 
     public class ColorScheme
@@ -94,6 +95,61 @@ namespace MaterialSkin
             WarningColor = warningColor ?? Color.Goldenrod;
             DangerColor = dangerColor ?? Color.Red;
 
+            TextColor = ((int)textShade).ToColor();
+
+            //Pen
+            PrimaryPen = new Pen(PrimaryColor);
+            DarkPrimaryPen = new Pen(DarkPrimaryColor);
+            LightPrimaryPen = new Pen(LightPrimaryColor);
+            AccentPen = new Pen(AccentColor);
+            TextPen = new Pen(TextColor);
+
+            //Brush
+            PrimaryBrush = new SolidBrush(PrimaryColor);
+            DarkPrimaryBrush = new SolidBrush(DarkPrimaryColor);
+            LightPrimaryBrush = new SolidBrush(LightPrimaryColor);
+            AccentBrush = new SolidBrush(AccentColor);
+            TextBrush = new SolidBrush(TextColor);
+        }
+
+        // original author on github
+        // https://github.com/WingsOfAltair/MaterialSkin
+        private int GetIntFromHexColor(string HexColor)
+        {
+            //#ffffff // #ffffffff
+            try
+            {
+                if (HexColor.Length <= 9 || HexColor.Length >= 2)
+                {
+                    if (HexColor[0] == '#')
+                    {
+                        return Convert.ToInt32(HexColor.Replace("#", "0x"), 16);
+                    }
+                    else
+                    {
+                        return Convert.ToInt32(HexColor.Insert(0, "0x"), 16);
+                    }
+
+                }
+            }
+            catch
+            {
+                return 0x00;
+            }
+            return 0x00;
+        }
+
+        public ColorScheme(string customPrimary, string customDarkPrimary, string customLightPrimary, string customAccent, TextShade textShade)
+        {
+            //Color
+            /*PrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customPrimary)).ToColor();
+            DarkPrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customDarkPrimary)).ToColor();
+            LightPrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customLightPrimary)).ToColor();
+            AccentColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customAccent)).ToColor();*/
+            PrimaryColor = GetIntFromHexColor(customPrimary).ToColor();
+            DarkPrimaryColor = GetIntFromHexColor(customDarkPrimary).ToColor();
+            LightPrimaryColor = GetIntFromHexColor(customLightPrimary).ToColor();
+            AccentColor = GetIntFromHexColor(customAccent).ToColor();
             TextColor = ((int)textShade).ToColor();
 
             //Pen

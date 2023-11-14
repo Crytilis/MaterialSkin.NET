@@ -7,6 +7,7 @@ namespace MaterialSkin.Controls
     using System.Drawing.Imaging;
     using System.Windows.Forms;
     using MaterialSkin.Animations;
+    using Microsoft.SqlServer.Server;
 
     public class MaterialTextBox2 : Control, IMaterialControl
     {
@@ -48,6 +49,30 @@ namespace MaterialSkin.Controls
         public override System.Drawing.Color ForeColor { get; set; }
 
 
+        [Category("Appearance")]
+        public ScrollBars ScrollBars { get { return baseTextBox.ScrollBars; } set { baseTextBox.ScrollBars = value; Invalidate(); } }
+
+        [Category("Behavior")]
+        public bool Multiline 
+        { 
+            get 
+            { 
+                return baseTextBox.Multiline; 
+            }  
+            set 
+            {
+                if (baseTextBox.Multiline == value)
+                    return;
+                baseTextBox.Multiline = value;
+                UpdateHeight();
+                UpdateRects();
+                Invalidate();
+            } 
+        }
+
+        [Category("Behavior")]
+        public bool WordWrap { get { return baseTextBox.WordWrap; } set { baseTextBox.WordWrap = value; Invalidate(); } }
+
         //Material Skin properties
 
         private bool useTallSize;
@@ -79,13 +104,14 @@ namespace MaterialSkin.Controls
                 if (_showAssistiveText)
                 {
                     _helperTextHeight = HELPER_TEXT_HEIGHT;
-                    UpdateHeight();
-                    UpdateRects();
                 }
                 else
                 {
                     _helperTextHeight = 0;
                 }
+
+                UpdateHeight();
+                UpdateRects();
                 Invalidate();
             }
         }
@@ -1402,8 +1428,8 @@ namespace MaterialSkin.Controls
         private const int ICON_SIZE = 24;
         private const int HINT_TEXT_SMALL_SIZE = 18;
         private const int HINT_TEXT_SMALL_Y = 4;
-        private const int LEFT_PADDING = 16;
-        private const int RIGHT_PADDING = 12;
+        private const int LEFT_PADDING = 0;
+        private const int RIGHT_PADDING = 0;
         private const int ACTIVATION_INDICATOR_HEIGHT = 1;
         private const int HELPER_TEXT_HEIGHT = 16;
         private const int FONT_HEIGHT = 20;
@@ -1468,9 +1494,10 @@ namespace MaterialSkin.Controls
                 Font = base.Font,
                 ForeColor = SkinManager.TextHighEmphasisColor,
                 Multiline = false,
-                Location = new Point(LEFT_PADDING, (HEIGHT / 2) - (FONT_HEIGHT / 2)),
-                Width = Width - (LEFT_PADDING + RIGHT_PADDING),
-                Height = FONT_HEIGHT
+                Location = new Point(Padding.Left, (HEIGHT / 2) - (FONT_HEIGHT / 2)),
+                Width = Width - (Padding.Left + Padding.Right),
+                Height = FONT_HEIGHT,
+                Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom
             };
 
             Enabled = true;
@@ -1565,7 +1592,7 @@ namespace MaterialSkin.Controls
 
             // HintText
             bool userTextPresent = !String.IsNullOrEmpty(Text);
-            Rectangle helperTextRect = new Rectangle(LEFT_PADDING - _prefix_padding, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - (LEFT_PADDING - _prefix_padding) - _right_padding, HELPER_TEXT_HEIGHT);
+            Rectangle helperTextRect = new Rectangle(Padding.Left - _prefix_padding, LINE_Y + ACTIVATION_INDICATOR_HEIGHT, Width - (Padding.Right - _prefix_padding) - _right_padding, HELPER_TEXT_HEIGHT);
             int hintFontSize = HINT_TEXT_SMALL_SIZE;
             using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
             {
@@ -1629,10 +1656,10 @@ namespace MaterialSkin.Controls
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
                     Rectangle suffixRect = new Rectangle(
-                        Width - _right_padding - PrefixSuffixPadding.Right,
+                        Width - _right_padding - _left_padding,
                         baseTextBox.Top + PrefixSuffixPadding.Top,
                         _suffix_padding,
-                        baseTextBox.Height);
+                        baseTextBox.Height - PrefixSuffixPadding.Top - PrefixSuffixPadding.Bottom);
 
                     // Draw Suffix text 
                     NativeText.DrawTransparentText(
@@ -1641,7 +1668,7 @@ namespace MaterialSkin.Controls
                     Enabled ? SkinManager.TextMediumEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     suffixRect.Location,
                     suffixRect.Size,
-                    NativeTextRenderer.TextAlignFlags.Right | NativeTextRenderer.TextAlignFlags.Middle);
+                    NativeTextRenderer.TextAlignFlags.Right | (Multiline ? NativeTextRenderer.TextAlignFlags.Bottom : NativeTextRenderer.TextAlignFlags.Middle));
                 }
             }
 
@@ -1705,7 +1732,6 @@ namespace MaterialSkin.Controls
                     NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle);
                 }
             }
-
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -1778,6 +1804,17 @@ namespace MaterialSkin.Controls
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            RecalculateSize();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            RecalculateSize();
+        }
+
+        protected void RecalculateSize()
+        {
             UpdateRects();
             preProcessIcons();
             UpdateHeight();
@@ -1794,6 +1831,13 @@ namespace MaterialSkin.Controls
             // events
             MouseState = MouseState.OUT;
 
+        }
+
+        protected override void OnPaddingChanged(EventArgs e)
+        {
+            base.OnPaddingChanged(e);
+            UpdateRects();
+            Invalidate();
         }
 
         public new bool Focus()
@@ -2008,7 +2052,7 @@ namespace MaterialSkin.Controls
         private void UpdateHeight()
         {
             HEIGHT = Height < 18 ? 18 : Height;
-            HEIGHT += _helperTextHeight;
+            //HEIGHT += _helperTextHeight;
             Size = new Size(Size.Width, HEIGHT);
 
             //HEIGHT = _UseTallSize ? 48 : Height;
@@ -2019,61 +2063,62 @@ namespace MaterialSkin.Controls
 
         private void UpdateRects()
         {
+            int newFontHeight = Height;
+            _prefix_padding = 0;
+            _suffix_padding = 0;
+            _left_padding = Padding.Left;
+            _right_padding = Padding.Right;
+
             if (LeadingIcon != null)
-                _left_padding = LEFT_PADDING + ICON_SIZE;
-            else
-                _left_padding = LEFT_PADDING;
+            {
+                _left_padding = Padding.Left + ICON_SIZE;
+            }
 
             if (_trailingIcon != null)
-                _right_padding = RIGHT_PADDING + ICON_SIZE;
-            else
-                _right_padding = RIGHT_PADDING;
-
-            if (_prefixsuffix == PrefixSuffixTypes.Prefix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
             {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
-                {
-                    _prefix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
-                    _left_padding += _prefix_padding;
-                }
+                _right_padding = Padding.Right + ICON_SIZE;
             }
-            else
-                _prefix_padding = 0;
+
+            using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+            {
+                if (_prefixsuffix == PrefixSuffixTypes.Prefix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
+                {
+                        _prefix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
+                        _left_padding += _prefix_padding;
+                }
                 
-            if (_prefixsuffix == PrefixSuffixTypes.Suffix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
-            {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                if (_prefixsuffix == PrefixSuffixTypes.Suffix && _prefixsuffixText != null && _prefixsuffixText.Length > 0)
                 {
-                    _suffix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
-                    _right_padding += _suffix_padding;
+                        _suffix_padding = NativeText.MeasureString(_prefixsuffixText, Font).Width + PREFIX_SUFFIX_PADDING;
+                        _right_padding += _suffix_padding;
                 }
-            }
-            else
-                _suffix_padding = 0;
 
-            if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text) || UseSmallHint))
-            {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                if (hasHint && _UseTallSize && (isFocused || !String.IsNullOrEmpty(Text) || UseSmallHint))
                 {
                     string text = string.IsNullOrEmpty(Text) ? "0" : Text;
-                    var newFontHeight = NativeText.MeasureString(text, Font).Height;
-                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2 + 4);
-                    baseTextBox.Height = newFontHeight;
+                    newFontHeight = NativeText.MeasureString(text, Font).Height;
                 }
-                baseTextBox.Width = Width - (_left_padding + _right_padding);
-            }
-            else
-            {
-                using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
+                else
                 {
                     string hint = string.IsNullOrEmpty(Hint) ? "0" : Hint;
                     var textToMesure = string.IsNullOrEmpty(Text) ? hint : Text;
-                    var newFontHeight = NativeText.MeasureString(textToMesure, Font).Height;
-                    baseTextBox.Location = new Point(_left_padding, (LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2 - newFontHeight / 2);
-                    baseTextBox.Height = newFontHeight;
+                    newFontHeight = NativeText.MeasureString(textToMesure, Font).Height;
                 }
-                baseTextBox.Width = Width - (_left_padding + _right_padding);
             }
+            
+           
+            if(!Multiline)
+            {
+                baseTextBox.Location = new Point(_left_padding, ((LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2) - (newFontHeight / 2) + Padding.Top);
+                baseTextBox.Height = newFontHeight - (Padding.Top + Padding.Bottom) - 2;
+            }
+            else
+            {
+                baseTextBox.Location = new Point(_left_padding, Padding.Top + ACTIVATION_INDICATOR_HEIGHT);
+                baseTextBox.Height = Height - (Padding.Top + Padding.Bottom) - 2;
+            }
+            
+            baseTextBox.Width = Width - (_left_padding + _right_padding);
 
             _leadingIconBounds = new Rectangle(8, ((LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
             _trailingIconBounds = new Rectangle(Width - (ICON_SIZE + 8), ((LINE_Y + ACTIVATION_INDICATOR_HEIGHT) / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
