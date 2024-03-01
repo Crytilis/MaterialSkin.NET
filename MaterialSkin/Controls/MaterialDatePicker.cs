@@ -206,13 +206,25 @@ namespace MaterialSkin.Controls
             }
             set
             {
-                if (value == null || value.Length == 0)
+                if (string.IsNullOrEmpty(value))
                 {
                     ResetValue();
                 }
                 else
                 {
-                    Value = DateTime.Parse(value, CultureInfo.CurrentCulture);
+                    DateTime parsedDate;
+                    // Define the expected formats. Adjust these formats as necessary.
+                    string[] expectedFormats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd" };
+                    if (DateTime.TryParseExact(value, expectedFormats, CultureInfo.CurrentCulture, DateTimeStyles.None, out parsedDate))
+                    {
+                        Value = parsedDate;
+                    }
+                    else
+                    {
+                        // Handle the failure to parse the date
+                        // For example, you could log a warning or throw a custom exception
+                        ResetValue();
+                    }
                 }
             }
         }

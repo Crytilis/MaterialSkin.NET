@@ -432,7 +432,7 @@ namespace MaterialSkin.Controls
                     return;
             }
 
-             base.OnMouseDown(e);
+            base.OnMouseDown(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)

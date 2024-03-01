@@ -55,6 +55,9 @@
       <Compile Update="Controls\MaterialExpansionPanel.cs">
         <SubType>Component</SubType>
       </Compile>
+      <Compile Update="Controls\MaterialPanel.cs">
+        <SubType>Component</SubType>
+      </Compile>
       <Compile Update="Controls\MaterialSlider.cs">
         <SubType>Component</SubType>
       </Compile>
