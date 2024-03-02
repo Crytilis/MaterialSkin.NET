@@ -1,4 +1,4 @@
-# MaterialSkin.NET for .NET WinForms
+# MaterialSkin for .NET WinForms
 
 Theming C# .NET WinForms to Google's Material Design Principles.
 
@@ -45,7 +45,6 @@ All supported components have a dark theme
 
 ---
 
-> - This project has been updated for the .NET ecosystem specifically .NET 6,7, and 8 by [@crytilis](https://github.com/crytilis/MaterialSkin.NET)
 > - This project was heavily updated by [@leocb](https://github.com/leocb/MaterialSkin)
 > - Currently it's kept alive by [@orapps44](https://github.com/orapps44/MaterialSkin)
 > - forked from [@donaldsteele](https://github.com/donaldsteele/MaterialSkin)
