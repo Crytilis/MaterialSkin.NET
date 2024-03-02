@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -92,11 +91,11 @@ namespace MaterialSkin.Controls
                 Minimum = 0,
                 MouseWheelBarPartitions = 10,
                 Orientation = MaterialScrollOrientation.Vertical,
-                ScrollbarSize = 15,
+                ScrollbarSize = SystemInformation.VerticalScrollBarWidth,
                 SmallChange = 1,
                 UseBarColor = false,
                 UseAccentColor = true,
-                Location = new Point(Width - 15, 0)
+                Visible = false
             };
             _hScrollBar = new MaterialScrollBar
             {
@@ -106,11 +105,11 @@ namespace MaterialSkin.Controls
                 Minimum = 0,
                 MouseWheelBarPartitions = 10,
                 Orientation = MaterialScrollOrientation.Horizontal,
-                ScrollbarSize = 15,
+                ScrollbarSize = SystemInformation.HorizontalScrollBarHeight,
                 SmallChange = 1,
                 UseBarColor = false,
                 UseAccentColor = true,
-                Location = new Point(0, Height - 15)
+                Visible = false
             };
 
             Controls.Add(_vScrollBar);
@@ -201,22 +200,42 @@ namespace MaterialSkin.Controls
                 return;
 
             var contentSize = GetContentSize();
-
+            
             if (AutoScroll)
             {
-                // Set scrollbars' maximum values
-                _vScrollBar.Maximum = contentSize.Height - ClientSize.Height;
+                _vScrollBar.Visible = contentSize.Height > ClientSize.Height;
+                _hScrollBar.Visible = contentSize.Width > ClientSize.Width;
+            }
+
+            if (_hScrollBar.Visible)
+            {
+                _hScrollBar.Minimum = 0;
+                _hScrollBar.SmallChange = Width / 20;
+                _hScrollBar.LargeChange = Width / 10;
+
                 _hScrollBar.Maximum = contentSize.Width - ClientSize.Width;
 
-                // Ensure the scrollbar's maximum value is not less than its minimum
-                _vScrollBar.Maximum = Math.Max(_vScrollBar.Maximum, _vScrollBar.Minimum);
-                _hScrollBar.Maximum = Math.Max(_hScrollBar.Maximum, _hScrollBar.Minimum);
+                if (_vScrollBar.Visible)
+                {
+                    _hScrollBar.Maximum += _vScrollBar.Width;
+                }
+
+                _hScrollBar.Maximum += _hScrollBar.LargeChange;
             }
-            Debug.WriteLine($"Content: {contentSize.Width}x{contentSize.Height}");
-            Debug.WriteLine($"Client: {ClientSize.Width}x{ClientSize.Height}");
-            // Adjust visibility based on content size
-            _vScrollBar.Visible = contentSize.Height > ClientSize.Height;
-            _hScrollBar.Visible = contentSize.Width > ClientSize.Width;
+
+            if (!_vScrollBar.Visible) return;
+            _vScrollBar.Minimum = 0;
+            _vScrollBar.SmallChange = Height / 20;
+            _vScrollBar.LargeChange = Height / 10;
+
+            _vScrollBar.Maximum = contentSize.Height - ClientSize.Height;
+
+            if (_hScrollBar.Visible)
+            {
+                _hScrollBar.Maximum += _vScrollBar.Width;
+            }
+
+            _vScrollBar.Maximum += _vScrollBar.LargeChange;
         }
 
         private Size GetContentSize()
