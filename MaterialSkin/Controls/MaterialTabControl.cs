@@ -1,11 +1,11 @@
-﻿namespace MaterialSkin.Controls
-{
-    using System;
-    using System.ComponentModel;
-    using System.Drawing.Drawing2D;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
+namespace MaterialSkin.NET.Controls
+{
     public class MaterialTabControl : TabControl, IMaterialControl
     {
         public MaterialTabControl()

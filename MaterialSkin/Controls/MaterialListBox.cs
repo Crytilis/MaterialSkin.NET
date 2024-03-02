@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 #endregion
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
 
     #region MaterialListBox

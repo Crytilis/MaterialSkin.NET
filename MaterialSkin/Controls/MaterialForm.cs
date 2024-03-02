@@ -1,15 +1,15 @@
-namespace MaterialSkin.Controls
-{
-    using MaterialSkin.Animations;
-    using System;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Drawing.Text;
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using System.Windows.Forms;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using MaterialSkin.NET.Animations;
 
+namespace MaterialSkin.NET.Controls
+{
 #if NETFRAMEWORK
     using System.Runtime.Remoting.Channels;
 #endif

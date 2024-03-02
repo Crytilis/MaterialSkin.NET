@@ -1,4 +1,4 @@
-﻿namespace MaterialSkin.Controls
+﻿namespace MaterialSkin.NET.Controls
 {
     partial class MaterialDropDownDatePicker
     {

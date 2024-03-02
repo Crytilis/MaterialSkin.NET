@@ -1,15 +1,15 @@
-﻿namespace MaterialSkin
-{
-    using MaterialSkin.Controls;
-    using MaterialSkin.Properties;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Text;
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using MaterialSkin.NET.Controls;
+using MaterialSkin.Properties;
 
+namespace MaterialSkin.NET
+{
     public enum Glyphs
     {
         GlobalNavigationButton = 0xE700,

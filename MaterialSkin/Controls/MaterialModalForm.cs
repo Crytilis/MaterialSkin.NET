@@ -1,9 +1,9 @@
-﻿using MaterialSkin.Animations;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using MaterialSkin.NET.Animations;
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
     /// <summary>
     /// MaterialModalForm is a Form that is meant to be used a Modal Form. Call with ShowMaterialDialog() instead of ShowDialog()

@@ -1,4 +1,4 @@
-﻿namespace MaterialSkin
+﻿namespace MaterialSkin.NET
 {
     /// <summary>
     /// Defines the <see cref="IMaterialControl" />

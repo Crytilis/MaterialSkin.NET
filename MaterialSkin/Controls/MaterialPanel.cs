@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
     public sealed class MaterialPanel : Panel, IMaterialControl
     {

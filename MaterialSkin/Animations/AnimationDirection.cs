@@ -1,4 +1,4 @@
-﻿namespace MaterialSkin.Animations
+﻿namespace MaterialSkin.NET.Animations
 {
     /// <summary>
     /// Defines the AnimationDirection

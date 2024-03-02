@@ -1,25 +1,12 @@
 ﻿#region Imports
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Design;
-using System.ComponentModel;
 using System.ComponentModel.Design;
-using MaterialSkin;
 //using MaterialSkin.Controls;
-
-using System.Drawing.Text;
-using System.Windows.Forms;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-
 
 #endregion
 
-namespace System.Windows.Forms
+namespace MaterialSkin.NET
 {
     public class MaterialItemCollectionEditor : CollectionEditor
     {

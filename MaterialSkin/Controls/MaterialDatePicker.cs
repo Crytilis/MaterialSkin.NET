@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Drawing2D;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
     [DefaultProperty("Value")]

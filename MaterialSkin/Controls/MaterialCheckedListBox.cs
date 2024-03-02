@@ -1,10 +1,10 @@
-﻿namespace MaterialSkin.Controls
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
 
+namespace MaterialSkin.NET.Controls
+{
     public class MaterialCheckedListBox : Panel, IMaterialControl
     {
         [Browsable(false)]
@@ -49,7 +49,7 @@
             return Items[Index].CheckState;
         }
 
-        public class ItemsList : List<MaterialSkin.Controls.MaterialCheckbox>
+        public class ItemsList : List<MaterialCheckbox>
         {
             private Panel _parent;
 
@@ -67,20 +67,20 @@
 
             public void Add(string text, bool defaultValue)
             {
-                MaterialSkin.Controls.MaterialCheckbox cb = new MaterialSkin.Controls.MaterialCheckbox();
+                MaterialCheckbox cb = new MaterialCheckbox();
                 Add(cb);
                 cb.Checked = defaultValue;
                 cb.Text = text;
             }
 
-            public new void Add(MaterialSkin.Controls.MaterialCheckbox value)
+            public new void Add(MaterialCheckbox value)
             {
                 base.Add(value);
                 _parent.Controls.Add(value);
                 value.Dock = DockStyle.Top;
             }
 
-            public new void Remove(MaterialSkin.Controls.MaterialCheckbox value)
+            public new void Remove(MaterialCheckbox value)
             {
                 base.Remove(value);
                 _parent.Controls.Remove(value);

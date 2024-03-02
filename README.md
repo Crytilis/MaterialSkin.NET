@@ -1,24 +1,10 @@
-# MaterialSkin 2 for .NET WinForms
+# MaterialSkin.NET for .NET WinForms
 
-Theming .NET WinForms, C# or VB.Net, to Google's Material Design Principles.
+Theming C# .NET WinForms to Google's Material Design Principles.
 
-> This project state is: this fork is customized for our needs may not be for everyone
+> This project state is: "Stasis"
 >
 
-
-![home](https://user-images.githubusercontent.com/77468294/134770847-0f20f37f-e3e7-4e15-b838-cf53b0b32c4e.png)
-
-## Nuget Package (not for this repository but from the repository this was forked from)
-
-A nuget package version is available [here](https://www.nuget.org/packages/MaterialSkin.2/)
-
-Or simply search for MaterialSkin.2 on the **Nuget Package Manager** inside Visual Studio
-
-## WIKI Available!
-
-But there's nothing in there for now, please contribute if you can. :smile:
-
-You can access it [here](https://github.com/TriDataGmbH/MaterialSkin/wiki)
 
 ## Current state of the MaterialSkin components
 
@@ -44,6 +30,7 @@ You can access it [here](https://github.com/TriDataGmbH/MaterialSkin/wiki)
 | Label                        |    Yes    |      Yes      |   N/A    |
 | ListBox                      |    Yes    |      Yes      |   N/A    |
 | ListView                     |    Yes    |    **No**     |   N/A    |
+| Panel                        |    Yes    |      N/A      |   N/A    |
 | Progress Bar                 |  _Partial_  |    **No**     |  **No**  |
 | Radio Button                 |    Yes    |      Yes      |   Yes    |
 | Text field                   |    Yes    |      Yes      |   Yes    |
@@ -56,18 +43,9 @@ You can access it [here](https://github.com/TriDataGmbH/MaterialSkin/wiki)
 
 All supported components have a dark theme
 
-## TODO List
-
-- [ ] Drawer - Header, Divider, subtitle & submenu
-
 ---
 
-## Contributing
-
-Thanks for taking the time to contribute!  :+1:
-
-If you have any issues please open an issue; have an improvement? open a pull request.
-
+> - This project has been updated for the .NET ecosystem specifically .NET 6,7, and 8 by [@crytilis](https://github.com/crytilis/MaterialSkin.NET)
 > - This project was heavily updated by [@leocb](https://github.com/leocb/MaterialSkin)
 > - Currently it's kept alive by [@orapps44](https://github.com/orapps44/MaterialSkin)
 > - forked from [@donaldsteele](https://github.com/donaldsteele/MaterialSkin)
@@ -75,7 +53,7 @@ If you have any issues please open an issue; have an improvement? open a pull re
 
 ## Contributors
 
-Thank you to all the people who have already contributed to MaterialSkin 2 !
+Thank you to all the people who have already contributed to the MaterialSkin projects!
 
 <a href="https://github.com/leocb/MaterialSkin/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=leocb/MaterialSkin" />
@@ -84,21 +62,9 @@ Thank you to all the people who have already contributed to MaterialSkin 2 !
 
 ---
 
-## Implementing MaterialSkin 2 in your application
+## Implementing MaterialSkin in your application
 
 ### 1. Add the library to your project
-
-There are a few methods to add this lib:
-
-#### The Easy way
-
-Search for MaterialSkin.2 on the Nuget Package manager inside VisualStudio and add it to your project.
-
-#### Manual way
-
-Download the precompiled DLL available on the releases section and add it as a external reference on your project.
-
-#### Compile from the latest master
 
 Clone the project from GitHub, then add the MaterialSkin.csproj to your own solution, then add it as a project reference on your project.
   
@@ -115,14 +81,7 @@ Open the code behind your Form you wish to skin. Make it inherit from MaterialFo
 ```cs
 public partial class Form1 : MaterialForm
 ```
-  
-#### VB.NET (Form1.Designer.vb)
-
-```vb
-Partial Class Form1
-  Inherits MaterialSkin.Controls.MaterialForm
-```
-  
+   
 ### 4. Initialize your colorscheme
 
 Set your preferred colors & theme. Also add the form to the manager so it keeps updated if the color scheme or theme changes later on.
@@ -139,22 +98,6 @@ public Form1()
     materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
     materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 }
-```
-
-#### VB.NET (Form1.vb)
-
-```vb
-Imports MaterialSkin
-
-Public Class Form1
-
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim SkinManager As MaterialSkinManager = MaterialSkinManager.Instance
-        SkinManager.AddFormToManage(Me)
-        SkinManager.Theme = MaterialSkinManager.Themes.LIGHT
-        SkinManager.ColorScheme = New ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE)
-    End Sub
-End Class
 ```
 
 ---

@@ -1,13 +1,13 @@
-﻿namespace MaterialSkin.Controls
-{
-    using MaterialSkin.Animations;
-    using System;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Forms;
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using MaterialSkin.NET.Animations;
 
+namespace MaterialSkin.NET.Controls
+{
     public class MaterialComboBox : ComboBox, IMaterialControl
     {
         // For some reason, even when overriding the AutoSize property, it doesn't appear on the properties panel, so we have to create a new one.

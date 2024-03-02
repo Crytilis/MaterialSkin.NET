@@ -1,15 +1,15 @@
-﻿namespace MaterialSkin.Controls
-{
-    using MaterialSkin.Animations;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Drawing.Text;
-    using System.Globalization;
-    using System.Linq;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Text;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
+using MaterialSkin.NET.Animations;
 
+namespace MaterialSkin.NET.Controls
+{
     public class MaterialBaseTabSelector : Control, IMaterialControl
     {
         [Browsable(false)]

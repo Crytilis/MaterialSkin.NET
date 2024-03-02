@@ -1,9 +1,9 @@
-﻿namespace MaterialSkin.Controls
-{
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
 
+namespace MaterialSkin.NET.Controls
+{
     public class MaterialProgressBar : ProgressBar, IMaterialControl
     {
         #region Private variables

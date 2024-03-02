@@ -1,15 +1,12 @@
-﻿namespace MaterialSkin.Controls
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+
+namespace MaterialSkin.NET.Controls
 {
-    using MaterialSkin.Animations;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Drawing.Text;
-    using System.Globalization;
-    using System.Linq;
-    using System.Windows.Forms;
-    using static MaterialSkin.Controls.MaterialBaseTabSelector;
+    using static MaterialBaseTabSelector;
 
     public class MaterialTabSelector : Control, IMaterialControl
     {

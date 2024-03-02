@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
     /// <summary>
     /// The form to show the customized message box.
@@ -94,13 +94,13 @@ namespace MaterialSkin.Controls
         {
             this.components = new System.ComponentModel.Container();
             this.FlexibleMaterialFormBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.leftButton = new MaterialSkin.Controls.MaterialButton();
-            this.middleButton = new MaterialSkin.Controls.MaterialButton();
-            this.rightButton = new MaterialSkin.Controls.MaterialButton();
-            this.messageContainer = new MaterialSkin.Controls.MaterialCard();
-            this.lblTextBoxMessage = new MaterialSkin.Controls.MaterialLabel();
+            this.leftButton = new MaterialButton();
+            this.middleButton = new MaterialButton();
+            this.rightButton = new MaterialButton();
+            this.messageContainer = new MaterialCard();
+            this.lblTextBoxMessage = new MaterialLabel();
             this.pictureBoxForIcon = new System.Windows.Forms.PictureBox();
-            this.richTextBoxMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox();
+            this.richTextBoxMessage = new MaterialMultiLineTextBox();
             this.BottomPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.FlexibleMaterialFormBindingSource)).BeginInit();
             this.messageContainer.SuspendLayout();
@@ -113,7 +113,7 @@ namespace MaterialSkin.Controls
             this.leftButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.leftButton.AutoSize = false;
             this.leftButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.leftButton.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            this.leftButton.Density = MaterialButton.MaterialButtonDensity.Default;
             this.leftButton.Depth = 0;
             this.leftButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.leftButton.Font = new System.Drawing.Font("Roboto", 8.25F);
@@ -123,13 +123,13 @@ namespace MaterialSkin.Controls
             this.leftButton.Location = new System.Drawing.Point(6, 7);
             this.leftButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.leftButton.MinimumSize = new System.Drawing.Size(0, 24);
-            this.leftButton.MouseState = MaterialSkin.MouseState.HOVER;
+            this.leftButton.MouseState = MouseState.HOVER;
             this.leftButton.Name = "leftButton";
             this.leftButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.leftButton.Size = new System.Drawing.Size(106, 24);
             this.leftButton.TabIndex = 14;
             this.leftButton.Text = "OK";
-            this.leftButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            this.leftButton.Type = MaterialButton.MaterialButtonType.Outlined;
             this.leftButton.UseAccentColor = false;
             this.leftButton.UseVisualStyleBackColor = true;
             this.leftButton.Visible = false;
@@ -139,7 +139,7 @@ namespace MaterialSkin.Controls
             this.middleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.middleButton.AutoSize = false;
             this.middleButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.middleButton.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            this.middleButton.Density = MaterialButton.MaterialButtonDensity.Default;
             this.middleButton.Depth = 0;
             this.middleButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.middleButton.Font = new System.Drawing.Font("Roboto", 8.25F);
@@ -149,13 +149,13 @@ namespace MaterialSkin.Controls
             this.middleButton.Location = new System.Drawing.Point(119, 7);
             this.middleButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.middleButton.MinimumSize = new System.Drawing.Size(0, 24);
-            this.middleButton.MouseState = MaterialSkin.MouseState.HOVER;
+            this.middleButton.MouseState = MouseState.HOVER;
             this.middleButton.Name = "middleButton";
             this.middleButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.middleButton.Size = new System.Drawing.Size(106, 24);
             this.middleButton.TabIndex = 15;
             this.middleButton.Text = "OK";
-            this.middleButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            this.middleButton.Type = MaterialButton.MaterialButtonType.Outlined;
             this.middleButton.UseAccentColor = false;
             this.middleButton.UseVisualStyleBackColor = true;
             this.middleButton.Visible = false;
@@ -165,7 +165,7 @@ namespace MaterialSkin.Controls
             this.rightButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.rightButton.AutoSize = false;
             this.rightButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.rightButton.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            this.rightButton.Density = MaterialButton.MaterialButtonDensity.Default;
             this.rightButton.Depth = 0;
             this.rightButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.rightButton.Font = new System.Drawing.Font("Roboto", 8.25F);
@@ -175,13 +175,13 @@ namespace MaterialSkin.Controls
             this.rightButton.Location = new System.Drawing.Point(232, 7);
             this.rightButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.rightButton.MinimumSize = new System.Drawing.Size(0, 24);
-            this.rightButton.MouseState = MaterialSkin.MouseState.HOVER;
+            this.rightButton.MouseState = MouseState.HOVER;
             this.rightButton.Name = "rightButton";
             this.rightButton.NoAccentTextColor = System.Drawing.Color.Empty;
             this.rightButton.Size = new System.Drawing.Size(106, 24);
             this.rightButton.TabIndex = 13;
             this.rightButton.Text = "OK";
-            this.rightButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            this.rightButton.Type = MaterialButton.MaterialButtonType.Outlined;
             this.rightButton.UseAccentColor = false;
             this.rightButton.UseVisualStyleBackColor = true;
             this.rightButton.Visible = false;
@@ -200,7 +200,7 @@ namespace MaterialSkin.Controls
             this.messageContainer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.messageContainer.Location = new System.Drawing.Point(1, 24);
             this.messageContainer.Margin = new System.Windows.Forms.Padding(14);
-            this.messageContainer.MouseState = MaterialSkin.MouseState.HOVER;
+            this.messageContainer.MouseState = MouseState.HOVER;
             this.messageContainer.Name = "messageContainer";
             this.messageContainer.Padding = new System.Windows.Forms.Padding(14);
             this.messageContainer.Radius = 1;
@@ -215,9 +215,9 @@ namespace MaterialSkin.Controls
             this.lblTextBoxMessage.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.FlexibleMaterialFormBindingSource, "MessageText", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.lblTextBoxMessage.Depth = 0;
             this.lblTextBoxMessage.Font = new System.Drawing.Font("Roboto", 9F);
-            this.lblTextBoxMessage.FontType = MaterialSkin.MaterialSkinManager.fontType.Caption;
+            this.lblTextBoxMessage.FontType = MaterialSkinManager.fontType.Caption;
             this.lblTextBoxMessage.Location = new System.Drawing.Point(56, 14);
-            this.lblTextBoxMessage.MouseState = MaterialSkin.MouseState.HOVER;
+            this.lblTextBoxMessage.MouseState = MouseState.HOVER;
             this.lblTextBoxMessage.Name = "lblTextBoxMessage";
             this.lblTextBoxMessage.Size = new System.Drawing.Size(278, 32);
             this.lblTextBoxMessage.TabIndex = 12;
@@ -246,7 +246,7 @@ namespace MaterialSkin.Controls
             this.richTextBoxMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.richTextBoxMessage.Location = new System.Drawing.Point(56, 14);
             this.richTextBoxMessage.Margin = new System.Windows.Forms.Padding(0);
-            this.richTextBoxMessage.MouseState = MaterialSkin.MouseState.HOVER;
+            this.richTextBoxMessage.MouseState = MouseState.HOVER;
             this.richTextBoxMessage.Name = "richTextBoxMessage";
             this.richTextBoxMessage.ReadOnly = true;
             this.richTextBoxMessage.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;

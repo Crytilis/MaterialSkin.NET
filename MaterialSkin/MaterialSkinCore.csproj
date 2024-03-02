@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net48;net47</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<RuntimeIdentifier>win</RuntimeIdentifier>
       <OutputType>Library</OutputType>
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<usewpf>true</usewpf>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-      <AssemblyName>MaterialSkin</AssemblyName>
+      <AssemblyName>MaterialSkin.NET</AssemblyName>
       <RootNamespace>$(AssemblyName)</RootNamespace>
-      <PackageId>MaterialSkin.2</PackageId>
-      <Version>2.3.1</Version>
-      <Product>MaterialSkin 2</Product>
-      <Authors>leocb, IgnaceMaes, orapps44</Authors>
+      <PackageId>MaterialSkin.NET</PackageId>
+      <Version>2.4.3</Version>
+      <Product>MaterialSkin.NET</Product>
+      <Authors>Metalios, TriDataGmbH, leocb, IgnaceMaes, orapps44</Authors>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
-      <RepositoryUrl>https://github.com/leocb/MaterialSkin</RepositoryUrl>
+      <RepositoryUrl>https://github.com/crytilis/MaterialSkin.NET</RepositoryUrl>
       <PackageIcon>nugetIcon.png</PackageIcon>
       <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-      <Description>Google's Material Design for your windows forms. MaterialSkin 2 is a Google's Material Design skin for you windows forms app. This updated version brings new user controls, unified theming and consistency. This package supersedes the MaterialSkin package By IgnaceMaes. Example app and documentation is available on the project site.</Description>
+      <Description>MaterialSkin.NET is the modern evolution of the MaterialSkin library for .NET, enhancing Windows Forms applications with Google's Material Design. Building on the foundation laid by IgnaceMaes and the updates introduced in leocb's MaterialSkin 2, this version extends support to .NET 6, .NET 7, and .NET 8, incorporating various language improvements for better performance and developer experience. It offers a rich set of controls, unified theming, and seamless integration with the .NET ecosystem, ensuring applications are not only visually appealing but also consistent and responsive. Credits to IgnaceMaes and leocb for their pioneering work.</Description>
       <PackageReleaseNotes>See GitHub page for release notes.</PackageReleaseNotes>
-      <Copyright>Copyright Leonardo C Bottaro © 2021</Copyright>
-      <PackageTags>material design materialdesign google forms theme skin</PackageTags>
+      <Copyright>Copyright Jason Thompson © 2024</Copyright>
+      <PackageTags>material design materialdesign materialdesign.net google winforms forms theme skin</PackageTags>
       <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|AnyCPU'">
@@ -29,18 +29,18 @@
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows|AnyCPU'">
       <NoWarn>1701;1702</NoWarn>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-      <NoWarn>1701;1702</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-      <NoWarn>1701;1702</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
-      <NoWarn>1701;1702</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-      <NoWarn>1701;1702</NoWarn>
-    </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows|AnyCPU'">
+		<NoWarn>1701;1702</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows|AnyCPU'">
+		<NoWarn>1701;1702</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+		<NoWarn>1701;1702</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+		<NoWarn>1701;1702</NoWarn>
+	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
 		<Reference Include="System.Design" />
 	</ItemGroup>

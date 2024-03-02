@@ -1,15 +1,15 @@
-namespace MaterialSkin.Controls
-{
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Globalization;
-    using System.Windows.Forms;
-    using System.Runtime.InteropServices;
-    using System.Reflection;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
+namespace MaterialSkin.NET.Controls
+{
     [ToolboxItem(false)]
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]

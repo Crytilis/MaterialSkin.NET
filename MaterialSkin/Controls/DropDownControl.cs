@@ -1,11 +1,11 @@
-﻿using MaterialSkin.Animations;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using MaterialSkin.NET.Animations;
 
-namespace MaterialSkin.Controls
+namespace MaterialSkin.NET.Controls
 {
     public partial class DropDownControl : UserControl
     {

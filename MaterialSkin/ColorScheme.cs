@@ -1,8 +1,8 @@
-namespace MaterialSkin
-{
-    using System;
-    using System.Drawing;
+using System;
+using System.Drawing;
 
+namespace MaterialSkin.NET
+{
     public class ColorScheme
     {
         public readonly Color PrimaryColor, DarkPrimaryColor, LightPrimaryColor, AccentColor, TextColor, SuccessColor, InfoColor, WarningColor, DangerColor;

@@ -1,10 +1,10 @@
-﻿namespace MaterialSkin
-{
-    using System;
-    using System.Drawing;
-    using System.Reflection;
-    using System.Windows.Forms;
+﻿using System;
+using System.Drawing;
+using System.Reflection;
+using System.Windows.Forms;
 
+namespace MaterialSkin.NET
+{
     /// <summary>
     /// Defines the <see cref="Extensions" />
     /// These add functions on default C# types and classes
@@ -87,7 +87,7 @@
             return (int)((percentage / 100d) * 255d);
         }
 
-        public static void InvokeIfRequired(this Control control, MethodInvoker action)
+        public static void InvokeIfRequired(this Control control, System.Windows.Forms.MethodInvoker action)
         {
             // See Update 2 for edits Mike de Klerk suggests to insert here.
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
+namespace MaterialSkin.NET;
+
 public sealed class NativeTextRenderer : IDisposable
 {
     #region Fields and Consts
