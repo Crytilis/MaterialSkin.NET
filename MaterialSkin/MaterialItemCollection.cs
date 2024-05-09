@@ -8,7 +8,7 @@ using System.Drawing.Design;
 
 #endregion
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     #region MaterialItemCollectionChild
 

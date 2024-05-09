@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialSlider : Control, IMaterialControl
     {
@@ -36,7 +36,7 @@ namespace MaterialSkin.NET.Controls
         private bool _showText;
         private bool _showValue;
         private bool _useAccentColor;
-        private MaterialSkinManager.fontType _fontType = MaterialSkinManager.fontType.Body1;
+        private MaterialSkinManager.FontType _fontType = MaterialSkinManager.FontType.Body1;
 
 
         #endregion
@@ -170,8 +170,8 @@ namespace MaterialSkin.NET.Controls
 
 
         [Category("Material Skin"),
-        DefaultValue(typeof(MaterialSkinManager.fontType), "Body1")]
-        public MaterialSkinManager.fontType FontType
+        DefaultValue(typeof(MaterialSkinManager.FontType), "Body1")]
+        public MaterialSkinManager.FontType FontType
         {
             get
             {
@@ -180,7 +180,7 @@ namespace MaterialSkin.NET.Controls
             set
             {
                 _fontType = value;
-                Font = SkinManager.getFontByType(_fontType);
+                Font = SkinManager.GetFontByType(_fontType);
                 Refresh();
             }
         }
@@ -349,8 +349,8 @@ namespace MaterialSkin.NET.Controls
             Size valueSize;
             using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
             {
-                textSize = NativeText.MeasureLogString(_showText ? Text : "", SkinManager.getLogFontByType(_fontType));
-                valueSize = NativeText.MeasureLogString(_showValue ? RangeMax.ToString() + _valueSuffix : "" , SkinManager.getLogFontByType(_fontType));
+                textSize = NativeText.MeasureLogString(_showText ? Text : "", SkinManager.GetLogFontByType(_fontType));
+                valueSize = NativeText.MeasureLogString(_showValue ? RangeMax.ToString() + _valueSuffix : "" , SkinManager.GetLogFontByType(_fontType));
             }
             _valueRectangle = new Rectangle(Width - valueSize.Width - _thumbRadiusHoverPressed / 4, 0, valueSize.Width + _thumbRadiusHoverPressed / 4, Height);
             _textRectangle = new Rectangle(0, 0, textSize.Width + _thumbRadiusHoverPressed/4, Height);
@@ -390,7 +390,7 @@ namespace MaterialSkin.NET.Controls
             _accentBrush = new SolidBrush(_accentColor);
             _disabledBrush = new SolidBrush(Color.FromArgb(255, 158, 158, 158));
 
-            if (SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Dark)
             {
                 _disabledColor = Color.FromArgb((int)(2.55 * 30), 255, 255, 255);
                 _inactiveTrackColor = _accentColor.Darken(0.25f);
@@ -460,7 +460,7 @@ namespace MaterialSkin.NET.Controls
                     // Draw text
                     NativeText.DrawTransparentText(
                     Text,
-                    SkinManager.getLogFontByType(_fontType),
+                    SkinManager.GetLogFontByType(_fontType),
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     _textRectangle.Location,
                     _textRectangle.Size,
@@ -470,7 +470,7 @@ namespace MaterialSkin.NET.Controls
                 // Draw value
                 NativeText.DrawTransparentText(
                     Value.ToString()+ValueSuffix,
-                    SkinManager.getLogFontByType(_fontType),
+                    SkinManager.GetLogFontByType(_fontType),
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     _valueRectangle.Location,
                     _valueRectangle.Size,

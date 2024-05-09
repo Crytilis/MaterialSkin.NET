@@ -1,4 +1,4 @@
-﻿namespace MaterialSkin.NET.Controls
+﻿namespace MaterialSkin.Controls
 {
     partial class DropDownControl
     {

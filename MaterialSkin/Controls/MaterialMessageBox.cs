@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     ///TODO: Break this out into a MaterialDialog then extend into the MaterialMsgBox
 

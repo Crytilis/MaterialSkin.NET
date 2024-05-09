@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialNumericUpDown : NumericUpDown, IMaterialControl
     {

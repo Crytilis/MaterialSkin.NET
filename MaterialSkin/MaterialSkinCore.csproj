@@ -7,7 +7,7 @@
 		<usewpf>true</usewpf>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-      <AssemblyName>MaterialSkin.NET</AssemblyName>
+      <AssemblyName>MaterialSkin</AssemblyName>
       <RootNamespace>$(AssemblyName)</RootNamespace>
       <PackageId>MaterialSkin.NET</PackageId>
       <Version>2.4.3</Version>
@@ -20,8 +20,13 @@
       <Description>MaterialSkin.NET is the modern evolution of the MaterialSkin library for .NET, enhancing Windows Forms applications with Google's Material Design. Building on the foundation laid by IgnaceMaes and the updates introduced in leocb's MaterialSkin 2, this version extends support to .NET 6, .NET 7, and .NET 8, incorporating various language improvements for better performance and developer experience. It offers a rich set of controls, unified theming, and seamless integration with the .NET ecosystem, ensuring applications are not only visually appealing but also consistent and responsive. Credits to IgnaceMaes and leocb for their pioneering work.</Description>
       <PackageReleaseNotes>See GitHub page for release notes.</PackageReleaseNotes>
       <Copyright>Copyright Jason Thompson © 2024</Copyright>
-      <PackageTags>material design materialdesign materialdesign.net google winforms forms theme skin</PackageTags>
+      <PackageTags>material;design;materialdesign;materialdesign.net;google;winforms;forms;theme;skin</PackageTags>
       <PackageReadmeFile>README.md</PackageReadmeFile>
+      <SignAssembly>True</SignAssembly>
+      <AssemblyOriginatorKeyFile>MaterialSkinTridata.snk</AssemblyOriginatorKeyFile>
+      <Title>MaterialSkin.NET</Title>
+      <PackageProjectUrl></PackageProjectUrl>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|AnyCPU'">
       <NoWarn>1701;1702</NoWarn>
@@ -49,6 +54,7 @@
       <Compile Update="Controls\MaterialListBox.cs">
         <SubType>Component</SubType>
       </Compile>
+      <Compile Update="Controls\MaterialFlowPanel.cs" />
       <Compile Update="Controls\MaterialScrollBar.cs">
         <SubType>Component</SubType>
       </Compile>
@@ -121,6 +127,12 @@
       </Compile>
     </ItemGroup>
     <ItemGroup>
+		<EmbeddedResource Include="Resources\dark_mode_24.png" />
+		<EmbeddedResource Include="Resources\light_mode_24.png" />
+		<EmbeddedResource Include="Resources\MaterialIcons-Regular.ttf" />
+		<EmbeddedResource Include="Resources\MaterialIconsOutlined-Regular.otf" />
+		<EmbeddedResource Include="Resources\MaterialIconsRound-Regular.otf" />
+		<EmbeddedResource Include="Resources\MaterialIconsSharp-Regular.otf" />
 		<EmbeddedResource Include="Resources\Roboto-Regular.ttf" />
 		<EmbeddedResource Include="Resources\Roboto-Medium.ttf" />
 		<EmbeddedResource Include="Resources\Roboto-Bold.ttf" />
@@ -130,6 +142,14 @@
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="Controls\MaterialMenuStrip.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Resources\dark_mode_24.png" />
+      <None Remove="Resources\light_mode_24.png" />
+      <None Remove="Resources\MaterialIcons-Regular.ttf" />
+      <None Remove="Resources\MaterialIconsOutlined-Regular.otf" />
+      <None Remove="Resources\MaterialIconsRound-Regular.otf" />
+      <None Remove="Resources\MaterialIconsSharp-Regular.otf" />
     </ItemGroup>
     <ItemGroup>
       <None Include="..\nugetIcon.png">

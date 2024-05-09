@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialMultiLineTextBox : RichTextBox, IMaterialControl
     {
@@ -95,7 +95,7 @@ namespace MaterialSkin.NET.Controls
             this.Multiline = true;
 
             BorderStyle = BorderStyle.None;
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
             BackColorChanged += (sender, args) => BackColor = SkinManager.BackgroundColor;

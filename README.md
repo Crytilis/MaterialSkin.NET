@@ -27,6 +27,7 @@ Theming C# .NET WinForms to Google's Material Design Principles.
 | Expansion Panel              |    Yes    |      Yes      |  **No**  |
 | Flexible Dialog (big)        |    Yes    |      Yes      |   N/A    |
 | FAB - Floating Action Button |    Yes    |      Yes      |   Yes    |
+| FlowLayoutPanel              |    Yes    |      N/A      |   N/A    |
 | Label                        |    Yes    |      Yes      |   N/A    |
 | ListBox                      |    Yes    |      Yes      |   N/A    |
 | ListView                     |    Yes    |    **No**     |   N/A    |

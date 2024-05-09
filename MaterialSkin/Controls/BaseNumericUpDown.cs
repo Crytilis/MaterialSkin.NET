@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     [ToolboxItem(false)]
     [ComVisible(true)]

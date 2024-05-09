@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialColorPicker : Control, IMaterialControl
     {
@@ -533,7 +533,7 @@ namespace MaterialSkin.NET.Controls
             Brush AccentBrush = new SolidBrush(AccentColor);
             Pen AccentPen = new Pen(AccentBrush, 2);
 
-            if (SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Dark)
             {
                 LineColor = Color.FromArgb((int)(2.55 * 30), 255, 255, 255);
             }

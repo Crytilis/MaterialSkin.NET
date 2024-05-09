@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     using static MaterialBaseTabSelector;
 
@@ -880,7 +880,7 @@ namespace MaterialSkin.NET.Controls
         {
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
             baseTabSelector = new MaterialBaseTabSelector();
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             TabIndicatorHeight = 2;
             TabLabel = TabLabelStyle.Text;
 

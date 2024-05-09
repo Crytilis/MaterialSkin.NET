@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialExpansionPanel : Panel, IMaterialControl
     {
@@ -287,7 +287,7 @@ namespace MaterialSkin.NET.Controls
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
         }
 
         protected override void InitLayout()
@@ -505,7 +505,7 @@ namespace MaterialSkin.NET.Controls
                 // Draw header text
                 NativeText.DrawTransparentText(
                     _titleHeader,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body1),
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     headerRect.Location,
                     headerRect.Size,
@@ -527,7 +527,7 @@ namespace MaterialSkin.NET.Controls
                     // Draw description header text 
                     NativeText.DrawTransparentText(
                     _descriptionHeader,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body1),
                      SkinManager.TextDisabledOrHintColor,
                     headerDescriptionRect.Location,
                     headerDescriptionRect.Size,
@@ -605,9 +605,9 @@ namespace MaterialSkin.NET.Controls
         {
             if (!_collapse && _showValidationButtons)
             {
-                int _buttonWidth = ((TextRenderer.MeasureText(ValidationButtonText, SkinManager.getFontByType(MaterialSkinManager.fontType.Button))).Width + 32);
+                int _buttonWidth = ((TextRenderer.MeasureText(ValidationButtonText, SkinManager.GetFontByType(MaterialSkinManager.FontType.Button))).Width + 32);
                 _savebuttonBounds = new Rectangle((Width) - _buttonPadding - _buttonWidth, Height - _expansionPanelDefaultPadding - _footerButtonHeight, _buttonWidth, _footerButtonHeight);
-                _buttonWidth = ((TextRenderer.MeasureText(CancelButtonText, SkinManager.getFontByType(MaterialSkinManager.fontType.Button))).Width + 32);
+                _buttonWidth = ((TextRenderer.MeasureText(CancelButtonText, SkinManager.GetFontByType(MaterialSkinManager.FontType.Button))).Width + 32);
                 _cancelbuttonBounds = new Rectangle(_savebuttonBounds.Left - _buttonPadding - _buttonWidth, Height - _expansionPanelDefaultPadding - _footerButtonHeight, _buttonWidth, _footerButtonHeight);
 
                 if (_validationButton != null)

@@ -6,9 +6,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Globalization;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     /// <summary>
     /// Defines the <see cref="MaterialButton" />
@@ -420,7 +420,7 @@ namespace MaterialSkin.NET.Controls
             {
                 base.Text = value;
                 if (!string.IsNullOrEmpty(value))
-                    _textSize = CreateGraphics().MeasureString(value.ToUpper(), SkinManager.getFontByType(MaterialSkinManager.fontType.Button));
+                    _textSize = CreateGraphics().MeasureString(value.ToUpper(), SkinManager.GetFontByType(MaterialSkinManager.FontType.Button));
                 else
                 {
                     _textSize.Width = 0;
@@ -499,7 +499,7 @@ namespace MaterialSkin.NET.Controls
 
             // Calculate lightness and color
             var color = GetColorByType();
-            float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT & (highEmphasis == false | Enabled == false | Type != MaterialButtonType.Contained)) ? 0f : 1.5f;
+            float l = (SkinManager.Theme == MaterialSkinManager.Themes.Light & (highEmphasis == false | Enabled == false | Type != MaterialButtonType.Contained)) ? 0f : 1.5f;
             float r = (useAccentColor ? SkinManager.ColorScheme.AccentColor.R : color.R) / 255f;
             float g = (useAccentColor ? SkinManager.ColorScheme.AccentColor.G : color.G) / 255f;
             float b = (useAccentColor ? SkinManager.ColorScheme.AccentColor.B : color.B) / 255f;
@@ -845,7 +845,7 @@ namespace MaterialSkin.NET.Controls
                         }
                         else
                         {
-                            if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                            if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                             {
                                 rippleColor = GetColorByType();
                             }

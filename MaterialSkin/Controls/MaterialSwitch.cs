@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialSwitch : CheckBox, IMaterialControl
     {
@@ -122,7 +122,7 @@ namespace MaterialSkin.NET.Controls
             Size strSize;
             using (NativeTextRenderer NativeText = new NativeTextRenderer(CreateGraphics()))
             {
-                strSize = NativeText.MeasureLogString(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1));
+                strSize = NativeText.MeasureLogString(Text, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body1));
             }
             var w = TRACK_SIZE_WIDTH + THUMB_SIZE + strSize.Width;
             return Ripple ? new Size(w, RIPPLE_DIAMETER) : new Size(w, THUMB_SIZE);
@@ -170,7 +170,7 @@ namespace MaterialSkin.NET.Controls
 
             Color rippleColor = Color.FromArgb(40, // color alpha
                 Checked ? SkinManager.ColorScheme.AccentColor : // On color
-                (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? Color.Black : Color.White)); // Off color
+                (SkinManager.Theme == MaterialSkinManager.Themes.Light ? Color.Black : Color.White)); // Off color
 
             if (Ripple && _rippleAM.IsAnimating())
             {
@@ -221,7 +221,7 @@ namespace MaterialSkin.NET.Controls
                 Rectangle textLocation = new Rectangle(TEXT_OFFSET + TRACK_SIZE_WIDTH, 0, Width - (TEXT_OFFSET + TRACK_SIZE_WIDTH), Height);
                 NativeText.DrawTransparentText(
                     Text,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body1),
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textLocation.Location,
                     textLocation.Size,

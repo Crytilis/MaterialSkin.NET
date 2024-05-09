@@ -2,11 +2,12 @@
 
 using System;
 using System.ComponentModel.Design;
+
 //using MaterialSkin.Controls;
 
 #endregion
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     public class MaterialItemCollectionEditor : CollectionEditor
     {

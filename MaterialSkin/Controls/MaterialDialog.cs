@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialDialog : MaterialForm
     {
@@ -111,7 +111,7 @@ namespace MaterialSkin.NET.Controls
                 Controls.Add(_cancelButton);
 
             Width = 560;
-            int TextWidth = TextRenderer.MeasureText(_text, SkinManager.getFontByType(MaterialSkinManager.fontType.Body1)).Width;
+            int TextWidth = TextRenderer.MeasureText(_text, SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1)).Width;
             int RectWidth = Width - (2 * LEFT_RIGHT_PADDING) - BUTTON_PADDING;
             int RectHeight = ((TextWidth / RectWidth) + 1) * 19;
             Rectangle textRect = new Rectangle(
@@ -123,7 +123,7 @@ namespace MaterialSkin.NET.Controls
             Height = _header_Height + TEXT_TOP_PADDING + textRect.Height + TEXT_BOTTOM_PADDING + 52; //560;
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 6, 6));
 
-            int _buttonWidth = ((TextRenderer.MeasureText(ValidationButtonText, SkinManager.getFontByType(MaterialSkinManager.fontType.Button))).Width + 32);
+            int _buttonWidth = ((TextRenderer.MeasureText(ValidationButtonText, SkinManager.GetFontByType(MaterialSkinManager.FontType.Button))).Width + 32);
             Rectangle _validationbuttonBounds = new Rectangle((Width) - BUTTON_PADDING - _buttonWidth, Height - BUTTON_PADDING - BUTTON_HEIGHT, _buttonWidth, BUTTON_HEIGHT);
             _validationButton.Width = _validationbuttonBounds.Width;
             _validationButton.Height = _validationbuttonBounds.Height;
@@ -131,7 +131,7 @@ namespace MaterialSkin.NET.Controls
             _validationButton.Left = _validationbuttonBounds.Left;  //Button minimum width management
             _validationButton.Visible = true;
 
-            _buttonWidth = ((TextRenderer.MeasureText(CancelButtonText, SkinManager.getFontByType(MaterialSkinManager.fontType.Button))).Width + 32);
+            _buttonWidth = ((TextRenderer.MeasureText(CancelButtonText, SkinManager.GetFontByType(MaterialSkinManager.FontType.Button))).Width + 32);
             Rectangle _cancelbuttonBounds = new Rectangle((_validationbuttonBounds.Left) - BUTTON_PADDING - _buttonWidth, Height - BUTTON_PADDING - BUTTON_HEIGHT, _buttonWidth, BUTTON_HEIGHT);
             _cancelButton.Width = _cancelbuttonBounds.Width;
             _cancelButton.Height = _cancelbuttonBounds.Height;
@@ -219,7 +219,7 @@ namespace MaterialSkin.NET.Controls
                 // Draw header text
                 NativeText.DrawTransparentText(
                     _title,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.H6),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.H6),
                     SkinManager.TextHighEmphasisColor,
                     titleRect.Location,
                     titleRect.Size,
@@ -228,7 +228,7 @@ namespace MaterialSkin.NET.Controls
 
             // Calc text Rect
 
-            int TextWidth = TextRenderer.MeasureText(_text, SkinManager.getFontByType(MaterialSkinManager.fontType.Body1)).Width;
+            int TextWidth = TextRenderer.MeasureText(_text, SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1)).Width;
             int RectWidth = Width - (2 * LEFT_RIGHT_PADDING) - BUTTON_PADDING;
             int RectHeight = ((TextWidth / RectWidth) + 1) * 19;
 
@@ -244,7 +244,7 @@ namespace MaterialSkin.NET.Controls
                 // Draw header text
                 NativeText.DrawMultilineTransparentText(
                     _text,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body1),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body1),
                     SkinManager.TextHighEmphasisColor,
                     textRect.Location,
                     textRect.Size,

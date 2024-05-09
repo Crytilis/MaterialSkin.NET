@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialLabel : Label, IMaterialControl
     {
@@ -52,11 +52,11 @@ namespace MaterialSkin.NET.Controls
         DefaultValue(false)]
         public bool UseAccent { get; set; }
 
-        private MaterialSkinManager.fontType _fontType = MaterialSkinManager.fontType.Body1;
+        private MaterialSkinManager.FontType _fontType = MaterialSkinManager.FontType.Body1;
 
         [Category("Material Skin"),
-        DefaultValue(typeof(MaterialSkinManager.fontType), "Body1")]
-        public MaterialSkinManager.fontType FontType
+        DefaultValue(typeof(MaterialSkinManager.FontType), "Body1")]
+        public MaterialSkinManager.FontType FontType
         {
             get
             {
@@ -65,9 +65,9 @@ namespace MaterialSkin.NET.Controls
             set
             {
                 _fontType = value;
-                if(value != MaterialSkinManager.fontType.Custom)
+                if(value != MaterialSkinManager.FontType.Custom)
                 {
-                    Font = SkinManager.getFontByType(_fontType);
+                    Font = SkinManager.GetFontByType(_fontType);
                 }
                 Refresh();
             }
@@ -87,7 +87,7 @@ namespace MaterialSkin.NET.Controls
 
         public MaterialLabel()
         {
-            FontType = MaterialSkinManager.fontType.Body1;
+            FontType = MaterialSkinManager.FontType.Body1;
             TextAlign = ContentAlignment.TopLeft;
         }
 
@@ -194,7 +194,7 @@ namespace MaterialSkin.NET.Controls
                 {
                     color = Enabled ? HighEmphasis ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // High emphasis, accent
-                    (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT) ?
+                    (SkinManager.Theme == MaterialSkinManager.Themes.Light) ?
                     SkinManager.ColorScheme.PrimaryColor : // High emphasis, primary Light theme
                     SkinManager.ColorScheme.PrimaryColor.Lighten(0.25f) : // High emphasis, primary Dark theme
                     SkinManager.TextHighEmphasisColor : // Normal

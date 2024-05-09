@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     // added from
     // https://github.com/DigitalAdeel/MaterialSkin2Framework
@@ -72,7 +72,7 @@ namespace MaterialSkin.NET.Controls
                 {
                     for (int i = 0; i < Rows.Count - 1; i++)
                     {
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                         {
                             Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);
                         }
@@ -141,8 +141,8 @@ namespace MaterialSkin.NET.Controls
             GridColor = Color.FromArgb(239, 239, 239);
             RowsDefaultCellStyle.BackColor = SkinManager.BackgroundColor;
             RowsDefaultCellStyle.ForeColor = SkinManager.TextHighEmphasisColor;
-            ColumnHeadersDefaultCellStyle.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle2);
-            RowHeadersDefaultCellStyle.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            ColumnHeadersDefaultCellStyle.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle2);
+            RowHeadersDefaultCellStyle.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Raised;
             BackgroundColor = Color.FromArgb(255, 255, 255, 255);
 
@@ -235,11 +235,11 @@ namespace MaterialSkin.NET.Controls
         {
             if (showColorStripping != true)
             {
-                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.Light)
                 {
                     Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);//SkinManager.BackgroundColor;
                 }
-                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.Dark)
                 {
                     Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(80, 80, 80);//SkinManager.BackgroundColor;
                 }
@@ -252,12 +252,12 @@ namespace MaterialSkin.NET.Controls
             IsMouseOver = true;
             if (showColorStripping != true)
             {
-                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.Light)
                 {
                     Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
 
                 }
-                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && SkinManager.Theme == MaterialSkinManager.Themes.Dark)
                 {
                     Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(95, 95, 95);
 
@@ -275,7 +275,7 @@ namespace MaterialSkin.NET.Controls
                     {
                         Rows[i].DefaultCellStyle.BackColor = ((int)colorStripColor).ToColor();
                         var brightness = Rows[i].DefaultCellStyle.BackColor.GetBrightness();
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                         {
                             if (brightness < 0.5)
                             {
@@ -287,7 +287,7 @@ namespace MaterialSkin.NET.Controls
 
                             }
                         }
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Dark)
                         {
                             if (brightness < 0.5)
                             {
@@ -301,9 +301,9 @@ namespace MaterialSkin.NET.Controls
                     }
                 }
             }
-            if (SkinManager.Theme == MaterialSkinManager.Themes.DARK && RowsDefaultCellStyle.BackColor != Color.FromArgb(80, 80, 80))
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Dark && RowsDefaultCellStyle.BackColor != Color.FromArgb(80, 80, 80))
                 RowsDefaultCellStyle.BackColor = Color.FromArgb(80, 80, 80);
-            if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT && RowsDefaultCellStyle.BackColor != Color.White)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Light && RowsDefaultCellStyle.BackColor != Color.White)
                 RowsDefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);
 
             Invalidate();
@@ -336,7 +336,7 @@ namespace MaterialSkin.NET.Controls
 
         private void ThemeChanged()
         {
-            if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
             {
                 RowsDefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);
                 RowsDefaultCellStyle.ForeColor = Color.FromArgb(80, 80, 80);
@@ -347,7 +347,7 @@ namespace MaterialSkin.NET.Controls
 
                 Invalidate();
             }
-            if (SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Dark)
             {
                 RowsDefaultCellStyle.BackColor = Color.FromArgb(80, 80, 80);
                 RowsDefaultCellStyle.ForeColor = Color.FromArgb(255, 255, 255, 255);
@@ -378,7 +378,7 @@ namespace MaterialSkin.NET.Controls
                 {
                     if (Rows[i].DefaultCellStyle.BackColor == ((int)colorStripColor).ToColor())
                     {
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                         {
                             Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);
                         }
@@ -388,7 +388,7 @@ namespace MaterialSkin.NET.Controls
                         }
                     }
                 }
-                if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                 {
                     for (int i = 0; i < Rows.Count - 1; i++)
                     {
@@ -422,7 +422,7 @@ namespace MaterialSkin.NET.Controls
         protected override void OnColumnDisplayIndexChanged(DataGridViewColumnEventArgs e)
         {
             base.OnColumnDisplayIndexChanged(e);
-            if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+            if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
             {
                 for (int i = 0; i < Rows.Count - 1; i++)
                 {
@@ -458,21 +458,21 @@ namespace MaterialSkin.NET.Controls
             {
                 BackgroundColor = Color.FromArgb(255, 255, 255, 255);
             }
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             if (ColumnHeadersHeightSizeMode == DataGridViewColumnHeadersHeightSizeMode.EnableResizing || ColumnHeadersHeightSizeMode == DataGridViewColumnHeadersHeightSizeMode.AutoSize)
             {
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             }
 
-            if (ColumnHeadersDefaultCellStyle.Font != SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle2))
+            if (ColumnHeadersDefaultCellStyle.Font != SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle2))
             {
-                ColumnHeadersDefaultCellStyle.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle2);
+                ColumnHeadersDefaultCellStyle.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle2);
             }
 
-            if (RowHeadersDefaultCellStyle.Font != SkinManager.getFontByType(MaterialSkinManager.fontType.Body1
+            if (RowHeadersDefaultCellStyle.Font != SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1
                 ))
             {
-                RowHeadersDefaultCellStyle.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+                RowHeadersDefaultCellStyle.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             }
             if (ColumnHeadersHeight != 56)
             {
@@ -578,7 +578,7 @@ namespace MaterialSkin.NET.Controls
             {
                 for (int i = 0; i < Rows.Count - 1; i++)
                 {
-                    if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                    if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                         Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255, 255);
                     else
                         Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(80, 80, 80);
@@ -596,7 +596,7 @@ namespace MaterialSkin.NET.Controls
                     {
                         Rows[i].DefaultCellStyle.BackColor = ((int)colorStripColor).ToColor();
                         float brightness = Rows[i].DefaultCellStyle.BackColor.GetBrightness();
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Light)
                         {
                             if (brightness <= 0.5f)
                             {
@@ -608,7 +608,7 @@ namespace MaterialSkin.NET.Controls
 
                             }
                         }
-                        if (SkinManager.Theme == MaterialSkinManager.Themes.DARK)
+                        if (SkinManager.Theme == MaterialSkinManager.Themes.Dark)
                         {
                             if (brightness <= 0.5f)
                             {

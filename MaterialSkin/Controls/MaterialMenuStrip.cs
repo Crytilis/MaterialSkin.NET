@@ -2,6 +2,8 @@
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using MaterialSkin.NET;
+using MaterialSkin.NET.Controls;
 
 namespace MaterialSkin.Controls
 {

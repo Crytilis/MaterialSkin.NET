@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 #endregion
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
 
     #region MaterialListBox
@@ -257,8 +257,8 @@ namespace MaterialSkin.NET.Controls
             );
             UpdateStyles();
             base.BackColor = Color.Transparent;
-            base.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
-            _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            base.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
+            _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             SetDefaults();
             ShowBorder = true;
             ShowScrollBar = false;
@@ -319,16 +319,16 @@ namespace MaterialSkin.NET.Controls
                     _itemHeight = 60;
                     _secondaryTextBottomPadding = 10;
                     _primaryTextBottomPadding = 2;
-                    _primaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
-                    _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body2);
+                    _primaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
+                    _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body2);
                 }
                 else
                 {
                     _itemHeight = 72;
                     _secondaryTextBottomPadding = 16;
                     _primaryTextBottomPadding = 4;
-                    _primaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
-                    _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+                    _primaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
+                    _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
                 }
             }
             else if (_style == ListBoxStyle.ThreeLine)
@@ -339,15 +339,15 @@ namespace MaterialSkin.NET.Controls
                 {
                     _itemHeight = 76;
                     _secondaryTextBottomPadding = 16;
-                    _primaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
-                    _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body2);
+                    _primaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
+                    _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body2);
                 }
                 else
                 {
                     _itemHeight = 88;
                     _secondaryTextBottomPadding = 12;
-                    _primaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
-                    _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+                    _primaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
+                    _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
                 }
             }
             else
@@ -357,8 +357,8 @@ namespace MaterialSkin.NET.Controls
                     _itemHeight = 40;
                 else
                     _itemHeight = 48;
-                _primaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
-                _secondaryFont = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+                _primaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
+                _secondaryFont = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             }
 
         }

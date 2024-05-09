@@ -6,9 +6,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialDrawer : Control, IMaterialControl, IDisposable
     {
@@ -204,7 +204,7 @@ namespace MaterialSkin.NET.Controls
                 return;
 
             // Calculate lightness and color
-            float l = UseColors ? SkinManager.ColorScheme.TextColor.R / 255 : SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? 0f : 1f;
+            float l = UseColors ? SkinManager.ColorScheme.TextColor.R / 255 : SkinManager.Theme == MaterialSkinManager.Themes.Light ? 0f : 1f;
             float r = (_highlightWithAccent ? SkinManager.ColorScheme.AccentColor.R : SkinManager.ColorScheme.PrimaryColor.R) / 255f;
             float g = (_highlightWithAccent ? SkinManager.ColorScheme.AccentColor.G : SkinManager.ColorScheme.PrimaryColor.G) / 255f;
             float b = (_highlightWithAccent ? SkinManager.ColorScheme.AccentColor.B : SkinManager.ColorScheme.PrimaryColor.B) / 255f;
@@ -410,8 +410,8 @@ namespace MaterialSkin.NET.Controls
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         protected override void InitLayout()
         {
-            drawerItemHeight = TAB_HEADER_PADDING * 2 - SkinManager.FORM_PADDING / 2;
-            MinWidth = (int)(SkinManager.FORM_PADDING * 1.5 + drawerItemHeight);
+            drawerItemHeight = TAB_HEADER_PADDING * 2 - MaterialSkinManager.FORM_PADDING / 2;
+            MinWidth = (int)(MaterialSkinManager.FORM_PADDING * 1.5 + drawerItemHeight);
             _showHideAnimManager.SetProgress(_isOpen ? 0 : 1);
             showHideAnimation();
             Invalidate();
@@ -491,7 +491,7 @@ namespace MaterialSkin.NET.Controls
             {
                 var rippleBrush = new SolidBrush(Color.FromArgb((int)(70 - (clickAnimProgress * 70)),
                     UseColors ? SkinManager.ColorScheme.AccentColor : // Using colors
-                    SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? SkinManager.ColorScheme.PrimaryColor : // light theme
+                    SkinManager.Theme == MaterialSkinManager.Themes.Light ? SkinManager.ColorScheme.PrimaryColor : // light theme
                     SkinManager.ColorScheme.LightPrimaryColor)); // dark theme
 
                 g.SetClip(_drawerItemPaths[_baseTabControl.SelectedIndex]);
@@ -509,7 +509,7 @@ namespace MaterialSkin.NET.Controls
                 Brush bgBrush = new SolidBrush(Color.FromArgb(CalculateAlpha(60, 0, currentTabIndex, clickAnimProgress, 1 - showHideAnimProgress),
                     UseColors ? _backgroundWithAccent ? SkinManager.ColorScheme.AccentColor : SkinManager.ColorScheme.LightPrimaryColor : // using colors
                     _backgroundWithAccent ? SkinManager.ColorScheme.AccentColor : // defaul accent
-                    SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? SkinManager.ColorScheme.PrimaryColor : // default light
+                    SkinManager.Theme == MaterialSkinManager.Themes.Light ? SkinManager.ColorScheme.PrimaryColor : // default light
                     SkinManager.ColorScheme.LightPrimaryColor)); // default dark
                 g.FillPath(bgBrush, _drawerItemPaths[currentTabIndex]);
                 bgBrush.Dispose();
@@ -526,11 +526,11 @@ namespace MaterialSkin.NET.Controls
                     (currentTabIndex == _baseTabControl.SelectedIndex ? (_highlightWithAccent ? SkinManager.ColorScheme.AccentColor : SkinManager.ColorScheme.PrimaryColor) : // selected
                     SkinManager.TextHighEmphasisColor));
 
-                IntPtr textFont = SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle2);
+                IntPtr textFont = SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Subtitle2);
 
                 Rectangle textRect = _drawerItemRects[currentTabIndex];
-                textRect.X += _baseTabControl.ImageList != null ? drawerItemHeight : (int)(SkinManager.FORM_PADDING * 0.75);
-                textRect.Width -= (SkinManager.FORM_PADDING << 2) + 16;
+                textRect.X += _baseTabControl.ImageList != null ? drawerItemHeight : (int)(MaterialSkinManager.FORM_PADDING * 0.75);
+                textRect.Width -= (MaterialSkinManager.FORM_PADDING << 2) + 16;
 
                 using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
                 {
@@ -801,9 +801,9 @@ namespace MaterialSkin.NET.Controls
             for (int i = 0; i < _baseTabControl.TabPages.Count; i++)
             {
                 _drawerItemRects[i] = (new Rectangle(
-                    (int)(SkinManager.FORM_PADDING * 0.75) - (ShowIconsWhenHidden ? Location.X : 0),
-                    (TAB_HEADER_PADDING * 2) * i + (int)(SkinManager.FORM_PADDING >> 1),
-                    (Width + (ShowIconsWhenHidden ? Location.X : 0)) - (int)(SkinManager.FORM_PADDING * 1.5) - 1,
+                    (int)(MaterialSkinManager.FORM_PADDING * 0.75) - (ShowIconsWhenHidden ? Location.X : 0),
+                    (TAB_HEADER_PADDING * 2) * i + (int)(MaterialSkinManager.FORM_PADDING >> 1),
+                    (Width + (ShowIconsWhenHidden ? Location.X : 0)) - (int)(MaterialSkinManager.FORM_PADDING * 1.5) - 1,
                     drawerItemHeight));
 
                 _drawerItemPaths[i] = DrawHelper.CreateRoundRect(new RectangleF(_drawerItemRects[i].X - 0.5f, _drawerItemRects[i].Y - 0.5f, _drawerItemRects[i].Width, _drawerItemRects[i].Height), 4);

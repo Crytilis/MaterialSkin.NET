@@ -6,9 +6,9 @@ using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialBaseTabSelector : Control, IMaterialControl
     {
@@ -207,7 +207,7 @@ namespace MaterialSkin.NET.Controls
         public MaterialBaseTabSelector()
         {
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             TabIndicatorHeight = 2;
             TabLabel = TabLabelStyle.Text;
 
@@ -304,7 +304,7 @@ namespace MaterialSkin.NET.Controls
                             CharacterCasing == CustomCharacterCasing.Upper ? tabPage.Text.ToUpper() :
                             CharacterCasing == CustomCharacterCasing.Lower ? tabPage.Text.ToLower() :
                             CharacterCasing == CustomCharacterCasing.Proper ? textInfo.ToTitleCase(tabPage.Text.ToLower()) : tabPage.Text,
-                            SkinManager.getFontByType(MaterialSkinManager.fontType.Body2),
+                            SkinManager.GetFontByType(MaterialSkinManager.FontType.Body2),
                             Color.FromArgb(CalculateTextAlpha(currentTabIndex, animationProgress), SkinManager.ColorScheme.TextColor),
                             textLocation.Location,
                             textLocation.Size,

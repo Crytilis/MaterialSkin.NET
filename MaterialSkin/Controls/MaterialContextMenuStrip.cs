@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     [ToolboxItem(false)]
     public class MaterialContextMenuStrip : ContextMenuStrip, IMaterialControl
@@ -118,7 +118,7 @@ namespace MaterialSkin.NET.Controls
 
             using (NativeTextRenderer NativeText = new NativeTextRenderer(g))
             {
-                NativeText.DrawTransparentText(e.Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Body2),
+                NativeText.DrawTransparentText(e.Text, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Body2),
                     e.Item.Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textRect.Location,
                     textRect.Size,

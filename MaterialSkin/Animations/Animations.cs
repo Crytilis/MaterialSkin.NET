@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MaterialSkin.NET.Animations
+namespace MaterialSkin.Animations
 {
     /// <summary>
     /// Defines the AnimationType

@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     public class ColorScheme
     {
@@ -11,7 +11,7 @@ namespace MaterialSkin.NET
 
         public readonly Brush PrimaryBrush, DarkPrimaryBrush, LightPrimaryBrush, AccentBrush, TextBrush;
 
-        public ColorScheme() : this(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE, Primary.Green900, Primary.LightBlue900, Primary.Amber900, Primary.Red900)
+        public ColorScheme() : this(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.White, Primary.Green900, Primary.LightBlue900, Primary.Amber900, Primary.Red900)
         {
         }
 
@@ -114,20 +114,20 @@ namespace MaterialSkin.NET
 
         // original author on github
         // https://github.com/WingsOfAltair/MaterialSkin
-        private int GetIntFromHexColor(string HexColor)
+        private static int GetIntFromHexColor(string hexColor)
         {
             //#ffffff // #ffffffff
             try
             {
-                if (HexColor.Length <= 9 || HexColor.Length >= 2)
+                if (hexColor.Length <= 9 || hexColor.Length >= 2)
                 {
-                    if (HexColor[0] == '#')
+                    if (hexColor[0] == '#')
                     {
-                        return Convert.ToInt32(HexColor.Replace("#", "0x"), 16);
+                        return Convert.ToInt32(hexColor.Replace("#", "0x"), 16);
                     }
                     else
                     {
-                        return Convert.ToInt32(HexColor.Insert(0, "0x"), 16);
+                        return Convert.ToInt32(hexColor.Insert(0, "0x"), 16);
                     }
 
                 }
@@ -141,11 +141,6 @@ namespace MaterialSkin.NET
 
         public ColorScheme(string customPrimary, string customDarkPrimary, string customLightPrimary, string customAccent, TextShade textShade)
         {
-            //Color
-            /*PrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customPrimary)).ToColor();
-            DarkPrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customDarkPrimary)).ToColor();
-            LightPrimaryColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customLightPrimary)).ToColor();
-            AccentColor = ((int)new System.ComponentModel.Int32Converter().ConvertFromString(customAccent)).ToColor();*/
             PrimaryColor = GetIntFromHexColor(customPrimary).ToColor();
             DarkPrimaryColor = GetIntFromHexColor(customDarkPrimary).ToColor();
             LightPrimaryColor = GetIntFromHexColor(customLightPrimary).ToColor();
@@ -166,13 +161,91 @@ namespace MaterialSkin.NET
             AccentBrush = new SolidBrush(AccentColor);
             TextBrush = new SolidBrush(TextColor);
         }
+
+        public ColorScheme(Color primaryColor, Color darkPrimaryColor, Color lightPrimaryColor, Color accentColor, Color textColor)
+        {
+            PrimaryColor = primaryColor;
+            DarkPrimaryColor = darkPrimaryColor;
+            LightPrimaryColor = lightPrimaryColor;
+            AccentColor = accentColor;
+            TextColor = textColor;
+
+            //Pen
+            PrimaryPen = new Pen(PrimaryColor);
+            DarkPrimaryPen = new Pen(DarkPrimaryColor);
+            LightPrimaryPen = new Pen(LightPrimaryColor);
+            AccentPen = new Pen(AccentColor);
+            TextPen = new Pen(TextColor);
+
+            //Brush
+            PrimaryBrush = new SolidBrush(PrimaryColor);
+            DarkPrimaryBrush = new SolidBrush(DarkPrimaryColor);
+            LightPrimaryBrush = new SolidBrush(LightPrimaryColor);
+            AccentBrush = new SolidBrush(AccentColor);
+            TextBrush = new SolidBrush(TextColor);
+        }
+
+        public ColorScheme(object primary, object darkPrimary, object lightPrimary, object accent, object textShade, object successColor = null, object infoColor = null, object warningColor = null, object dangerColor = null)
+        {
+            // Convert each parameter to a Color and assign it
+            PrimaryColor = ConvertToColor(primary);
+            DarkPrimaryColor = ConvertToColor(darkPrimary);
+            LightPrimaryColor = ConvertToColor(lightPrimary);
+            AccentColor = ConvertToColor(accent);
+            TextColor = ConvertToColor(textShade);
+
+            // Use default colors if null, otherwise convert and assign
+            SuccessColor = successColor == null ? Color.Green : ConvertToColor(successColor);
+            InfoColor = infoColor == null ? Color.Cyan : ConvertToColor(infoColor);
+            WarningColor = warningColor == null ? Color.Goldenrod : ConvertToColor(warningColor);
+            DangerColor = dangerColor == null ? Color.Red : ConvertToColor(dangerColor);
+
+            // Initialize Pens and Brushes
+            PrimaryPen = new Pen(PrimaryColor);
+            DarkPrimaryPen = new Pen(DarkPrimaryColor);
+            LightPrimaryPen = new Pen(LightPrimaryColor);
+            AccentPen = new Pen(AccentColor);
+            TextPen = new Pen(TextColor);
+
+            PrimaryBrush = new SolidBrush(PrimaryColor);
+            DarkPrimaryBrush = new SolidBrush(DarkPrimaryColor);
+            LightPrimaryBrush = new SolidBrush(LightPrimaryColor);
+            AccentBrush = new SolidBrush(AccentColor);
+            TextBrush = new SolidBrush(TextColor);
+        }
+
+        private Color ConvertToColor(object value)
+        {
+            switch (value)
+            {
+                case Color color:
+                {
+                    return color;
+                }
+                case string hexValue:
+                {
+                    return hexValue.ToColor();
+                }
+                case int intValue:
+                {
+                    return intValue.ToColor();
+                }
+                case Enum enumValue:
+                {
+                    return enumValue.ToColor();
+                }
+            }
+
+            return Color.Empty;
+        }
+        
     }
 
     //Color constants
     public enum TextShade
     {
-        WHITE = 0xFFFFFF,
-        BLACK = 0x212121
+        White = 0xFFFFFF,
+        Black = 0x212121
     }
 
     public enum Primary

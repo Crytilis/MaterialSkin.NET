@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     public static class ColorHelper
     {

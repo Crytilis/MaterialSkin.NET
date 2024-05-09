@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     [ToolboxItem(false), Description("This control has been replaced by MaterialTextBox2"), Obsolete("Use MaterialTextBox2 instead", false)]
     public class MaterialTextBox : RichTextBox, IMaterialControl
@@ -263,7 +263,7 @@ namespace MaterialSkin.NET.Controls
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-            base.Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            base.Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
             base.AutoSize = false;
 
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
@@ -363,7 +363,7 @@ namespace MaterialSkin.NET.Controls
             if (_trailingIcon == null && _leadingIcon == null) return;
 
             // Calculate lightness and color
-            float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ) ? 0f : 1f;
+            float l = (SkinManager.Theme == MaterialSkinManager.Themes.Light ) ? 0f : 1f;
 
             // Create matrices
             float[][] matrixGray = {
@@ -495,14 +495,14 @@ namespace MaterialSkin.NET.Controls
         private void UpdateRects(bool RedefineTextField = true)
         {
             if (LeadingIcon != null)
-                _left_padding = SkinManager.FORM_PADDING + ICON_SIZE;
+                _left_padding = MaterialSkinManager.FORM_PADDING + ICON_SIZE;
             else
-                _left_padding = SkinManager.FORM_PADDING;
+                _left_padding = MaterialSkinManager.FORM_PADDING;
 
             if (_trailingIcon != null)
-                _right_padding = SkinManager.FORM_PADDING + ICON_SIZE;
+                _right_padding = MaterialSkinManager.FORM_PADDING + ICON_SIZE;
             else
-                _right_padding = SkinManager.FORM_PADDING;
+                _right_padding = MaterialSkinManager.FORM_PADDING;
 
             _leadingIconBounds = new Rectangle(8, (HEIGHT / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
             _trailingIconBounds = new Rectangle(Width - (ICON_SIZE + 8), (HEIGHT / 2) - (ICON_SIZE / 2), ICON_SIZE, ICON_SIZE);
@@ -638,8 +638,8 @@ namespace MaterialSkin.NET.Controls
                 string textBeforeSelection = textToDisplay.Substring(0, SelectionStart);
                 textSelected = textToDisplay.Substring(SelectionStart, SelectionLength);
 
-                int selectX = NativeText.MeasureLogString(textBeforeSelection, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width;
-                int selectWidth = NativeText.MeasureLogString(textSelected, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1)).Width;
+                int selectX = NativeText.MeasureLogString(textBeforeSelection, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Subtitle1)).Width;
+                int selectWidth = NativeText.MeasureLogString(textSelected, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Subtitle1)).Width;
 
                 textSelectRect = new Rectangle(
                     textRect.X + selectX, UseTallSize ? hasHint ?
@@ -655,7 +655,7 @@ namespace MaterialSkin.NET.Controls
                 // Draw user text
                 NativeText.DrawTransparentText(
                     textToDisplay,
-                    SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1),
+                    SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Subtitle1),
                     Enabled ? SkinManager.TextHighEmphasisColor : SkinManager.TextDisabledOrHintColor,
                     textRect.Location,
                     textRect.Size,
@@ -672,7 +672,7 @@ namespace MaterialSkin.NET.Controls
                 {
                     NativeText.DrawTransparentText(
                         textSelected,
-                        SkinManager.getLogFontByType(MaterialSkinManager.fontType.Subtitle1),
+                        SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Subtitle1),
                         SkinManager.ColorScheme.TextColor,
                         textSelectRect.Location,
                         textSelectRect.Size,
@@ -689,7 +689,7 @@ namespace MaterialSkin.NET.Controls
                 {
                     NativeText.DrawTransparentText(
                     Hint,
-                    SkinManager.getTextBoxFontBySize(hintTextSize),
+                    SkinManager.GetTextBoxFontBySize(hintTextSize),
                     Enabled ? !_errorState || (!userTextPresent && !Focused) ? Focused ? UseAccent ?
                     SkinManager.ColorScheme.AccentColor : // Focus Accent
                     SkinManager.ColorScheme.PrimaryColor : // Focus Primary

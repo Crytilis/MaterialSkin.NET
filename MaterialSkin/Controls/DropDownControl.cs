@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public partial class DropDownControl : UserControl
     {
@@ -259,7 +259,7 @@ namespace MaterialSkin.NET.Controls
 
             InitializeComponent();
 
-            Font = SkinManager.getFontByType(MaterialSkinManager.fontType.Subtitle1);
+            Font = SkinManager.GetFontByType(MaterialSkinManager.FontType.Subtitle1);
 
             this.storedSize = this.Size;
             this.BackColor = Color.White;
@@ -513,7 +513,7 @@ namespace MaterialSkin.NET.Controls
 
             // Calc text Rect
             var textRect = new System.Drawing.Rectangle(
-                SkinManager.FORM_PADDING,
+                MaterialSkinManager.FORM_PADDING,
                 ClientRectangle.Y,
                 ClientRectangle.Width - 32, ClientRectangle.Height);
             g.Clip = new Region(textRect);

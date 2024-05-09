@@ -6,9 +6,9 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
 #if NETFRAMEWORK
     using System.Runtime.Remoting.Channels;
@@ -455,8 +455,8 @@ namespace MaterialSkin.NET.Controls
         private Rectangle _maxButtonBounds => new Rectangle(ClientSize.Width - 2 * STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _xButtonBounds => new Rectangle(ClientSize.Width - STATUS_BAR_BUTTON_WIDTH, ClientRectangle.Y, STATUS_BAR_BUTTON_WIDTH, STATUS_BAR_HEIGHT);
         private Rectangle _actionBarBounds => new Rectangle(ClientRectangle.X, ClientRectangle.Y + STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
-        private Rectangle _drawerButtonBounds => new Rectangle(ClientRectangle.X + (SkinManager.FORM_PADDING / 2) + 3, STATUS_BAR_HEIGHT + (ACTION_BAR_HEIGHT / 2) - (ACTION_BAR_HEIGHT_DEFAULT / 2), ACTION_BAR_HEIGHT_DEFAULT, ACTION_BAR_HEIGHT_DEFAULT);
-        private Rectangle _drawerButtonStatusBarBounds => new Rectangle(ClientRectangle.X + (SkinManager.FORM_PADDING / 2) + 3, STATUS_BAR_HEIGHT - (STATUS_BAR_HEIGHT / 2), STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT);
+        private Rectangle _drawerButtonBounds => new Rectangle(ClientRectangle.X + (MaterialSkinManager.FORM_PADDING / 2) + 3, STATUS_BAR_HEIGHT + (ACTION_BAR_HEIGHT / 2) - (ACTION_BAR_HEIGHT_DEFAULT / 2), ACTION_BAR_HEIGHT_DEFAULT, ACTION_BAR_HEIGHT_DEFAULT);
+        private Rectangle _drawerButtonStatusBarBounds => new Rectangle(ClientRectangle.X + (MaterialSkinManager.FORM_PADDING / 2) + 3, STATUS_BAR_HEIGHT - (STATUS_BAR_HEIGHT / 2), STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT);
         private Rectangle _statusBarBounds => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientSize.Width, STATUS_BAR_HEIGHT);
         private Rectangle _drawerIconRect;
 
@@ -985,7 +985,7 @@ namespace MaterialSkin.NET.Controls
             // Themeswitcher
             if ((message == WM.LeftButtonDown || message == WM.LeftButtonDoubleClick) && _themeSwitchButtonBounds.Contains(cursorPos) && ShowThemeSwitchButton)
             {
-                SkinManager.Theme = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? MaterialSkinManager.Themes.DARK : MaterialSkinManager.Themes.LIGHT;
+                SkinManager.Theme = SkinManager.Theme == MaterialSkinManager.Themes.Light ? MaterialSkinManager.Themes.Dark : MaterialSkinManager.Themes.Light;
             }
             // Double click to maximize
             else if (message == WM.LeftButtonDoubleClick && isOverCaption)
@@ -1294,7 +1294,7 @@ namespace MaterialSkin.NET.Controls
 
                 if(ShowThemeSwitchButton)
                 {
-                    var iconMode = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? iconLightMode : iconDarkMode;
+                    var iconMode = SkinManager.Theme == MaterialSkinManager.Themes.Light ? iconLightMode : iconDarkMode;
                     var themeSwitcher = ProcessThemeSwitchIcon(iconMode);
                     g.FillRectangle(themeSwitcher, _themeSwitchButtonBounds);
                 }
@@ -1309,7 +1309,7 @@ namespace MaterialSkin.NET.Controls
                 if (_buttonState == ButtonState.DrawerDown)
                     g.FillRectangle(downBrush, _drawerButtonBounds);
 
-                _drawerIconRect = new Rectangle(SkinManager.FORM_PADDING / 2, STATUS_BAR_HEIGHT, ACTION_BAR_HEIGHT_DEFAULT, ACTION_BAR_HEIGHT);
+                _drawerIconRect = new Rectangle(MaterialSkinManager.FORM_PADDING / 2, STATUS_BAR_HEIGHT, ACTION_BAR_HEIGHT_DEFAULT, ACTION_BAR_HEIGHT);
                 // Ripple
                 if (_clickAnimManager.IsAnimating())
                 {
@@ -1329,38 +1329,38 @@ namespace MaterialSkin.NET.Controls
                     // Middle line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2),
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2));
 
                     // Bottom line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2) - 6,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2) - 6);
 
                     // Top line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2) + 6,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(ACTION_BAR_HEIGHT / 2) + 6);
                 }
             }
             if (DrawerTabControl != null && _formStyle == FormStyles.ActionBar_None && _formStyle != FormStyles.StatusAndActionBar_None)
             {
-                _drawerIconRect = new Rectangle(ClientRectangle.X + (SkinManager.FORM_PADDING / 2) + 18, 0, (int)(STATUS_BAR_HEIGHT * 1.5f), STATUS_BAR_HEIGHT);
+                _drawerIconRect = new Rectangle(ClientRectangle.X + (MaterialSkinManager.FORM_PADDING / 2) + 18, 0, (int)(STATUS_BAR_HEIGHT * 1.5f), STATUS_BAR_HEIGHT);
                 if (_buttonState == ButtonState.DrawerOver)
                     g.FillRectangle(hoverBrush, _drawerIconRect);
 
                 if (_buttonState == ButtonState.DrawerDown)
                     g.FillRectangle(downBrush, _drawerIconRect);
 
-                _drawerIconRect = new Rectangle(ClientRectangle.X + (SkinManager.FORM_PADDING / 2) + 12, 0, (int)(STATUS_BAR_HEIGHT * 1.5f), STATUS_BAR_HEIGHT);
+                _drawerIconRect = new Rectangle(ClientRectangle.X + (MaterialSkinManager.FORM_PADDING / 2) + 12, 0, (int)(STATUS_BAR_HEIGHT * 1.5f), STATUS_BAR_HEIGHT);
                 // Ripple
                 if (_clickAnimManager.IsAnimating())
                 {
@@ -1380,25 +1380,25 @@ namespace MaterialSkin.NET.Controls
                     // Middle line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2),
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2));
 
                     // Bottom line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2) - 6,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2) - 6);
 
                     // Top line
                     g.DrawLine(
                        formButtonsPen,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING),
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING),
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2) + 6,
-                       _drawerIconRect.X + (int)(SkinManager.FORM_PADDING) + 18,
+                       _drawerIconRect.X + (int)(MaterialSkinManager.FORM_PADDING) + 18,
                        _drawerIconRect.Y + (int)(STATUS_BAR_HEIGHT / 2) + 6);
                 }
             }
@@ -1412,7 +1412,7 @@ namespace MaterialSkin.NET.Controls
                     if(_formStyle != FormStyles.ActionBar_None)
                     {
                         Rectangle textLocation = new Rectangle(DrawerTabControl != null ? TITLE_LEFT_PADDING : TITLE_LEFT_PADDING - (ICON_SIZE + (ACTION_BAR_PADDING * 2)), STATUS_BAR_HEIGHT, ClientSize.Width, ACTION_BAR_HEIGHT);
-                        NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
+                        NativeText.DrawTransparentText(Text, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Caption),
                             SkinManager.ColorScheme.TextColor,
                             textLocation.Location,
                             textLocation.Size,
@@ -1426,9 +1426,9 @@ namespace MaterialSkin.NET.Controls
 
                         if(DrawerTabControl != null && _formStyle == FormStyles.ActionBar_None)
                         {
-                            textLocation = new Rectangle(ClientRectangle.X + (SkinManager.FORM_PADDING / 2) + 24 + (int)(STATUS_BAR_HEIGHT * 1.5f), 0, ClientSize.Width, STATUS_BAR_HEIGHT);
+                            textLocation = new Rectangle(ClientRectangle.X + (MaterialSkinManager.FORM_PADDING / 2) + 24 + (int)(STATUS_BAR_HEIGHT * 1.5f), 0, ClientSize.Width, STATUS_BAR_HEIGHT);
                         }
-                        NativeText.DrawTransparentText(Text, SkinManager.getLogFontByType(MaterialSkinManager.fontType.Caption),
+                        NativeText.DrawTransparentText(Text, SkinManager.GetLogFontByType(MaterialSkinManager.FontType.Caption),
                             SkinManager.ColorScheme.TextColor,
                             textLocation.Location,
                             textLocation.Size,
@@ -1457,7 +1457,7 @@ namespace MaterialSkin.NET.Controls
         private TextureBrush ProcessThemeSwitchIcon(Image img)
         {
             // Calculate lightness and color
-            float l = SkinManager.Theme == MaterialSkinManager.Themes.LIGHT ? 0f : 1f;
+            float l = SkinManager.Theme == MaterialSkinManager.Themes.Light ? 0f : 1f;
             float r = SkinManager.ColorScheme.TextColor.R / 255f;
             float g = SkinManager.ColorScheme.TextColor.G / 255f;
             float b = SkinManager.ColorScheme.TextColor.B / 255f;
@@ -1543,7 +1543,7 @@ namespace MaterialSkin.NET.Controls
             Bitmap IconResized = new Bitmap(Icon.ToBitmap(), newWidth, newHeight);
 
             // Calculate lightness and color
-            float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT) ? 0f : 1.5f;
+            float l = (SkinManager.Theme == MaterialSkinManager.Themes.Light) ? 0f : 1.5f;
 
             // Create matrices
             float[][] matrixGray = {

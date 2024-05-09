@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace MaterialSkin.Controls
 {
-    public sealed class MaterialPanel : Panel, IMaterialControl, ICustomSkinManager
+    public sealed class MaterialFlowPanel : FlowLayoutPanel, IMaterialControl, ICustomSkinManager
     {
         #region HiddenDesignerProps
 
@@ -118,7 +118,7 @@ namespace MaterialSkin.Controls
 
         #region Constructor
 
-        public MaterialPanel()
+        public MaterialFlowPanel()
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
             SuspendLayout();

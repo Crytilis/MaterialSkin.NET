@@ -5,10 +5,10 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MaterialSkin.NET.Controls;
+using MaterialSkin.Controls;
 using MaterialSkin.Properties;
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     public enum Glyphs
     {
@@ -19,9 +19,10 @@ namespace MaterialSkin.NET
 
     public class MaterialSkinManager
     {
+
         private static MaterialSkinManager _instance;
 
-        private readonly List<MaterialForm> _formsToManage = new List<MaterialForm>();
+        private readonly List<MaterialForm> _formsToManage = new();
 
         public delegate void SkinManagerEventHandler(object sender);
 
@@ -32,11 +33,13 @@ namespace MaterialSkin.NET
         /// <summary>
         /// Set this property to false to stop enforcing the backcolor on non-materialSkin components
         /// </summary>
-        public bool EnforceBackcolorOnAllComponents = true;
+        public readonly bool EnforceBackcolorOnAllComponents = true;
 
-        public static MaterialSkinManager Instance => _instance ?? (_instance = new MaterialSkinManager());
+        public static MaterialSkinManager Instance => _instance ??= new MaterialSkinManager();
 
-        public int FORM_PADDING = 14;
+        public static MaterialSkinManager ControlInstance => new();
+
+        public const int FORM_PADDING = 14;
 
         /// <summary>
         /// Possible options
@@ -50,10 +53,7 @@ namespace MaterialSkin.NET
         public int CornerRadius
         {
             get => _cornerRadius;
-            set
-            {
-                _cornerRadius = value;
-            }
+            set => _cornerRadius = value;
         }
 
         private Font _buttonFont;
@@ -72,18 +72,15 @@ namespace MaterialSkin.NET
         /// </summary>
         public int Height { 
             get => _height; 
-            set
-            {
-                _height = value;
-            }
+            set => _height = value;
         }
         #endregion
 
         // Constructor
         private MaterialSkinManager()
         {
-            Theme = Themes.LIGHT;
-            ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE, Primary.Green700, Primary.Cyan700, Primary.Yellow700, Primary.Red700);
+            Theme = Themes.Light;
+            ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.White, Primary.Green700, Primary.Cyan700, Primary.Yellow700, Primary.Red700);
             CurrentFontFamily = "Roboto";
 
             // Create and cache Roboto fonts
@@ -91,59 +88,59 @@ namespace MaterialSkin.NET
             // And https://www.codeproject.com/Articles/107376/Embedding-Font-To-Resources
 
             // Add font to system table in memory and save the font family
-            addFont(Resources.Roboto_Thin);
-            addFont(Resources.Roboto_Light);
-            addFont(Resources.Roboto_Regular);
-            addFont(Resources.Roboto_Medium);
+            AddFont(Resources.Roboto_Thin);
+            AddFont(Resources.Roboto_Light);
+            AddFont(Resources.Roboto_Regular);
+            AddFont(Resources.Roboto_Medium);
             //addFont(Resources.Roboto_Bold);
-            addFont(Resources.Roboto_Black);
+            AddFont(Resources.Roboto_Black);
 
-            addFont(Resources.MaterialIcons_Regular);
-            addFont(Resources.MaterialIconsOutlined_Regular);
-            addFont(Resources.MaterialIconsRound_Regular);
-            addFont(Resources.MaterialIconsSharp_Regular);
+            AddFont(Resources.MaterialIcons_Regular);
+            AddFont(Resources.MaterialIconsOutlined_Regular);
+            AddFont(Resources.MaterialIconsRound_Regular);
+            AddFont(Resources.MaterialIconsSharp_Regular);
 
-            RobotoFontFamilies = new Dictionary<string, FontFamily>();
-            foreach (FontFamily ff in privateFontCollection.Families.ToArray())
+            _robotoFontFamilies = new Dictionary<string, FontFamily>();
+            foreach (var ff in _privateFontCollection.Families.ToArray())
             {
-                RobotoFontFamilies.Add(ff.Name.Replace(' ', '_'), ff);
+                _robotoFontFamilies.Add(ff.Name.Replace(' ', '_'), ff);
             }
 
             // create and save font handles for GDI
-            logicalFonts = new Dictionary<string, IntPtr>(18)
+            _logicalFonts = new Dictionary<string, IntPtr>(18)
             {
-                { "H1", createLogicalFont("Roboto Light", 96, NativeTextRenderer.logFontWeight.FW_LIGHT) },
-                { "H2", createLogicalFont("Roboto Light", 60, NativeTextRenderer.logFontWeight.FW_LIGHT) },
-                { "H3", createLogicalFont("Roboto", 48, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "H4", createLogicalFont("Roboto", 34, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "H5", createLogicalFont("Roboto", 24, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "H6", createLogicalFont("Roboto Medium", 20, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
-                { "Subtitle1", createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "Subtitle2", createLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
-                { "SubtleEmphasis", createLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_NORMAL, 1) },
-                { "Body1", createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "Body2", createLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "Button", createLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
-                { "ButtonIcon", createLogicalFont("Material Icons", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
-                { "Caption", createLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "Overline", createLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "MenuStrip", createLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "H1", CreateLogicalFont("Roboto Light", 96, NativeTextRenderer.logFontWeight.FW_LIGHT) },
+                { "H2", CreateLogicalFont("Roboto Light", 60, NativeTextRenderer.logFontWeight.FW_LIGHT) },
+                { "H3", CreateLogicalFont("Roboto", 48, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "H4", CreateLogicalFont("Roboto", 34, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "H5", CreateLogicalFont("Roboto", 24, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "H6", CreateLogicalFont("Roboto Medium", 20, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
+                { "Subtitle1", CreateLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "Subtitle2", CreateLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
+                { "SubtleEmphasis", CreateLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_NORMAL, 1) },
+                { "Body1", CreateLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "Body2", CreateLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "Button", CreateLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
+                { "ButtonIcon", CreateLogicalFont("Material Icons", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
+                { "Caption", CreateLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "Overline", CreateLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "MenuStrip", CreateLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR) },
                 // Logical fonts for textbox animation
-                { "textBox16", createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "textBox15", createLogicalFont("Roboto", 15, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "textBox14", createLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR) },
-                { "textBox13", createLogicalFont("Roboto Medium", 13, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
-                { "textBox12", createLogicalFont("Roboto Medium", 12, NativeTextRenderer.logFontWeight.FW_MEDIUM) }
+                { "textBox16", CreateLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "textBox15", CreateLogicalFont("Roboto", 15, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "textBox14", CreateLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR) },
+                { "textBox13", CreateLogicalFont("Roboto Medium", 13, NativeTextRenderer.logFontWeight.FW_MEDIUM) },
+                { "textBox12", CreateLogicalFont("Roboto Medium", 12, NativeTextRenderer.logFontWeight.FW_MEDIUM) }
             };
 
-            DefaultFont = getFontByType(MaterialSkinManager.fontType.Body1);
+            DefaultFont = GetFontByType(FontType.Body1);
         }
 
         // Destructor
         ~MaterialSkinManager()
         {
             // RemoveFontMemResourceEx
-            foreach (IntPtr handle in logicalFonts.Values)
+            foreach (var handle in _logicalFonts.Values)
             {
                 NativeTextRenderer.DeleteObject(handle);
             }
@@ -154,7 +151,7 @@ namespace MaterialSkin.NET
 
         public Themes Theme
         {
-            get { return _theme; }
+            get => _theme;
             set
             {
                 _theme = value;
@@ -167,7 +164,7 @@ namespace MaterialSkin.NET
 
         public ColorScheme ColorScheme
         {
-            get { return _colorScheme; }
+            get => _colorScheme;
             set
             {
                 _colorScheme = value;
@@ -178,8 +175,8 @@ namespace MaterialSkin.NET
 
         public enum Themes : byte
         {
-            LIGHT,
-            DARK
+            Light,
+            Dark
         }
 
         #region Variables static readonly
@@ -277,68 +274,68 @@ namespace MaterialSkin.NET
         #region Properties - Using these makes handling the dark theme switching easier
         // Getters - Using these makes handling the dark theme switching easier
         // Text
-        public Color TextHighEmphasisColor => Theme == Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK : TEXT_HIGH_EMPHASIS_LIGHT;
-        public Brush TextHighEmphasisBrush => Theme == Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK_BRUSH : TEXT_HIGH_EMPHASIS_LIGHT_BRUSH;
-        public Color TextHighEmphasisNoAlphaColor => Theme == Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK_NOALPHA : TEXT_HIGH_EMPHASIS_LIGHT_NOALPHA;
-        public Brush TextHighEmphasisNoAlphaBrush => Theme == Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK_NOALPHA_BRUSH : TEXT_HIGH_EMPHASIS_LIGHT_NOALPHA_BRUSH;
-        public Color TextMediumEmphasisColor => Theme == Themes.LIGHT ? TEXT_MEDIUM_EMPHASIS_DARK : TEXT_MEDIUM_EMPHASIS_LIGHT;
-        public Brush TextMediumEmphasisBrush => Theme == Themes.LIGHT ? TEXT_MEDIUM_EMPHASIS_DARK_BRUSH : TEXT_MEDIUM_EMPHASIS_LIGHT_BRUSH;
-        public Color TextDisabledOrHintColor => Theme == Themes.LIGHT ? TEXT_DISABLED_OR_HINT_DARK : TEXT_DISABLED_OR_HINT_LIGHT;
-        public Brush TextDisabledOrHintBrush => Theme == Themes.LIGHT ? TEXT_DISABLED_OR_HINT_DARK_BRUSH : TEXT_DISABLED_OR_HINT_LIGHT_BRUSH;
+        public Color TextHighEmphasisColor => Theme == Themes.Light ? TEXT_HIGH_EMPHASIS_DARK : TEXT_HIGH_EMPHASIS_LIGHT;
+        public Brush TextHighEmphasisBrush => Theme == Themes.Light ? TEXT_HIGH_EMPHASIS_DARK_BRUSH : TEXT_HIGH_EMPHASIS_LIGHT_BRUSH;
+        public Color TextHighEmphasisNoAlphaColor => Theme == Themes.Light ? TEXT_HIGH_EMPHASIS_DARK_NOALPHA : TEXT_HIGH_EMPHASIS_LIGHT_NOALPHA;
+        public Brush TextHighEmphasisNoAlphaBrush => Theme == Themes.Light ? TEXT_HIGH_EMPHASIS_DARK_NOALPHA_BRUSH : TEXT_HIGH_EMPHASIS_LIGHT_NOALPHA_BRUSH;
+        public Color TextMediumEmphasisColor => Theme == Themes.Light ? TEXT_MEDIUM_EMPHASIS_DARK : TEXT_MEDIUM_EMPHASIS_LIGHT;
+        public Brush TextMediumEmphasisBrush => Theme == Themes.Light ? TEXT_MEDIUM_EMPHASIS_DARK_BRUSH : TEXT_MEDIUM_EMPHASIS_LIGHT_BRUSH;
+        public Color TextDisabledOrHintColor => Theme == Themes.Light ? TEXT_DISABLED_OR_HINT_DARK : TEXT_DISABLED_OR_HINT_LIGHT;
+        public Brush TextDisabledOrHintBrush => Theme == Themes.Light ? TEXT_DISABLED_OR_HINT_DARK_BRUSH : TEXT_DISABLED_OR_HINT_LIGHT_BRUSH;
 
         // Divider
-        public Color DividersColor => Theme == Themes.LIGHT ? DIVIDERS_DARK : DIVIDERS_LIGHT;
-        public Brush DividersBrush => Theme == Themes.LIGHT ? DIVIDERS_DARK_BRUSH : DIVIDERS_LIGHT_BRUSH;
-        public Color DividersAlternativeColor => Theme == Themes.LIGHT ? DIVIDERS_ALTERNATIVE_DARK : DIVIDERS_ALTERNATIVE_LIGHT;
-        public Brush DividersAlternativeBrush => Theme == Themes.LIGHT ? DIVIDERS_ALTERNATIVE_DARK_BRUSH : DIVIDERS_ALTERNATIVE_LIGHT_BRUSH;
+        public Color DividersColor => Theme == Themes.Light ? DIVIDERS_DARK : DIVIDERS_LIGHT;
+        public Brush DividersBrush => Theme == Themes.Light ? DIVIDERS_DARK_BRUSH : DIVIDERS_LIGHT_BRUSH;
+        public Color DividersAlternativeColor => Theme == Themes.Light ? DIVIDERS_ALTERNATIVE_DARK : DIVIDERS_ALTERNATIVE_LIGHT;
+        public Brush DividersAlternativeBrush => Theme == Themes.Light ? DIVIDERS_ALTERNATIVE_DARK_BRUSH : DIVIDERS_ALTERNATIVE_LIGHT_BRUSH;
 
         // Checkbox / Radio / Switch
-        public Color CheckboxOffColor => Theme == Themes.LIGHT ? CHECKBOX_OFF_LIGHT : CHECKBOX_OFF_DARK;
-        public Brush CheckboxOffBrush => Theme == Themes.LIGHT ? CHECKBOX_OFF_LIGHT_BRUSH : CHECKBOX_OFF_DARK_BRUSH;
-        public Color CheckBoxOffDisabledColor => Theme == Themes.LIGHT ? CHECKBOX_OFF_DISABLED_LIGHT : CHECKBOX_OFF_DISABLED_DARK;
-        public Brush CheckBoxOffDisabledBrush => Theme == Themes.LIGHT ? CHECKBOX_OFF_DISABLED_LIGHT_BRUSH : CHECKBOX_OFF_DISABLED_DARK_BRUSH;
+        public Color CheckboxOffColor => Theme == Themes.Light ? CHECKBOX_OFF_LIGHT : CHECKBOX_OFF_DARK;
+        public Brush CheckboxOffBrush => Theme == Themes.Light ? CHECKBOX_OFF_LIGHT_BRUSH : CHECKBOX_OFF_DARK_BRUSH;
+        public Color CheckBoxOffDisabledColor => Theme == Themes.Light ? CHECKBOX_OFF_DISABLED_LIGHT : CHECKBOX_OFF_DISABLED_DARK;
+        public Brush CheckBoxOffDisabledBrush => Theme == Themes.Light ? CHECKBOX_OFF_DISABLED_LIGHT_BRUSH : CHECKBOX_OFF_DISABLED_DARK_BRUSH;
 
         // Switch
-        public Color SwitchOffColor => Theme == Themes.LIGHT ? CHECKBOX_OFF_DARK : CHECKBOX_OFF_LIGHT; // yes, I re-use the checkbox color, sue me
-        public Color SwitchOffThumbColor => Theme == Themes.LIGHT ? SWITCH_OFF_THUMB_LIGHT : SWITCH_OFF_THUMB_DARK;
-        public Color SwitchOffTrackColor => Theme == Themes.LIGHT ? SWITCH_OFF_TRACK_LIGHT : SWITCH_OFF_TRACK_DARK;
-        public Color SwitchOffDisabledThumbColor => Theme == Themes.LIGHT ? SWITCH_OFF_DISABLED_THUMB_LIGHT : SWITCH_OFF_DISABLED_THUMB_DARK;
+        public Color SwitchOffColor => Theme == Themes.Light ? CHECKBOX_OFF_DARK : CHECKBOX_OFF_LIGHT; // yes, I re-use the checkbox color, sue me
+        public Color SwitchOffThumbColor => Theme == Themes.Light ? SWITCH_OFF_THUMB_LIGHT : SWITCH_OFF_THUMB_DARK;
+        public Color SwitchOffTrackColor => Theme == Themes.Light ? SWITCH_OFF_TRACK_LIGHT : SWITCH_OFF_TRACK_DARK;
+        public Color SwitchOffDisabledThumbColor => Theme == Themes.Light ? SWITCH_OFF_DISABLED_THUMB_LIGHT : SWITCH_OFF_DISABLED_THUMB_DARK;
 
         // Control Back colors
-        public Color BackgroundColor => Theme == Themes.LIGHT ? BACKGROUND_LIGHT : BACKGROUND_DARK;
-        public Brush BackgroundBrush => Theme == Themes.LIGHT ? BACKGROUND_LIGHT_BRUSH : BACKGROUND_DARK_BRUSH;
-        public Color BackgroundAlternativeColor => Theme == Themes.LIGHT ? BACKGROUND_ALTERNATIVE_LIGHT : BACKGROUND_ALTERNATIVE_DARK;
-        public Brush BackgroundAlternativeBrush => Theme == Themes.LIGHT ? BACKGROUND_ALTERNATIVE_LIGHT_BRUSH : BACKGROUND_ALTERNATIVE_DARK_BRUSH;
-        public Color BackgroundDisabledColor => Theme == Themes.LIGHT ? BACKGROUND_DISABLED_LIGHT : BACKGROUND_DISABLED_DARK;
-        public Brush BackgroundDisabledBrush => Theme == Themes.LIGHT ? BACKGROUND_DISABLED_LIGHT_BRUSH : BACKGROUND_DISABLED_DARK_BRUSH;
-        public Color BackgroundHoverColor => Theme == Themes.LIGHT ? BACKGROUND_HOVER_LIGHT : BACKGROUND_HOVER_DARK;
-        public Brush BackgroundHoverBrush => Theme == Themes.LIGHT ? BACKGROUND_HOVER_LIGHT_BRUSH : BACKGROUND_HOVER_DARK_BRUSH;
-        public Color BackgroundHoverRedColor => Theme == Themes.LIGHT ? BACKGROUND_HOVER_RED : BACKGROUND_HOVER_RED;
-        public Brush BackgroundHoverRedBrush => Theme == Themes.LIGHT ? BACKGROUND_HOVER_RED_BRUSH : BACKGROUND_HOVER_RED_BRUSH;
-        public Brush BackgroundDownRedBrush => Theme == Themes.LIGHT ? BACKGROUND_DOWN_RED_BRUSH : BACKGROUND_DOWN_RED_BRUSH;
-        public Color BackgroundFocusColor => Theme == Themes.LIGHT ? BACKGROUND_FOCUS_LIGHT : BACKGROUND_FOCUS_DARK;
-        public Brush BackgroundFocusBrush => Theme == Themes.LIGHT ? BACKGROUND_FOCUS_LIGHT_BRUSH : BACKGROUND_FOCUS_DARK_BRUSH;
+        public Color BackgroundColor => Theme == Themes.Light ? BACKGROUND_LIGHT : BACKGROUND_DARK;
+        public Brush BackgroundBrush => Theme == Themes.Light ? BACKGROUND_LIGHT_BRUSH : BACKGROUND_DARK_BRUSH;
+        public Color BackgroundAlternativeColor => Theme == Themes.Light ? BACKGROUND_ALTERNATIVE_LIGHT : BACKGROUND_ALTERNATIVE_DARK;
+        public Brush BackgroundAlternativeBrush => Theme == Themes.Light ? BACKGROUND_ALTERNATIVE_LIGHT_BRUSH : BACKGROUND_ALTERNATIVE_DARK_BRUSH;
+        public Color BackgroundDisabledColor => Theme == Themes.Light ? BACKGROUND_DISABLED_LIGHT : BACKGROUND_DISABLED_DARK;
+        public Brush BackgroundDisabledBrush => Theme == Themes.Light ? BACKGROUND_DISABLED_LIGHT_BRUSH : BACKGROUND_DISABLED_DARK_BRUSH;
+        public Color BackgroundHoverColor => Theme == Themes.Light ? BACKGROUND_HOVER_LIGHT : BACKGROUND_HOVER_DARK;
+        public Brush BackgroundHoverBrush => Theme == Themes.Light ? BACKGROUND_HOVER_LIGHT_BRUSH : BACKGROUND_HOVER_DARK_BRUSH;
+        public Color BackgroundHoverRedColor => Theme == Themes.Light ? BACKGROUND_HOVER_RED : BACKGROUND_HOVER_RED;
+        public Brush BackgroundHoverRedBrush => Theme == Themes.Light ? BACKGROUND_HOVER_RED_BRUSH : BACKGROUND_HOVER_RED_BRUSH;
+        public Brush BackgroundDownRedBrush => Theme == Themes.Light ? BACKGROUND_DOWN_RED_BRUSH : BACKGROUND_DOWN_RED_BRUSH;
+        public Color BackgroundFocusColor => Theme == Themes.Light ? BACKGROUND_FOCUS_LIGHT : BACKGROUND_FOCUS_DARK;
+        public Brush BackgroundFocusBrush => Theme == Themes.Light ? BACKGROUND_FOCUS_LIGHT_BRUSH : BACKGROUND_FOCUS_DARK_BRUSH;
 
 
         // Other color
-        public Color CardsColor => Theme == Themes.LIGHT ? CARD_WHITE : CARD_BLACK;
+        public Color CardsColor => Theme == Themes.Light ? CARD_WHITE : CARD_BLACK;
 
         // Expansion Panel color/brush
-        public Brush ExpansionPanelFocusBrush => Theme == Themes.LIGHT ? EXPANSIONPANEL_FOCUS_LIGHT_BRUSH : EXPANSIONPANEL_FOCUS_DARK_BRUSH;
+        public Brush ExpansionPanelFocusBrush => Theme == Themes.Light ? EXPANSIONPANEL_FOCUS_LIGHT_BRUSH : EXPANSIONPANEL_FOCUS_DARK_BRUSH;
 
         // SnackBar
-        public Color SnackBarTextHighEmphasisColor => Theme != Themes.LIGHT ? TEXT_HIGH_EMPHASIS_DARK : TEXT_HIGH_EMPHASIS_LIGHT;
-        public Color SnackBarBackgroundColor => Theme != Themes.LIGHT ? BACKGROUND_LIGHT : BACKGROUND_DARK;
-        public Color SnackBarTextButtonNoAccentTextColor => Theme != Themes.LIGHT ? ColorScheme.PrimaryColor : ColorScheme.LightPrimaryColor;
+        public Color SnackBarTextHighEmphasisColor => Theme != Themes.Light ? TEXT_HIGH_EMPHASIS_DARK : TEXT_HIGH_EMPHASIS_LIGHT;
+        public Color SnackBarBackgroundColor => Theme != Themes.Light ? BACKGROUND_LIGHT : BACKGROUND_DARK;
+        public Color SnackBarTextButtonNoAccentTextColor => Theme != Themes.Light ? ColorScheme.PrimaryColor : ColorScheme.LightPrimaryColor;
 
         // Backdrop color
-        public Color BackdropColor => Theme == Themes.LIGHT ? BACKDROP_LIGHT : BACKDROP_DARK;
-        public Brush BackdropBrush => Theme == Themes.LIGHT ? BACKDROP_LIGHT_BRUSH : BACKDROP_DARK_BRUSH;
+        public Color BackdropColor => Theme == Themes.Light ? BACKDROP_LIGHT : BACKDROP_DARK;
+        public Brush BackdropBrush => Theme == Themes.Light ? BACKDROP_LIGHT_BRUSH : BACKDROP_DARK_BRUSH;
 
         #endregion
 
         // Font Handling
-        public enum fontType
+        public enum FontType
         {
             H1,
             H2,
@@ -374,177 +371,182 @@ namespace MaterialSkin.NET
 
         public Font GetFont(CustomFontFamily family)
         {
-            if(RobotoFontFamilies.ContainsKey(family.ToString()))
+            if(_robotoFontFamilies.ContainsKey(family.ToString()))
             {
-                return new Font(RobotoFontFamilies[family.ToString()], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
+                return new Font(_robotoFontFamilies[family.ToString()], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
             }
 
-            return new Font(RobotoFontFamilies["Roboto"], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
+            return new Font(_robotoFontFamilies["Roboto"], 12.25f, FontStyle.Regular, GraphicsUnit.Point);
         }
 
-        public Font getFontByType(fontType type, int dpi = 96)
+        public Font GetFontByType(FontType type, int dpi = 96)
         {
-            float f = dpi / 96f;
+            var f = dpi / 96f;
 
             switch (type)
             {
-                case fontType.H1:
-                    return new Font(RobotoFontFamilies["Roboto_Light"], f * 96f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.H1:
+                    return new Font(_robotoFontFamilies["Roboto_Light"], f * 96f, FontStyle.Regular, GraphicsUnit.Pixel);
 
-                case fontType.H2:
-                    return new Font(RobotoFontFamilies["Roboto_Light"], f * 60f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.H2:
+                    return new Font(_robotoFontFamilies["Roboto_Light"], f * 60f, FontStyle.Regular, GraphicsUnit.Pixel);
 
-                case fontType.H3:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 48f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.H3:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 48f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.H4:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 34f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.H4:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 34f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.H5:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 24f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.H5:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 24f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.H6:
-                    return new Font(RobotoFontFamilies["Roboto_Medium"], f * 20f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.H6:
+                    return new Font(_robotoFontFamilies["Roboto_Medium"], f * 20f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.Subtitle1:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 16f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.Subtitle1:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 16f, FontStyle.Regular, GraphicsUnit.Pixel);
 
-                case fontType.Subtitle2:
-                    return new Font(RobotoFontFamilies["Roboto_Medium"], f * 14f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.Subtitle2:
+                    return new Font(_robotoFontFamilies["Roboto_Medium"], f * 14f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.SubtleEmphasis:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 12f, FontStyle.Italic, GraphicsUnit.Pixel);
+                case FontType.SubtleEmphasis:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 12f, FontStyle.Italic, GraphicsUnit.Pixel);
 
-                case fontType.Body1:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 8.25f, FontStyle.Regular, GraphicsUnit.Point);
+                case FontType.Body1:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 8.25f, FontStyle.Regular, GraphicsUnit.Point);
 
-                case fontType.Body2:
-                    return new Font(RobotoFontFamilies["Roboto"],   f * 12f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.Body2:
+                    return new Font(_robotoFontFamilies["Roboto"],   f * 12f, FontStyle.Regular, GraphicsUnit.Pixel);
 
-                case fontType.Button:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 8.25f, FontStyle.Bold, GraphicsUnit.Pixel);
+                case FontType.Button:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 8.25f, FontStyle.Bold, GraphicsUnit.Pixel);
 
-                case fontType.Caption:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 12f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.Caption:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 12f, FontStyle.Regular, GraphicsUnit.Pixel);
 
-                case fontType.Overline:
-                    return new Font(RobotoFontFamilies["Roboto"], f * 10f, FontStyle.Regular, GraphicsUnit.Pixel);
+                case FontType.Overline:
+                    return new Font(_robotoFontFamilies["Roboto"], f * 10f, FontStyle.Regular, GraphicsUnit.Pixel);
             }
-            return new Font(RobotoFontFamilies["Roboto"], f * 14f, FontStyle.Regular, GraphicsUnit.Pixel);
+            return new Font(_robotoFontFamilies["Roboto"], f * 14f, FontStyle.Regular, GraphicsUnit.Pixel);
         }
 
         /// <summary>
         /// Get the font by size - used for textbox label animation, try to not use this for anything else
         /// </summary>
         /// <param name="size">font size, ranges from 12 up to 16</param>
+        /// <param name="dpi"></param>
         /// <returns></returns>
-        public IntPtr getTextBoxFontBySize(int size, int dpi = 96)
+        public IntPtr GetTextBoxFontBySize(int size, int dpi = 96)
         {
-            string key = "textBox" + Math.Min(16, Math.Max(12, size)).ToString() + "-" + dpi.ToString();
-            if (logicalFonts.TryGetValue(key, out var font))
+            var key = "textBox" + Math.Min(16, Math.Max(12, size)).ToString() + "-" + dpi.ToString();
+            if (_logicalFonts.TryGetValue(key, out var font))
                 return font;
             
-            IntPtr newfont;
+            IntPtr newFont;
             
             if (size > 13)
             {
-                newfont = createLogicalFont("Roboto", size, NativeTextRenderer.logFontWeight.FW_NORMAL, 0, dpi);
+                newFont = CreateLogicalFont("Roboto", size, NativeTextRenderer.logFontWeight.FW_NORMAL, 0, dpi);
             }
             else
             {
-                newfont = createLogicalFont("Roboto Medium", size, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
+                newFont = CreateLogicalFont("Roboto Medium", size, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
             }
 
-            logicalFonts[key] = newfont;
-            return newfont;
+            _logicalFonts[key] = newFont;
+            return newFont;
         }
 
         /// <summary>
         /// Gets a Material Skin Logical Roboto Font given a standard material font type
         /// </summary>
         /// <param name="type">material design font type</param>
+        /// <param name="dpi"></param>
         /// <returns></returns>
-        public IntPtr getLogFontByType(fontType type, int dpi = 96)
+        public IntPtr GetLogFontByType(FontType type, int dpi = 96)
         {
-            string key = Enum.GetName(typeof(fontType), type) + "-" + dpi.ToString();
-            if (logicalFonts.TryGetValue(key, out var font))
+            var key = Enum.GetName(typeof(FontType), type) + "-" + dpi.ToString();
+            if (_logicalFonts.TryGetValue(key, out var font))
                 return font;
-            IntPtr newfont = createLogicalFontByType(type, dpi);
-            logicalFonts[key] = newfont;
-            return newfont;
+            var newFont = CreateLogicalFontByType(type, dpi);
+            _logicalFonts[key] = newFont;
+            return newFont;
         }
 
         // Font stuff
-        private Dictionary<string, IntPtr> logicalFonts;
+        private readonly Dictionary<string, IntPtr> _logicalFonts;
 
-        private Dictionary<string, FontFamily> RobotoFontFamilies;
+        private readonly Dictionary<string, FontFamily> _robotoFontFamilies;
 
-        private PrivateFontCollection privateFontCollection = new PrivateFontCollection();
+        private readonly PrivateFontCollection _privateFontCollection = new();
 
-        private void addFont(byte[] fontdata)
+        private void AddFont(byte[] fontData)
         {
             // Add font to system table in memory
-            int dataLength = fontdata.Length;
+            var dataLength = fontData.Length;
 
-            IntPtr ptrFont = Marshal.AllocCoTaskMem(dataLength);
-            Marshal.Copy(fontdata, 0, ptrFont, dataLength);
+            var ptrFont = Marshal.AllocCoTaskMem(dataLength);
+            Marshal.Copy(fontData, 0, ptrFont, dataLength);
 
             // GDI Font
-            NativeTextRenderer.AddFontMemResourceEx(fontdata, dataLength, IntPtr.Zero, out _);
+            NativeTextRenderer.AddFontMemResourceEx(fontData, dataLength, IntPtr.Zero, out _);
 
             // GDI+ Font
-            privateFontCollection.AddMemoryFont(ptrFont, dataLength);
+            _privateFontCollection.AddMemoryFont(ptrFont, dataLength);
         }
 
-        private IntPtr createLogicalFont(string fontName, int size, NativeTextRenderer.logFontWeight weight, byte lfItalic = 0, int dpi = 96)
+        private static IntPtr CreateLogicalFont(string fontName, int size, NativeTextRenderer.logFontWeight weight, byte lfItalic = 0, int dpi = 96)
         {
             // Logical font:
-            NativeTextRenderer.LogFont lfont = new NativeTextRenderer.LogFont();
-            lfont.lfFaceName = fontName;
-            lfont.lfHeight = (int)Math.Round(-size * dpi / 96f);
-            lfont.lfWeight = (int)weight;
-            lfont.lfItalic = lfItalic;
-            return NativeTextRenderer.CreateFontIndirect(lfont);
+            var lFont = new NativeTextRenderer.LogFont
+            {
+                lfFaceName = fontName,
+                lfHeight = (int)Math.Round(-size * dpi / 96f),
+                lfWeight = (int)weight,
+                lfItalic = lfItalic
+            };
+            return NativeTextRenderer.CreateFontIndirect(lFont);
         }
 
-        private IntPtr createLogicalFontByType(fontType type, int dpi = 96)
+        private static IntPtr CreateLogicalFontByType(FontType type, int dpi = 96)
         {
             switch (type) { 
-                case fontType.H1:
-                    return createLogicalFont("Roboto Light", 96, NativeTextRenderer.logFontWeight.FW_LIGHT, 0, dpi);
-                case fontType.H2:
-                    return createLogicalFont("Roboto Light", 60, NativeTextRenderer.logFontWeight.FW_LIGHT, 0, dpi);
-                case fontType.H3:
-                    return createLogicalFont("Roboto", 48, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.H4:
-                    return createLogicalFont("Roboto", 34, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.H5:
-                    return createLogicalFont("Roboto", 24, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.H6:
-                    return createLogicalFont("Roboto Medium", 20, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
-                case fontType.Subtitle1:
-                    return createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.Subtitle2:
-                    return createLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
-                case fontType.SubtleEmphasis:
-                    return createLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_NORMAL, 1, dpi);
-                case fontType.Body1:
-                    return createLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.Body2:
-                    return createLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.Button:
-                    return createLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
-                case fontType.Caption:
-                    return createLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-                case fontType.Overline:
-                    return createLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
-            };
+                case FontType.H1:
+                    return CreateLogicalFont("Roboto Light", 96, NativeTextRenderer.logFontWeight.FW_LIGHT, 0, dpi);
+                case FontType.H2:
+                    return CreateLogicalFont("Roboto Light", 60, NativeTextRenderer.logFontWeight.FW_LIGHT, 0, dpi);
+                case FontType.H3:
+                    return CreateLogicalFont("Roboto", 48, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.H4:
+                    return CreateLogicalFont("Roboto", 34, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.H5:
+                    return CreateLogicalFont("Roboto", 24, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.H6:
+                    return CreateLogicalFont("Roboto Medium", 20, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
+                case FontType.Subtitle1:
+                    return CreateLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.Subtitle2:
+                    return CreateLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
+                case FontType.SubtleEmphasis:
+                    return CreateLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_NORMAL, 1, dpi);
+                case FontType.Body1:
+                    return CreateLogicalFont("Roboto", 16, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.Body2:
+                    return CreateLogicalFont("Roboto", 14, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.Button:
+                    return CreateLogicalFont("Roboto Medium", 14, NativeTextRenderer.logFontWeight.FW_MEDIUM, 0, dpi);
+                case FontType.Caption:
+                    return CreateLogicalFont("Roboto", 12, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+                case FontType.Overline:
+                    return CreateLogicalFont("Roboto", 10, NativeTextRenderer.logFontWeight.FW_REGULAR, 0, dpi);
+            }
+
             return IntPtr.Zero;
         }
 
         public FontFamily GetFontFamily(string fontName)
         {
-            return RobotoFontFamilies[fontName];
+            return _robotoFontFamilies[fontName];
         }
 
         /// <summary>
@@ -592,9 +594,9 @@ namespace MaterialSkin.NET
             if (controlToUpdate.ContextMenuStrip != null) UpdateToolStrip(controlToUpdate.ContextMenuStrip, newBackColor);
 
             // Material Tabcontrol pages
-            if (controlToUpdate is TabPage)
+            if (controlToUpdate is TabPage page)
             {
-                ((TabPage)controlToUpdate).BackColor = newBackColor;
+                page.BackColor = newBackColor;
             }
 
             // Material Divider
@@ -623,19 +625,18 @@ namespace MaterialSkin.NET
                     controlToUpdate.ForeColor = TextHighEmphasisColor;
                     controlToUpdate.Font = DefaultFont;
 
-                    if(controlToUpdate is DataGridView)
+                    if(controlToUpdate is DataGridView view)
                     {
-                        var test = BackgroundColor;
-                        ((DataGridView)controlToUpdate).DefaultCellStyle.BackColor = BackgroundColor;
-                        ((DataGridView)controlToUpdate).DefaultCellStyle.ForeColor = TextHighEmphasisColor;
-                        ((DataGridView)controlToUpdate).DefaultCellStyle.Font = DefaultFont;
-                        ((DataGridView)controlToUpdate).RowHeadersDefaultCellStyle.BackColor = BackgroundColor;
-                        ((DataGridView)controlToUpdate).RowHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
-                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.Font = DefaultFont;
-                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.BackColor = BackgroundColor;
-                        ((DataGridView)controlToUpdate).ColumnHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
-                        ((DataGridView)controlToUpdate).EnableHeadersVisualStyles = true;
-                        ((DataGridView)controlToUpdate).BackgroundColor = controlToUpdate.Parent.BackColor;
+                        view.DefaultCellStyle.BackColor = BackgroundColor;
+                        view.DefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        view.DefaultCellStyle.Font = DefaultFont;
+                        view.RowHeadersDefaultCellStyle.BackColor = BackgroundColor;
+                        view.RowHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        view.ColumnHeadersDefaultCellStyle.Font = DefaultFont;
+                        view.ColumnHeadersDefaultCellStyle.BackColor = BackgroundColor;
+                        view.ColumnHeadersDefaultCellStyle.ForeColor = TextHighEmphasisColor;
+                        view.EnableHeadersVisualStyles = true;
+                        if (view.Parent != null) view.BackgroundColor = view.Parent.BackColor;
                     }
                 }
             }
@@ -647,7 +648,7 @@ namespace MaterialSkin.NET
             }
         }
 
-        private void UpdateToolStrip(ToolStrip toolStrip, Color newBackColor)
+        private static void UpdateToolStrip(ToolStrip toolStrip, Color newBackColor)
         {
             if (toolStrip == null)
             {

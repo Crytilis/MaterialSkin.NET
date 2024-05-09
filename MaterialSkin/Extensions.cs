@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET
+namespace MaterialSkin
 {
     /// <summary>
     /// Defines the <see cref="Extensions" />
@@ -75,6 +75,17 @@ namespace MaterialSkin.NET
                 (argb & 0xFF0000) >> 16,
                 (argb & 0x00FF00) >> 8,
                  argb & 0x0000FF);
+        }
+
+        public static Color ToColor(this string hexColor)
+        {
+            return ColorTranslator.FromHtml(hexColor);
+        }
+
+        public static Color ToColor(this Enum enumColor)
+        {
+            var argb = Convert.ToInt32(enumColor);
+            return Color.FromArgb(argb);
         }
 
         public static Color RemoveAlpha(this Color color)

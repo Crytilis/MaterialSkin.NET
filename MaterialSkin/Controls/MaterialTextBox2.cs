@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialTextBox2 : Control, IMaterialControl
     {
@@ -1902,7 +1902,7 @@ namespace MaterialSkin.NET.Controls
             if (_trailingIcon == null && _leadingIcon == null) return;
 
             // Calculate lightness and color
-            float l = (SkinManager.Theme == MaterialSkinManager.Themes.LIGHT) ? 0f : 1f;
+            float l = (SkinManager.Theme == MaterialSkinManager.Themes.Light) ? 0f : 1f;
 
             // Create matrices
             float[][] matrixGray = {

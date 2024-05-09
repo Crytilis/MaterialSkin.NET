@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     /// <summary>
     /// The form to show the customized message box.
@@ -215,7 +215,7 @@ namespace MaterialSkin.NET.Controls
             this.lblTextBoxMessage.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.FlexibleMaterialFormBindingSource, "MessageText", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.lblTextBoxMessage.Depth = 0;
             this.lblTextBoxMessage.Font = new System.Drawing.Font("Roboto", 9F);
-            this.lblTextBoxMessage.FontType = MaterialSkinManager.fontType.Caption;
+            this.lblTextBoxMessage.FontType = MaterialSkinManager.FontType.Caption;
             this.lblTextBoxMessage.Location = new System.Drawing.Point(56, 14);
             this.lblTextBoxMessage.MouseState = MouseState.HOVER;
             this.lblTextBoxMessage.Name = "lblTextBoxMessage";
@@ -449,7 +449,7 @@ namespace MaterialSkin.NET.Controls
 
             materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
-            FONT = materialSkinManager.getFontByType(MaterialSkinManager.fontType.Body1);
+            FONT = materialSkinManager.GetFontByType(MaterialSkinManager.FontType.Body1);
             messageContainer.BackColor = this.BackColor;
 
             var heightDif = leftButton.Height - materialSkinManager.Height;

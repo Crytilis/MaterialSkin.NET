@@ -4,9 +4,9 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using MaterialSkin.NET.Animations;
+using MaterialSkin.Animations;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialComboBox : ComboBox, IMaterialControl
     {
@@ -307,9 +307,9 @@ namespace MaterialSkin.NET.Controls
 
             // Create and Draw the arrow
             System.Drawing.Drawing2D.GraphicsPath pth = new System.Drawing.Drawing2D.GraphicsPath();
-            PointF TopRight = new PointF(this.Width - 0.5f - SkinManager.FORM_PADDING, (this.Height >> 1) - 2.5f);
-            PointF MidBottom = new PointF(this.Width - 4.5f - SkinManager.FORM_PADDING, (this.Height >> 1) + 2.5f);
-            PointF TopLeft = new PointF(this.Width - 8.5f - SkinManager.FORM_PADDING, (this.Height >> 1) - 2.5f);
+            PointF TopRight = new PointF(this.Width - 0.5f - MaterialSkinManager.FORM_PADDING, (this.Height >> 1) - 2.5f);
+            PointF MidBottom = new PointF(this.Width - 4.5f - MaterialSkinManager.FORM_PADDING, (this.Height >> 1) + 2.5f);
+            PointF TopLeft = new PointF(this.Width - 8.5f - MaterialSkinManager.FORM_PADDING, (this.Height >> 1) - 2.5f);
             pth.AddLine(TopLeft, TopRight);
             pth.AddLine(TopRight, MidBottom);
 
@@ -323,7 +323,7 @@ namespace MaterialSkin.NET.Controls
 
             // HintText
             bool userTextPresent = SelectedIndex >= 0;
-            Rectangle hintRect = new Rectangle(SkinManager.FORM_PADDING, ClientRectangle.Y, Width, LINE_Y);
+            Rectangle hintRect = new Rectangle(MaterialSkinManager.FORM_PADDING, ClientRectangle.Y, Width, LINE_Y);
             float hintTextSize = SelectedIndex >= 0 ? HintFont.SizeInPoints : Font.SizeInPoints;
 
             // bottom line base
@@ -354,7 +354,7 @@ namespace MaterialSkin.NET.Controls
                 if (hasHint && UseTallSize)
                 {
                     hintRect = new Rectangle(
-                        SkinManager.FORM_PADDING,
+                        MaterialSkinManager.FORM_PADDING,
                         userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_Y) : ClientRectangle.Y + (int)((TEXT_SMALL_Y - ClientRectangle.Y) * animationProgress),
                         Width,
                         userTextPresent && !_animationManager.IsAnimating() || SelectedIndex >= 0 ? (TEXT_SMALL_SIZE) : (int)(LINE_Y + (TEXT_SMALL_SIZE - LINE_Y) * animationProgress));
@@ -369,9 +369,9 @@ namespace MaterialSkin.NET.Controls
 
             // Calc text Rect
             Rectangle textRect = new Rectangle(
-                SkinManager.FORM_PADDING,
+                MaterialSkinManager.FORM_PADDING,
                 hasHint && UseTallSize ? (hintRect.Y + hintRect.Height) - 2 : ClientRectangle.Y,
-                ClientRectangle.Width - SkinManager.FORM_PADDING * 3 - 8,
+                ClientRectangle.Width - MaterialSkinManager.FORM_PADDING * 3 - 8,
                 hasHint && UseTallSize ? LINE_Y - (hintRect.Y + hintRect.Height) : LINE_Y);
 
             g.Clip = new Region(textRect);
@@ -459,8 +459,8 @@ namespace MaterialSkin.NET.Controls
                 Text,
                 Font,
                 SkinManager.TextHighEmphasisNoAlphaColor,
-                new Point(e.Bounds.Location.X + SkinManager.FORM_PADDING, e.Bounds.Location.Y),
-                new Size(e.Bounds.Size.Width - SkinManager.FORM_PADDING * 2, e.Bounds.Size.Height),
+                new Point(e.Bounds.Location.X + MaterialSkinManager.FORM_PADDING, e.Bounds.Location.Y),
+                new Size(e.Bounds.Size.Width - MaterialSkinManager.FORM_PADDING * 2, e.Bounds.Size.Height),
                 NativeTextRenderer.TextAlignFlags.Left | NativeTextRenderer.TextAlignFlags.Middle); ;
             }
         }
@@ -504,7 +504,7 @@ namespace MaterialSkin.NET.Controls
             if (!AutoResize) return;
 
             int w = DropDownWidth;
-            int padding = SkinManager.FORM_PADDING * 3;
+            int padding = MaterialSkinManager.FORM_PADDING * 3;
             int vertScrollBarWidth = (Items.Count > MaxDropDownItems) ? SystemInformation.VerticalScrollBarWidth : 0;
 
             Graphics g = CreateGraphics();

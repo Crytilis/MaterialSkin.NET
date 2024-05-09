@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public class MaterialCard : Panel, IMaterialControl
     {
@@ -60,8 +60,8 @@ namespace MaterialSkin.NET.Controls
             Paint += new PaintEventHandler(paintControl);
             BackColor = SkinManager.BackgroundColor;
             ForeColor = SkinManager.TextHighEmphasisColor;
-            Margin = new Padding(SkinManager.FORM_PADDING);
-            Padding = new Padding(SkinManager.FORM_PADDING);
+            Margin = new Padding(MaterialSkinManager.FORM_PADDING);
+            Padding = new Padding(MaterialSkinManager.FORM_PADDING);
 
             Radius = radius <= 0 ? 4 : radius;
         }

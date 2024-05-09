@@ -1,4 +1,3 @@
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
 
-namespace MaterialSkin.NET.Controls
+namespace MaterialSkin.Controls
 {
     public enum MaterialScrollOrientation
     {
@@ -17,23 +16,38 @@ namespace MaterialSkin.NET.Controls
 
     [DefaultEvent("Scroll")]
     [DefaultProperty("Value")]
-    public class MaterialScrollBar : Control, IMaterialControl
+    public class MaterialScrollBar : Control, IMaterialControl, ICustomSkinManager
     {
+
+        private MaterialSkinManager _skinManager;
 
         [Browsable(false)]
         public int Depth { get; set; }
+
         [Browsable(false)]
-        public MaterialSkinManager SkinManager { get { return MaterialSkinManager.Instance; } }
+        public MaterialSkinManager SkinManager
+        {
+            get => _skinManager ?? MaterialSkinManager.Instance;
+            internal set => _skinManager = value;
+        }
+
+        [Browsable(false)]
+        public MaterialSkinManager CustomSkinManager
+        {
+            get => SkinManager;
+            set => SkinManager = value;
+        }
+
         [Browsable(false)]
         public MouseState MouseState { get; set; }
 
-        private bool useAccentColor;
+        private bool _useAccentColor;
 
         [Category("Material Skin"), DefaultValue(false), DisplayName("Use Accent Color")]
         public bool UseAccentColor
         {
-            get { return useAccentColor; }
-            set { useAccentColor = value; Invalidate(); }
+            get => _useAccentColor;
+            set { _useAccentColor = value; Invalidate(); }
         }
 
         [DllImport("user32.dll")]
@@ -120,7 +134,7 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(10)]
         public int MouseWheelBarPartitions
         {
-            get { return mouseWheelBarPartitions; }
+            get => mouseWheelBarPartitions;
             set
             {
                 if (value > 0)
@@ -141,14 +155,14 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(false)]
         public bool UseBarColor
         {
-            get { return useBarColor; }
-            set { useBarColor = value; }
+            get => useBarColor;
+            set => useBarColor = value;
         }
 
         [DefaultValue(SCROLLBAR_DEFAULT_SIZE)]
         public int ScrollbarSize
         {
-            get { return Orientation == MaterialScrollOrientation.Vertical ? Width : Height; }
+            get => Orientation == MaterialScrollOrientation.Vertical ? Width : Height;
             set
             {
                 if (Orientation == MaterialScrollOrientation.Vertical)
@@ -162,8 +176,8 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(false)]
         public bool HighlightOnWheel
         {
-            get { return highlightOnWheel; }
-            set { highlightOnWheel = value; }
+            get => highlightOnWheel;
+            set => highlightOnWheel = value;
         }
 
         private MaterialScrollOrientation MaterialOrientation = MaterialScrollOrientation.Vertical;
@@ -171,7 +185,7 @@ namespace MaterialSkin.NET.Controls
 
         public MaterialScrollOrientation Orientation
         {
-            get { return MaterialOrientation; }
+            get => MaterialOrientation;
             set
             {
                 if (value == MaterialOrientation) return;
@@ -186,7 +200,7 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(0)]
         public int Minimum
         {
-            get { return minimum; }
+            get => minimum;
             set
             {
                 if (minimum == value || value < 0 || value >= maximum)
@@ -224,7 +238,7 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(100)]
         public int Maximum
         {
-            get { return maximum; }
+            get => maximum;
             set
             {
                 if (value == maximum || value < 1 || value <= minimum)
@@ -257,7 +271,7 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(1)]
         public int SmallChange
         {
-            get { return smallChange; }
+            get => smallChange;
             set
             {
                 if (value == smallChange || value < 1 || value >= largeChange)
@@ -274,7 +288,7 @@ namespace MaterialSkin.NET.Controls
         [DefaultValue(10)]
         public int LargeChange
         {
-            get { return largeChange; }
+            get => largeChange;
             set
             {
                 if (value == largeChange || value < smallChange || value < 2)
@@ -309,7 +323,7 @@ namespace MaterialSkin.NET.Controls
         [Browsable(false)]
         public int Value
         {
-            get { return curValue; }
+            get => curValue;
 
             set
             {
@@ -364,13 +378,7 @@ namespace MaterialSkin.NET.Controls
 
         public MaterialScrollBar()
         {
-            SetStyle(ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.OptimizedDoubleBuffer |
-                     ControlStyles.ResizeRedraw |
-                     ControlStyles.Selectable |
-//                     ControlStyles.AllPaintingInWmPaint |
-                     ControlStyles.SupportsTransparentBackColor |
-                     ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.Selectable | ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint, true);
 
             Width = SCROLLBAR_DEFAULT_SIZE;
             Height = 200;
@@ -438,7 +446,7 @@ namespace MaterialSkin.NET.Controls
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            DrawScrollBar(e.Graphics, MaterialSkinManager.Instance.CardsColor, SkinManager.SwitchOffTrackColor, useAccentColor ? MaterialSkinManager.Instance.ColorScheme.AccentColor : MaterialSkinManager.Instance.ColorScheme.PrimaryColor);
+            DrawScrollBar(e.Graphics, MaterialSkinManager.Instance.CardsColor, SkinManager.SwitchOffTrackColor, _useAccentColor ? MaterialSkinManager.Instance.ColorScheme.AccentColor : MaterialSkinManager.Instance.ColorScheme.PrimaryColor);
         }
 
         private void DrawScrollBar(Graphics g, Color backColor, Color thumbColor, Color barColor)
